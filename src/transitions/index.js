@@ -1,5 +1,5 @@
 import { Core } from '@unseenco/taxi';
-import SmoothScroll from '@utils/smoothscroll';
+import SmoothScroll from '@utils/SmoothScroll';
 import Components from '@components';
 import emitter from '@utils/Emitter';
 import GlobalTransition from './global/GlobalEnter';
