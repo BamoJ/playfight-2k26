@@ -18,6 +18,7 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, './src'),
+			'@animations': path.resolve(__dirname, './src/animations'),
 			'@canvas': path.resolve(__dirname, './src/canvas'),
 			'@transitions': path.resolve(__dirname, './src/transitions'),
 			'@components': path.resolve(__dirname, './src/components'),
