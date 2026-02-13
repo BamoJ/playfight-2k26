@@ -2,7 +2,6 @@ import { Core } from '@unseenco/taxi';
 import SmoothScroll from '@utils/smoothscroll';
 import Components from '@components';
 import emitter from '@utils/Emitter';
-import Canvas from '@canvas';
 import GlobalTransition from './global/GlobalEnter';
 
 /**
@@ -11,7 +10,6 @@ import GlobalTransition from './global/GlobalEnter';
  * Wraps every transition with shared logic:
  *   - Stop/start smooth scroll
  *   - Emit transition:start / transition:complete events
- *   - Trigger Canvas page swap (WebGL)
  *   - Reinitialize DOM components
  *
  * To add page-specific transitions:
@@ -19,9 +17,8 @@ import GlobalTransition from './global/GlobalEnter';
  *   2. Pass it in the pageTransitions config
  */
 export default class TransitionManager {
-	constructor({ pages = {}, pageTransitions = {} } = {}) {
+	constructor({ pageTransitions = {} } = {}) {
 		this.scroll = new SmoothScroll();
-		this.canvas = new Canvas(pages);
 		this.component = new Components();
 		this.pageTransitions = pageTransitions;
 		this.init();
@@ -32,7 +29,6 @@ export default class TransitionManager {
 	 */
 	createTransitions(TransitionClass) {
 		const scrollInstance = this.scroll;
-		const canvasInstance = this;
 
 		return class extends TransitionClass {
 			onLeave({ from, trigger, done }) {
@@ -43,9 +39,7 @@ export default class TransitionManager {
 					from.hasAttribute('data-loader') ||
 					from.classList.contains('loader')
 				) {
-					const realView = document.querySelector(
-						'[data-taxi-view]',
-					);
+					const realView = document.querySelector('[data-taxi-view]');
 					this.fromElement = realView || from;
 				} else {
 					this.fromElement = from;
@@ -69,14 +63,6 @@ export default class TransitionManager {
 					emitter.emit('transition:complete');
 					done();
 				});
-
-				if (canvasInstance.canvas) {
-					const pageName =
-						canvasInstance.detectPageName(to);
-					if (pageName) {
-						canvasInstance.canvas.onChange(pageName, to);
-					}
-				}
 			}
 		};
 	}
@@ -91,9 +77,7 @@ export default class TransitionManager {
 		for (const [name, TransClass] of Object.entries(
 			this.pageTransitions,
 		)) {
-			wrappedTransitions[name] = this.createTransitions(
-				TransClass,
-			);
+			wrappedTransitions[name] = this.createTransitions(TransClass);
 		}
 
 		return class extends Global {
@@ -103,8 +87,7 @@ export default class TransitionManager {
 				for (const [name, WrappedClass] of Object.entries(
 					wrappedTransitions,
 				)) {
-					this.specificTransitions[name] =
-						new WrappedClass(options);
+					this.specificTransitions[name] = new WrappedClass(options);
 				}
 			}
 
@@ -128,32 +111,6 @@ export default class TransitionManager {
 		};
 	}
 
-	detectPageName(pageElement = document.body) {
-		const pageAttr =
-			pageElement.dataset.page ||
-			pageElement.dataset.canvasPage ||
-			pageElement.querySelector('[data-page]')?.dataset.page;
-
-		if (pageAttr) return pageAttr;
-
-		// Fallback to URL — match against canvas registry keys
-		const path = window.location.pathname;
-		if (this.canvas) {
-			for (const key of Object.keys(
-				this.canvas.registry,
-			)) {
-				if (
-					path === '/' &&
-					(key === 'home' || key === 'index')
-				)
-					return key;
-				if (path.includes(key)) return key;
-			}
-		}
-
-		return null;
-	}
-
 	init() {
 		const transitions = {
 			default: this.createRoute(),
@@ -163,12 +120,12 @@ export default class TransitionManager {
 		for (const [name, TransClass] of Object.entries(
 			this.pageTransitions,
 		)) {
-			transitions[name] =
-				this.createTransitions(TransClass);
+			transitions[name] = this.createTransitions(TransClass);
 		}
 
 		this.taxi = new Core({
-			links: 'a:not([target]):not([href^=\\#]):not([data-taxi-ignore])',
+			links:
+				'a:not([target]):not([href^=\\#]):not([data-taxi-ignore])',
 			removeOldContent: false,
 			transitions,
 		});

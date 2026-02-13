@@ -1,20 +1,12 @@
 import { Transition } from '@unseenco/taxi';
 import { gsap } from 'gsap';
-import emitter from '@utils/Emitter';
 
 /**
  * Default global transition — fade out old, fade in new.
  *
- * For pages with WebGL (e.g. Home), listens for a ready signal
- * before running enter animations.
- *
  * Override per page by creating page-specific transition classes.
  */
 export default class GlobalTransition extends Transition {
-	constructor(options) {
-		super(options);
-	}
-
 	onLeave({ from, trigger, done }) {
 		done();
 	}
@@ -40,11 +32,16 @@ export default class GlobalTransition extends Transition {
 			);
 		}
 
-		// Safety timeout
-		setTimeout(() => {
-			if (document.body.contains(this.fromElement)) {
-				animationComplete();
-			}
-		}, 1500);
+		// Fade in new content
+		tl.fromTo(
+			to,
+			{ opacity: 0 },
+			{
+				opacity: 1,
+				duration: 0.6,
+				ease: 'sine.in',
+			},
+			this.fromElement ? 0.4 : 0,
+		);
 	}
 }

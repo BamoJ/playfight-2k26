@@ -1,4 +1,3 @@
-import TextureCache from '@canvas/utils/TextureCache';
 import { gsap } from 'gsap';
 import emitter from '@utils/Emitter';
 
