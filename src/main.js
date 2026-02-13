@@ -1,6 +1,6 @@
 import '@styles/index.css';
 import TransitionManager from '@transitions';
-import SmoothScroll from '@utils/SmoothScroll';
+import SmoothScroll from '@utils/smoothscroll';
 
 // --- Transition Registry ---
 // Import page-specific transitions (optional).
