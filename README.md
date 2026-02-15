@@ -55,13 +55,21 @@ Single event system replacing the old dual EventBus + EventEmitter:
 
 - **GlobalEnter** — default page enter transition (fade out/in)
 
-### 4. Component Architecture (`components/`)
+### 4. Scroll Animations (`animations/`)
+- **AnimationCore** — base class for scroll-driven DOM animations
+  - GSAP timeline + ScrollTrigger integration
+  - One-shot (`once: true`) or scrub modes
+  - Self-cleaning: destroys after playing (`cleanup: true`)
+- **Built-in animations**: FadeIn, LineReveal, ImageReveal, ImageParallax, HeadingReveal, ParaReveal
+- Triggered via `data-anim-*` attributes on DOM elements
+
+### 5. Component Architecture (`components/`)
 - **ComponentCore** — base class with lifecycle management
   - `createElements()`, `createEvents()`, `addEventListeners()`
   - `init()` / `destroy()` lifecycle
 - **Components manager** — initializes all DOM UI components
 
-### 5. Utilities
+### 6. Utilities
 - **SmoothScroll** — Lenis wrapper (singleton) with ScrollTrigger integration
 - **TextureCache** — singleton texture loader with cache + dedup
 - **Time** — RAF timer (extends Emitter, emits `tick`)
@@ -93,8 +101,17 @@ src/
 │
 ├── components/                    # DOM UI components
 │   ├── index.js                   # Component manager
-│   └── core/
+│   └── _core/
 │       └── ComponentCore.js       # Base component class
+│
+├── animations/                    # Scroll-driven DOM animations
+│   ├── index.js                   # Animation manager
+│   ├── _core/
+│   │   └── AnimationCore.js       # Base class (ScrollTrigger + GSAP)
+│   └── global/                    # Animation implementations
+│       ├── effect/                # FadeIn, ImageReveal, ImageParallax
+│       ├── text/                  # HeadingReveal, ParaReveal
+│       └── line/                  # LineReveal
 │
 ├── utils/                         # Global utilities
 │   ├── Emitter.js                 # Unified event system
@@ -127,6 +144,8 @@ bun run dev
 bun run build
 ```
 Outputs `dist/main.js` — single IIFE bundle with CSS inlined.
+
+Deploy `dist/main.js` to Vercel (or any static host). The production URL goes into the Webflow script snippet below.
 
 ### 4. Webflow Integration
 
@@ -169,6 +188,15 @@ Add to your Webflow project settings (Site Level), custom code before `</head>`:
   })();
 </script>
 ```
+
+**How this works:**
+- **Activate dev mode:** visit any page with `?dev=true` in the URL (e.g., `yoursite.webflow.io?dev=true`)
+- This sets `sessionStorage.localDev = 'true'`, which persists across Taxi SPA navigations within the tab
+- In dev mode, the script loads from `localhost:3000` as an ES module and injects `@vite/client` for HMR (hot module replacement)
+- `cors: true` in `vite.config.js` is required for cross-origin loading from the Webflow domain
+- **Fallback:** if the dev server isn't running, `onerror` fires → clears sessionStorage → reloads from the production URL
+- **Exit dev mode:** close the browser tab, clear sessionStorage manually, or navigate without `?dev=true`
+- **Production:** replace `[your-production-url]` with your Vercel deployment URL (e.g., `https://your-project.vercel.app`)
 
 ### 5. Adding a New WebGL Page
 
@@ -266,8 +294,15 @@ Via the singleton emitter (`import emitter from '@utils/Emitter'`):
 | `data-loader="wrapper"` | Preloader container |
 | `data-loader="loader-num"` | Progress number display |
 | `data-loader="progress-bar"` | Progress bar element |
+| `data-taxi-view` | Taxi page view container (what gets swapped) |
 | `data-taxi-ignore` | Exclude link from Taxi routing |
 | `data-lenis-prevent` | Exclude element from smooth scroll |
+| `data-anim="fade-in"` | FadeIn scroll animation |
+| `data-anim-line="true"` | LineReveal (scaleX wipe) |
+| `data-anim-imgreveal="true"` | ImageReveal (clip wipe from right) |
+| `data-anim-imgparallax="true"` | ImageParallax (scrub parallax) |
+| `data-anim-heading="true"` | HeadingReveal (SplitText chars slide up) |
+| `data-anim-para="true"` | ParaReveal (SplitText lines slide up) |
 
 ## CSS Features
 
@@ -286,9 +321,26 @@ Lenis integration with automatic ScrollTrigger sync.
 ## Conventions
 - Tabs for indentation, single quotes, trailing commas (see `.prettierrc`)
 - GLSL shaders imported via `vite-plugin-glsl` with `#include` support
-- Path aliases: `@canvas`, `@utils`, `@transitions`, `@components`, `@styles`
+- Path aliases: `@` (src root), `@canvas`, `@utils`, `@transitions`, `@components`, `@component-core`, `@ui`, `@styles`, `@animations`, `@core` (animations/_core)
 - Mobile: WebGL effects disabled under 768px width
 - Console logs stripped in production build via terser
+
+## Claude Code Skills
+
+10 custom skills in `.claude/skills/` for Claude Code users:
+
+| Command | Purpose |
+|---------|---------|
+| `/webgl-page` | Build new Page subclasses (lifecycle, scene, viewport) |
+| `/dom-plane` | DOM-to-WebGL plane mapping (DOMPlane, hover, textures) |
+| `/shader` | GLSL shaders (write, debug, uniforms, includes) |
+| `/transition` | Page routing (Taxi + TransitionController + Lenis) |
+| `/scroll-anim` | Scroll animations (GSAP + ScrollTrigger + SplitText) |
+| `/component` | DOM components with Taxi lifecycle |
+| `/perf-audit` | 60fps audit checklist across all browsers |
+| `/webflow` | Webflow integration (data attributes, script loading) |
+| `/debug` | Symptom-to-diagnosis troubleshooting guide |
+| `/new-project` | Bootstrap new project from this starter |
 
 ## Browser Support
 Modern browsers (Chrome, Firefox, Safari, Edge).
