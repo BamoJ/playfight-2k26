@@ -29,6 +29,7 @@ export default class TransitionManager {
 	 */
 	createTransitions(TransitionClass) {
 		const scrollInstance = this.scroll;
+		const manager = this;
 
 		return class extends TransitionClass {
 			onLeave({ from, trigger, done }) {
@@ -59,7 +60,8 @@ export default class TransitionManager {
 					to.classList.remove('is-transition');
 					window.scrollTo(0, 0);
 					scrollInstance.startScroll();
-					new Components();
+					if (manager.component) manager.component.destroy();
+					manager.component = new Components();
 					emitter.emit('transition:complete');
 					done();
 				});

@@ -7,6 +7,7 @@
  */
 
 import MenuComponent from '@ui/menu/MenuComponent';
+import VideoPlayerManager from '@components/VideoPlayer/VideoPlayerManager';
 
 export default class Components {
 	constructor() {
@@ -17,9 +18,19 @@ export default class Components {
 	initComponents() {
 		// Add project-specific components here
 		this.instances.menu = new MenuComponent();
+		this.instances.videoPlayer = new VideoPlayerManager();
 	}
 
 	get(name) {
 		return this.instances[name];
+	}
+
+	destroy() {
+		for (var key in this.instances) {
+			if (this.instances[key] && typeof this.instances[key].destroy === 'function') {
+				this.instances[key].destroy();
+			}
+		}
+		this.instances = {};
 	}
 }
