@@ -12,7 +12,9 @@ export function formatTime(sec) {
 		h = Math.floor(s / 3600),
 		m = Math.floor((s % 3600) / 60),
 		r = s % 60;
-	return h > 0 ? h + ':' + pad2(m) + ':' + pad2(r) : pad2(m) + ':' + pad2(r);
+	return h > 0
+		? h + ':' + pad2(m) + ':' + pad2(r)
+		: pad2(m) + ':' + pad2(r);
 }
 
 export function setText(nodes, text) {
@@ -54,9 +56,15 @@ export function maybeSetRatioFromVideo(el, updateSize, video) {
 	if (updateSize !== 'true') return;
 	var before = el.querySelector('[data-player-before]');
 	if (!before) return;
-	var hasPad = before.style.paddingTop && before.style.paddingTop !== '0%';
+	var hasPad =
+		before.style.paddingTop && before.style.paddingTop !== '0%';
 	if (!hasPad && video.videoWidth && video.videoHeight) {
-		setBeforeRatio(el, updateSize, video.videoWidth, video.videoHeight);
+		setBeforeRatio(
+			el,
+			updateSize,
+			video.videoWidth,
+			video.videoHeight,
+		);
 	}
 }
 

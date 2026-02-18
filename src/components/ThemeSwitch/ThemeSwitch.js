@@ -6,6 +6,7 @@ export default class ThemeSwitch extends ComponentCore {
 		super();
 		this._onNavigateIn = this._onNavigateIn.bind(this);
 		this.init();
+		this._applyCurrentTheme();
 	}
 
 	createElements() {}
@@ -16,6 +17,25 @@ export default class ThemeSwitch extends ComponentCore {
 
 	removeEventListeners() {
 		E.off('NAVIGATE_IN', this._onNavigateIn);
+	}
+
+	_applyCurrentTheme() {
+		const themeClasses = [
+			'u-theme-dark',
+			'u-theme-brand',
+			'u-theme-light',
+		];
+		const liveBody = document.body;
+		const bodyTheme = themeClasses.find((cls) =>
+			liveBody.classList.contains(cls),
+		);
+		const liveWrapper = liveBody.firstElementChild;
+		if (liveWrapper && bodyTheme) {
+			themeClasses.forEach((cls) =>
+				liveWrapper.classList.remove(cls),
+			);
+			liveWrapper.classList.add(bodyTheme);
+		}
 	}
 
 	_onNavigateIn({ to }) {

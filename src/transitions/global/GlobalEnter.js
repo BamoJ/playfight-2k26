@@ -14,7 +14,7 @@ export default class GlobalTransition extends Transition {
 	onEnter({ to, trigger }, animationComplete) {
 		const tl = gsap.timeline({
 			onComplete: () => {
-				gsap.set(to, { clearProps: 'all' });
+				gsap.set(to, { clearProps: 'opacity' });
 				animationComplete();
 			},
 		});

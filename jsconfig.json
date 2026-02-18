@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"],
+			"@canvas/*": ["src/canvas/*"],
+			"@utils/*": ["src/utils/*"],
+			"@transitions/*": ["src/transitions/*"],
+			"@components/*": ["src/components/*"],
+			"@component-core/*": ["src/components/_core/*"],
+			"@ui/*": ["src/components/ui/*"],
+			"@styles/*": ["src/styles/*"],
+			"@animations/*": ["src/animations/*"],
+			"@core/*": ["src/animations/_core/*"]
+		},
+		"forceConsistentCasingInFileNames": false
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist"]
+}

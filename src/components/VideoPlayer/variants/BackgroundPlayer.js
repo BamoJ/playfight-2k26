@@ -23,8 +23,13 @@ export class BackgroundPlayer {
 		var video = this.video;
 
 		// Reset video state
-		try { video.pause(); } catch (_) {}
-		try { video.removeAttribute('src'); video.load(); } catch (_) {}
+		try {
+			video.pause();
+		} catch (_) {}
+		try {
+			video.removeAttribute('src');
+			video.load();
+		} catch (_) {}
 
 		video.muted = true;
 		video.loop = true;

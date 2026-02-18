@@ -1,8 +1,10 @@
 import { Core } from '@unseenco/taxi';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SmoothScroll from '@utils/SmoothScroll';
 import Components from '@components';
 import emitter from '@utils/Emitter';
 import GlobalTransition from './global/GlobalEnter';
+import Animation from '@/animations';
 
 /**
  * TransitionManager — orchestrates page routing via Taxi.
@@ -19,9 +21,10 @@ import GlobalTransition from './global/GlobalEnter';
 export default class TransitionManager {
 	constructor({ pageTransitions = {} } = {}) {
 		this.scroll = new SmoothScroll();
-		this.component = new Components();
 		this.pageTransitions = pageTransitions;
 		this.init();
+		this.component = new Components();
+		this.animation = new Animation();
 	}
 
 	/**
@@ -53,15 +56,19 @@ export default class TransitionManager {
 				to.classList.add('is-transition');
 
 				super.onEnter({ to, trigger }, () => {
+					if (manager.component) manager.component.destroy();
+					if (manager.animation) manager.animation.destroy();
 					if (this.fromElement) {
 						this.fromElement.remove();
 					}
 
 					to.classList.remove('is-transition');
-					window.scrollTo(0, 0);
+					scrollInstance.scrollTo(0);
 					scrollInstance.startScroll();
-					if (manager.component) manager.component.destroy();
+					manager.animation = new Animation();
 					manager.component = new Components();
+					ScrollTrigger.refresh();
+
 					emitter.emit('transition:complete');
 					done();
 				});

@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Notes
-.chat_history
+.chat_history 

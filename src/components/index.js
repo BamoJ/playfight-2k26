@@ -9,6 +9,7 @@
 import MenuComponent from '@ui/menu/MenuComponent';
 import VideoPlayerManager from '@components/VideoPlayer/VideoPlayerManager';
 import ThemeSwitch from '@components/ThemeSwitch/ThemeSwitch';
+import HeroTypewriter from '@ui/HeroTypewriter/HeroTypewritter';
 
 export default class Components {
 	constructor() {
@@ -21,6 +22,7 @@ export default class Components {
 		this.instances.menu = new MenuComponent();
 		this.instances.videoPlayer = new VideoPlayerManager();
 		this.instances.themeSwitch = new ThemeSwitch();
+		this.instances.heroTypewriter = new HeroTypewriter();
 	}
 
 	get(name) {

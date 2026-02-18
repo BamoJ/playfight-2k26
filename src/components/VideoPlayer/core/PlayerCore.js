@@ -45,14 +45,19 @@ export class PlayerCore {
 		this._progressBar = el.querySelector('[data-player-progress]');
 		this._bufferedBar = el.querySelector('[data-player-buffered]');
 		this._handle = el.querySelector('[data-player-timeline-handle]');
-		this._durationEls = el.querySelectorAll('[data-player-time-duration]');
-		this._progressEls = el.querySelectorAll('[data-player-time-progress]');
+		this._durationEls = el.querySelectorAll(
+			'[data-player-time-duration]',
+		);
+		this._progressEls = el.querySelectorAll(
+			'[data-player-time-progress]',
+		);
 
 		// HLS adapter
 		this.adapter = new HLSAdapter(this.video);
 
 		// Options from data attributes
-		this._updateSize = el.getAttribute('data-player-update-size') || null;
+		this._updateSize =
+			el.getAttribute('data-player-update-size') || null;
 		this._hoverHideDelay = 3000;
 		this._seekThrottle = 180;
 	}
@@ -67,15 +72,24 @@ export class PlayerCore {
 
 	setMuted(v) {
 		this.video.muted = !!v;
-		this.el.setAttribute('data-player-muted', this.video.muted ? 'true' : 'false');
+		this.el.setAttribute(
+			'data-player-muted',
+			this.video.muted ? 'true' : 'false',
+		);
 	}
 
 	setFullscreen(v) {
-		this.el.setAttribute('data-player-fullscreen', v ? 'true' : 'false');
+		this.el.setAttribute(
+			'data-player-fullscreen',
+			v ? 'true' : 'false',
+		);
 	}
 
 	setActivated(v) {
-		this.el.setAttribute('data-player-activated', v ? 'true' : 'false');
+		this.el.setAttribute(
+			'data-player-activated',
+			v ? 'true' : 'false',
+		);
 	}
 
 	// --- Setup methods (called selectively by variants) ---
@@ -88,7 +102,8 @@ export class PlayerCore {
 		if (typeof video.disableRemotePlayback !== 'undefined')
 			video.disableRemotePlayback = true;
 
-		if (!this.el.hasAttribute('data-player-activated')) this.setActivated(false);
+		if (!this.el.hasAttribute('data-player-activated'))
+			this.setActivated(false);
 	}
 
 	setupMediaEvents(options = {}) {
@@ -162,7 +177,13 @@ export class PlayerCore {
 		);
 
 		// Time text updates
-		video.addEventListener('timeupdate', function () { self._updateTimeTexts(); }, { signal });
+		video.addEventListener(
+			'timeupdate',
+			function () {
+				self._updateTimeTexts();
+			},
+			{ signal },
+		);
 		video.addEventListener(
 			'loadedmetadata',
 			function () {
@@ -185,12 +206,36 @@ export class PlayerCore {
 			},
 			{ signal },
 		);
-		video.addEventListener('durationchange', function () { self._updateTimeTexts(); }, { signal });
+		video.addEventListener(
+			'durationchange',
+			function () {
+				self._updateTimeTexts();
+			},
+			{ signal },
+		);
 
 		// Buffered bar
-		video.addEventListener('progress', function () { self._updateBufferedBar(); }, { signal });
-		video.addEventListener('loadedmetadata', function () { self._updateBufferedBar(); }, { signal });
-		video.addEventListener('durationchange', function () { self._updateBufferedBar(); }, { signal });
+		video.addEventListener(
+			'progress',
+			function () {
+				self._updateBufferedBar();
+			},
+			{ signal },
+		);
+		video.addEventListener(
+			'loadedmetadata',
+			function () {
+				self._updateBufferedBar();
+			},
+			{ signal },
+		);
+		video.addEventListener(
+			'durationchange',
+			function () {
+				self._updateBufferedBar();
+			},
+			{ signal },
+		);
 	}
 
 	setupControls(extraHandler) {
@@ -201,9 +246,14 @@ export class PlayerCore {
 				var btn = e.target.closest('[data-player-control]');
 				if (!btn || !self.el.contains(btn)) return;
 				var type = btn.getAttribute('data-player-control');
-				if (type === 'play' || type === 'pause' || type === 'playpause') {
+				if (
+					type === 'play' ||
+					type === 'pause' ||
+					type === 'playpause'
+				) {
 					var isPlaying = !self.video.paused && !self.video.ended;
-					if (extraHandler) extraHandler(isPlaying ? 'pause' : 'play');
+					if (extraHandler)
+						extraHandler(isPlaying ? 'pause' : 'play');
 					else self.togglePlay();
 				} else if (type === 'mute') {
 					self.toggleMute();
@@ -231,7 +281,8 @@ export class PlayerCore {
 		);
 
 		function getFractionFromX(x) {
-			if (!self._seekRect) self._seekRect = timeline.getBoundingClientRect();
+			if (!self._seekRect)
+				self._seekRect = timeline.getBoundingClientRect();
 			var f = (x - self._seekRect.left) / self._seekRect.width;
 			if (f < 0) f = 0;
 			if (f > 1) f = 1;
@@ -242,10 +293,14 @@ export class PlayerCore {
 			if (!self.video.duration) return;
 			var pct = f * 100;
 			if (self._progressBar)
-				self._progressBar.style.transform = 'translateX(' + (-100 + pct) + '%)';
+				self._progressBar.style.transform =
+					'translateX(' + (-100 + pct) + '%)';
 			if (self._handle) self._handle.style.left = pct + '%';
 			if (self._progressEls.length)
-				setText(self._progressEls, formatTime(f * self.video.duration));
+				setText(
+					self._progressEls,
+					formatTime(f * self.video.duration),
+				);
 		}
 
 		function maybeSeek(now) {
@@ -269,9 +324,14 @@ export class PlayerCore {
 			self._targetTime = f * self.video.duration;
 			previewAtFraction(f);
 			maybeSeek(performance.now());
-			if (timeline.setPointerCapture) timeline.setPointerCapture(e.pointerId);
-			window.addEventListener('pointermove', onPointerMove, { passive: false });
-			window.addEventListener('pointerup', onPointerUp, { passive: true });
+			if (timeline.setPointerCapture)
+				timeline.setPointerCapture(e.pointerId);
+			window.addEventListener('pointermove', onPointerMove, {
+				passive: false,
+			});
+			window.addEventListener('pointerup', onPointerUp, {
+				passive: true,
+			});
 			e.preventDefault();
 		}
 
@@ -299,9 +359,15 @@ export class PlayerCore {
 			window.removeEventListener('pointerup', onPointerUp);
 		};
 
-		timeline.addEventListener('pointerdown', onPointerDown, { passive: false, signal });
+		timeline.addEventListener('pointerdown', onPointerDown, {
+			passive: false,
+			signal,
+		});
 		if (this._handle) {
-			this._handle.addEventListener('pointerdown', onPointerDown, { passive: false, signal });
+			this._handle.addEventListener('pointerdown', onPointerDown, {
+				passive: false,
+				signal,
+			});
 		}
 	}
 
@@ -311,9 +377,15 @@ export class PlayerCore {
 
 		// Check if THIS player (or its video) is the fullscreen element
 		function isThisPlayerFs() {
-			var fsEl = document.fullscreenElement || document.webkitFullscreenElement;
+			var fsEl =
+				document.fullscreenElement ||
+				document.webkitFullscreenElement;
 			if (!fsEl) return false;
-			return fsEl === self.el || self.el.contains(fsEl) || fsEl.contains(self.el);
+			return (
+				fsEl === self.el ||
+				self.el.contains(fsEl) ||
+				fsEl.contains(self.el)
+			);
 		}
 
 		document.addEventListener(
@@ -369,8 +441,14 @@ export class PlayerCore {
 		}
 
 		self.el.addEventListener('pointerdown', wakeControls, { signal });
-		document.addEventListener('fullscreenchange', wakeControls, { signal });
-		document.addEventListener('webkitfullscreenchange', wakeControls, { signal });
+		document.addEventListener('fullscreenchange', wakeControls, {
+			signal,
+		});
+		document.addEventListener(
+			'webkitfullscreenchange',
+			wakeControls,
+			{ signal },
+		);
 
 		var onPointerMoveGlobal = function (e) {
 			var r = self.el.getBoundingClientRect();
@@ -389,9 +467,13 @@ export class PlayerCore {
 				wakeControls();
 				if (!self._trackingMove) {
 					self._trackingMove = true;
-					window.addEventListener('pointermove', onPointerMoveGlobal, {
-						passive: true,
-					});
+					window.addEventListener(
+						'pointermove',
+						onPointerMoveGlobal,
+						{
+							passive: true,
+						},
+					);
 				}
 			},
 			{ signal },
@@ -404,7 +486,10 @@ export class PlayerCore {
 				clearTimeout(self._hoverTimer);
 				if (self._trackingMove) {
 					self._trackingMove = false;
-					window.removeEventListener('pointermove', onPointerMoveGlobal);
+					window.removeEventListener(
+						'pointermove',
+						onPointerMoveGlobal,
+					);
 				}
 			},
 			{ signal },
@@ -413,7 +498,10 @@ export class PlayerCore {
 		// Cleanup global listener on destroy
 		signal.addEventListener('abort', function () {
 			if (self._trackingMove) {
-				window.removeEventListener('pointermove', onPointerMoveGlobal);
+				window.removeEventListener(
+					'pointermove',
+					onPointerMoveGlobal,
+				);
 				self._trackingMove = false;
 			}
 		});
@@ -435,7 +523,10 @@ export class PlayerCore {
 
 	toggleMute() {
 		this.video.muted = !this.video.muted;
-		this.el.setAttribute('data-player-muted', this.video.muted ? 'true' : 'false');
+		this.el.setAttribute(
+			'data-player-muted',
+			this.video.muted ? 'true' : 'false',
+		);
 	}
 
 	toggleFullscreen() {
@@ -443,18 +534,27 @@ export class PlayerCore {
 		var video = this.video;
 
 		function isFsActive() {
-			return !!(document.fullscreenElement || document.webkitFullscreenElement);
+			return !!(
+				document.fullscreenElement || document.webkitFullscreenElement
+			);
 		}
 
 		if (isFsActive() || video.webkitDisplayingFullscreen) {
 			if (document.exitFullscreen) document.exitFullscreen();
-			else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-			else if (video.webkitDisplayingFullscreen && typeof video.webkitExitFullscreen === 'function')
+			else if (document.webkitExitFullscreen)
+				document.webkitExitFullscreen();
+			else if (
+				video.webkitDisplayingFullscreen &&
+				typeof video.webkitExitFullscreen === 'function'
+			)
 				video.webkitExitFullscreen();
 		} else {
 			if (el.requestFullscreen) el.requestFullscreen();
 			else if (video.requestFullscreen) video.requestFullscreen();
-			else if (video.webkitSupportsFullscreen && typeof video.webkitEnterFullscreen === 'function')
+			else if (
+				video.webkitSupportsFullscreen &&
+				typeof video.webkitEnterFullscreen === 'function'
+			)
 				video.webkitEnterFullscreen();
 		}
 	}
@@ -463,10 +563,13 @@ export class PlayerCore {
 
 	_updateProgressVisuals() {
 		if (!this.video.duration) return;
-		var playedPct = (this.video.currentTime / this.video.duration) * 100;
+		var playedPct =
+			(this.video.currentTime / this.video.duration) * 100;
 		if (this._progressBar)
-			this._progressBar.style.transform = 'translateX(' + (-100 + playedPct) + '%)';
-		if (this._handle) this._handle.style.left = pctClamp(playedPct) + '%';
+			this._progressBar.style.transform =
+				'translateX(' + (-100 + playedPct) + '%)';
+		if (this._handle)
+			this._handle.style.left = pctClamp(playedPct) + '%';
 	}
 
 	_loop() {
@@ -480,10 +583,16 @@ export class PlayerCore {
 	}
 
 	_updateBufferedBar() {
-		if (!this._bufferedBar || !this.video.duration || !this.video.buffered.length) return;
+		if (
+			!this._bufferedBar ||
+			!this.video.duration ||
+			!this.video.buffered.length
+		)
+			return;
 		var end = this.video.buffered.end(this.video.buffered.length - 1);
 		var buffPct = (end / this.video.duration) * 100;
-		this._bufferedBar.style.transform = 'translateX(' + (-100 + buffPct) + '%)';
+		this._bufferedBar.style.transform =
+			'translateX(' + (-100 + buffPct) + '%)';
 	}
 
 	_updateTimeTexts() {

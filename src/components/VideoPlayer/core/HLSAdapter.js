@@ -15,8 +15,11 @@ export class HLSAdapter {
 	constructor(video) {
 		this.video = video;
 		this.hls = null;
-		this.isSafariNative = !!video.canPlayType('application/vnd.apple.mpegurl');
-		this.canUseHlsJs = !!(Hls && Hls.isSupported()) && !this.isSafariNative;
+		this.isSafariNative = !!video.canPlayType(
+			'application/vnd.apple.mpegurl',
+		);
+		this.canUseHlsJs =
+			!!(Hls && Hls.isSupported()) && !this.isSafariNative;
 	}
 
 	attach(src, onReady) {
@@ -25,7 +28,9 @@ export class HLSAdapter {
 		if (this.isSafariNative) {
 			this.video.preload = 'auto';
 			this.video.src = src;
-			this.video.addEventListener('loadedmetadata', onReady, { once: true });
+			this.video.addEventListener('loadedmetadata', onReady, {
+				once: true,
+			});
 			return;
 		}
 
@@ -42,13 +47,19 @@ export class HLSAdapter {
 		// Plain src fallback
 		this.video.preload = 'auto';
 		this.video.src = src;
-		this.video.addEventListener('loadedmetadata', onReady, { once: true });
+		this.video.addEventListener('loadedmetadata', onReady, {
+			once: true,
+		});
 	}
 
 	onLevelLoaded(cb) {
 		if (this.hls) {
 			this.hls.on(Hls.Events.LEVEL_LOADED, function (e, data) {
-				if (data && data.details && isFinite(data.details.totalduration)) {
+				if (
+					data &&
+					data.details &&
+					isFinite(data.details.totalduration)
+				) {
 					cb(data.details.totalduration);
 				}
 			});

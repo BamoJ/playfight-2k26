@@ -43,6 +43,10 @@ export default class SmoothScroll {
 		requestAnimationFrame(RAF);
 	}
 
+	scrollTo(target, options = {}) {
+		this.lenis.scrollTo(target, { immediate: true, force: true, ...options });
+	}
+
 	startScroll() {
 		this.lenis.start();
 	}
