@@ -19,6 +19,9 @@ export default class MenuComponent extends ComponentCore {
 			openBtn: document.querySelector('[data-menu="open-btn"]'),
 			closeBtn: document.querySelector('[data-menu="close-btn"]'),
 			menuLinks: menuNav.querySelectorAll('a'),
+			menuSmallLinks: document.querySelectorAll(
+				'.menu_top_link_bottom',
+			),
 		};
 	}
 
@@ -47,6 +50,11 @@ export default class MenuComponent extends ComponentCore {
 				link.addEventListener('click', this.events.click);
 			});
 		}
+		if (this.el.menuSmallLinks.length) {
+			this.el.menuSmallLinks.forEach((link) => {
+				link.addEventListener('click', this.events.click);
+			});
+		}
 	}
 
 	removeEventListeners() {
@@ -69,6 +77,11 @@ export default class MenuComponent extends ComponentCore {
 		}
 		if (this.el.menuLinks.length) {
 			this.el.menuLinks.forEach((link) => {
+				link.removeEventListener('click', this.events.click);
+			});
+		}
+		if (this.el.menuSmallLinks.length) {
+			this.el.menuSmallLinks.forEach((link) => {
 				link.removeEventListener('click', this.events.click);
 			});
 		}
