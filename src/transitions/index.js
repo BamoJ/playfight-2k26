@@ -5,6 +5,7 @@ import Components from '@components';
 import emitter from '@utils/Emitter';
 import GlobalTransition from './global/GlobalEnter';
 import Animation from '@/animations';
+import ThemeSwitch from '@utils/ThemeSwitch';
 
 /**
  * TransitionManager — orchestrates page routing via Taxi.
@@ -23,6 +24,7 @@ export default class TransitionManager {
 		this.scroll = new SmoothScroll();
 		this.pageTransitions = pageTransitions;
 		this.init();
+		this.themeSwitch = new ThemeSwitch();
 		this.component = new Components();
 		this.animation = new Animation();
 	}

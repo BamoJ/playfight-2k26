@@ -8,7 +8,7 @@
 
 import MenuComponent from '@ui/menu/MenuComponent';
 import VideoPlayerManager from '@components/VideoPlayer/VideoPlayerManager';
-import ThemeSwitch from '@components/ThemeSwitch/ThemeSwitch';
+
 import HeroTypewriter from '@ui/HeroTypewriter/HeroTypewritter';
 import HideNav from '@ui/HideNav/HideNav';
 import MouseImageTrail from '@ui/Mouse/MouseImageTrail';
@@ -23,7 +23,7 @@ export default class Components {
 		// Add project-specific components here
 		this.instances.menu = new MenuComponent();
 		this.instances.videoPlayer = new VideoPlayerManager();
-		this.instances.themeSwitch = new ThemeSwitch();
+
 		this.instances.heroTypewriter = new HeroTypewriter();
 		this.instances.hideNav = new HideNav();
 		this.instances.mouseImageTrail = new MouseImageTrail();
