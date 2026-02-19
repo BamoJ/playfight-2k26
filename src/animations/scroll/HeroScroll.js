@@ -10,7 +10,7 @@ export default class HeroScroll extends AnimationCore {
 			triggerStart: 'top top',
 			triggerEnd: 'bottom +=105%',
 			scrub: true,
-			markers: false,
+			markers: true,
 			cleanup: false,
 		});
 	}
