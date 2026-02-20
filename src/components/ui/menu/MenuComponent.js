@@ -23,6 +23,7 @@ export default class MenuComponent extends ComponentCore {
 				'.menu_top_link_bottom',
 			),
 		};
+		this.el.menu.style.pointerEvents = 'none';
 	}
 
 	createEvents() {
@@ -98,6 +99,7 @@ export default class MenuComponent extends ComponentCore {
 	open() {
 		if (this.isOpen) return;
 		this.scroll.stopScroll();
+		this.el.menu.style.pointerEvents = 'auto';
 		MenuAnimations.open({
 			menu: this.el.menu,
 			container: this.el.container,
@@ -115,6 +117,7 @@ export default class MenuComponent extends ComponentCore {
 			container: this.el.container,
 			closeBtn: this.el.closeBtn,
 		}).then(() => {
+			this.el.menu.style.pointerEvents = 'none';
 			this.isOpen = false;
 
 			this.scroll.startScroll(); // Restart main scroll when menu is closed
