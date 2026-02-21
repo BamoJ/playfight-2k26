@@ -1,7 +1,6 @@
 import ComponentCore from '@/components/_core/ComponentCore';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
-import './LinkHover.css';
 
 gsap.registerPlugin(SplitText);
 
