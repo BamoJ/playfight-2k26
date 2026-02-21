@@ -1,0 +1,9 @@
+[data-anim-link-hover] {
+	overflow: hidden;
+	display: inline-block;
+}
+
+[data-anim-link-hover] div {
+	display: inline-block;
+	text-shadow: 0px 1.3em currentColor;
+}

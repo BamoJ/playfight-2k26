@@ -66,7 +66,7 @@ export default class ButtonHover extends ComponentCore {
 						opacity: 1,
 						filter: 'blur(0px)',
 						duration: 0.25,
-						stagger: { amount: 0.1, from: 'random' },
+						stagger: { amount: 0.1, grid: [10, 5] },
 					},
 					0.1,
 				);

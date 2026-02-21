@@ -9,6 +9,7 @@
 import MenuComponent from '@ui/menu/MenuComponent';
 import VideoPlayerManager from '@components/VideoPlayer/VideoPlayerManager';
 import ButtonHover from '@ui/Buttons/ButtonHover';
+import LinkHover from '@ui/Links/LinkHover';
 
 import HeroTypewriter from '@ui/HeroTypewriter/HeroTypewritter';
 import HideNav from '@ui/HideNav/HideNav';
@@ -29,6 +30,7 @@ export default class Components {
 		this.instances.hideNav = new HideNav();
 		this.instances.mouseImageTrail = new MouseImageTrail();
 		this.instances.buttonHover = new ButtonHover();
+		this.instances.linkHover = new LinkHover();
 	}
 
 	get(name) {
