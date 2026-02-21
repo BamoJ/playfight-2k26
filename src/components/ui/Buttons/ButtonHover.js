@@ -35,6 +35,8 @@ export default class ButtonHover extends ComponentCore {
 				const tl = gsap.timeline({
 					paused: true,
 					defaults: { ease: 'back.out(1.2)' },
+					onReverseComplete: () =>
+						gsap.set(btn, { clearProps: 'width,scale' }),
 				});
 
 				tl.to(
