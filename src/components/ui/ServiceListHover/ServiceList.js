@@ -12,6 +12,8 @@ export default class ServiceList extends ComponentCore {
 		this.container = document.querySelector(
 			'[data-service-hover="container"]',
 		);
+		if (!this.container) return;
+
 		this.img = this.container.querySelectorAll(
 			'[data-service-hover="visual"]',
 		);
@@ -82,7 +84,7 @@ export default class ServiceList extends ComponentCore {
 					yPercent: -120,
 					duration: 0.5,
 					ease: 'power3.out',
-					stagger: { amount: 0.2 },
+					stagger: { amount: 0.2, from: 'random' },
 				},
 				0,
 			);
