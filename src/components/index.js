@@ -14,6 +14,7 @@ import LinkHover from '@ui/Links/LinkHover';
 import HeroTypewriter from '@ui/HeroTypewriter/HeroTypewritter';
 import HideNav from '@ui/HideNav/HideNav';
 import MouseImageTrail from '@ui/Mouse/MouseImageTrail';
+import PLModeSwitch from '@ui/PlaygroundModeSwitch/PLModeSwitch';
 
 export default class Components {
 	constructor() {
@@ -31,6 +32,7 @@ export default class Components {
 		this.instances.mouseImageTrail = new MouseImageTrail();
 		this.instances.buttonHover = new ButtonHover();
 		this.instances.linkHover = new LinkHover();
+		this.instances.plModeSwitch = new PLModeSwitch();
 	}
 
 	get(name) {
