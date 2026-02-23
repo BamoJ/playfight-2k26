@@ -35,22 +35,24 @@ export default class PLModeSwitch extends ComponentCore {
 		this.grid.classList.add(`is-${mode}-col`);
 		this.currentMode = mode;
 
+		const isTo4 = mode === '4';
+
 		Flip.from(state, {
-			duration: 1.5,
+			duration: isTo4 ? 1.3 : 1,
 			ease: 'expo.inOut',
 			absoluteOnLeave: true,
 			absolute: false,
 			stagger: {
-				amount: 0.9,
+				amount: isTo4 ? 0.9 : 0.5,
+				from: isTo4 ? 'center' : 'start',
 			},
 		});
-
 		gsap.to(this.cardItem, {
 			filter: 'blur(10px)',
-			duration: 0.4,
+			duration: isTo4 ? 1 : 0.4,
 			yoyo: true,
 			repeat: 1,
-			ease: 'sine.out',
+			ease: isTo4 ? 'sine.in' : 'sine.inOut',
 			delay: 0.4,
 		});
 	}
