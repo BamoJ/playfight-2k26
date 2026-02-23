@@ -5,6 +5,7 @@ import { SplitText } from 'gsap/SplitText';
 export default class ServiceList extends ComponentCore {
 	constructor() {
 		super();
+		this.items = [];
 		this.init();
 	}
 
