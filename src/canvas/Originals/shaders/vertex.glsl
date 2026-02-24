@@ -10,8 +10,8 @@ varying vec2 vUv;
 void main() {
 	vec4 newPosition = modelViewMatrix * vec4(position, 1.0);
 
-	float targetDisplacementX = sin(newPosition.y / uViewportSizes.x * PI + PI / 2.0) * -uStrength * 2.0;
-	float targetDisplacementZ = cos(newPosition.x / uViewportSizes.y * PI + PI / 2.0) * -uStrength * 2.0;
+	float targetDisplacementX = sin(newPosition.y / uViewportSizes.x * PI + PI / 2.0) * -uStrength * 1.0;
+	float targetDisplacementZ = -cos(newPosition.x / uViewportSizes.y * PI + PI / 2.0) * -uStrength * 1.0;
 
 	newPosition.x += targetDisplacementX * 0.55;
 	newPosition.z += targetDisplacementZ * 1.25;
