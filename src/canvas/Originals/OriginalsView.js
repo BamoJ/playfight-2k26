@@ -23,7 +23,7 @@ export class OriginalsView extends DOMPlane {
 
 		if (!images.length) return;
 
-		let loaded = 0;
+		let settled = 0;
 		const uniqueSrcs = new Map();
 
 		images.forEach((img) => {
@@ -32,18 +32,23 @@ export class OriginalsView extends DOMPlane {
 			uniqueSrcs.set(src, img);
 		});
 
+		const done = () => {
+			settled++;
+			if (settled === uniqueSrcs.size) {
+				this.createPlanes(images);
+			}
+		};
+
 		uniqueSrcs.forEach((img, src) => {
 			TextureCache.load(src)
 				.then((texture) => {
 					this.textures.push({ texture, src });
-					loaded++;
-					if (loaded === uniqueSrcs.size) {
-						this.createPlanes(images);
-					}
+					done();
 				})
-				.catch((err) =>
-					console.error('[OriginalsView] Texture error:', err),
-				);
+				.catch((err) => {
+					console.error('[OriginalsView] Texture error:', err);
+					done();
+				});
 		});
 	}
 

@@ -5,7 +5,7 @@ export class OriginalSlider extends Core {
 		super(wrapper, {
 			infinite: true,
 			snap: true,
-			scrollInput: false,
+			scrollInput: true,
 			scrollSensitivity: 1,
 			virtualScroll: {
 				mouseMultiplier: 0.85,
@@ -32,6 +32,60 @@ export class OriginalSlider extends Core {
 		this._running = false;
 
 		this.start();
+		this.#hoistLightboxes();
+		this.#handleLinks();
+	}
+
+	#hoistLightboxes() {
+		this.wrapper
+			.querySelectorAll('[data-video-lightbox-status]')
+			.forEach((el) => document.body.appendChild(el));
+	}
+
+	#handleLinks() {
+		[...this.wrapper.querySelectorAll('a')].forEach((item) => {
+			let startX = 0;
+			let startY = 0;
+			let startTime = 0;
+			let isDragging = false;
+
+			item.style.pointerEvents = 'none';
+
+			const handleMouseDown = (e) => {
+				startX = e.clientX;
+				startY = e.clientY;
+				startTime = Date.now();
+				isDragging = false;
+			};
+
+			const handleMouseMove = (e) => {
+				if (!startTime) return;
+				const deltaX = Math.abs(e.clientX - startX);
+				const deltaY = Math.abs(e.clientY - startY);
+				if (deltaX > 5 || deltaY > 5) {
+					isDragging = true;
+				}
+			};
+
+			const handleMouseUp = () => {
+				const deltaTime = Date.now() - startTime;
+				if (!isDragging && deltaTime < 200) {
+					item.click();
+				}
+				startTime = 0;
+				isDragging = false;
+			};
+
+			item.parentElement.addEventListener(
+				'mousedown',
+				handleMouseDown,
+			);
+			item.parentElement.addEventListener(
+				'mousemove',
+				handleMouseMove,
+			);
+			item.parentElement.addEventListener('mouseup', handleMouseUp);
+		});
 	}
 
 	start() {
