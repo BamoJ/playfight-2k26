@@ -1,20 +1,15 @@
 import { Page } from '../Page';
 import emitter from '@utils/Emitter';
-import defaultVert from '../shaders/defaultVert.glsl';
-import defaultFrag from '../shaders/defaultFrag.glsl';
+import { OriginalSlider } from './OriginalSlider';
+import { OriginalsView } from './OriginalsView';
 
-/**
- * Example About page — demonstrates DOMPlane usage with image textures.
- *
- * Queries all [data-gl="img"] elements, creates WebGL planes,
- * and syncs them to the DOM. Hover adds wave/reveal effects.
- *
- * Replace this with your project-specific WebGL experience.
- */
-export class About extends Page {
+export class Originals extends Page {
 	constructor(options) {
 		super(options);
 		this.view = null;
+		this.slider = null;
+		this.smoothedStrength = 0;
+		this._leaveTimer = null;
 		this.calculateViewport();
 	}
 
@@ -32,12 +27,12 @@ export class About extends Page {
 	}
 
 	create(template = document) {
-		// Signal ready for preloader/transitions
-		setTimeout(() => emitter.emit('about:enter-ready'), 0);
+		setTimeout(() => emitter.emit('originals:enter-ready'), 0);
 
 		if (this.created) return;
 
 		this.calculateViewport();
+		this.initSlider(template);
 		this.initView(template);
 
 		this.scene.add(this.elements);
@@ -45,24 +40,34 @@ export class About extends Page {
 		this.emit('create');
 	}
 
+	initSlider(template = document) {
+		const wrapper = template.querySelector('[data-slider]');
+		if (!wrapper) return;
+
+		this.slider = new OriginalSlider(wrapper);
+	}
+
 	initView(template = document) {
-		this.view = new AboutSlider({
+		this.view = new OriginalsView({
 			parent: this.elements,
 			camera: this.camera,
 			viewport: this.viewport,
 			screen: this.screen,
-			shaders: {
-				vertex: defaultVert,
-				fragment: defaultFrag,
-			},
 			template,
 		});
 	}
 
 	onEnter(data) {
+		if (this._leaveTimer) {
+			clearTimeout(this._leaveTimer);
+			this._leaveTimer = null;
+		}
+
 		if (this.view && this.created) {
 			this.view.destroy?.();
+			this.slider?.destroy?.();
 			this.view = null;
+			this.slider = null;
 			this.created = false;
 			this.create(data);
 		}
@@ -70,7 +75,7 @@ export class About extends Page {
 	}
 
 	transitionIn(onComplete) {
-		emitter.emit('about:enter-ready');
+		emitter.emit('originals:enter-ready');
 		if (onComplete) onComplete();
 	}
 
@@ -79,9 +84,12 @@ export class About extends Page {
 			this.view.hide();
 		}
 
-		setTimeout(() => {
+		this._leaveTimer = setTimeout(() => {
+			this._leaveTimer = null;
 			this.view?.destroy?.();
+			this.slider?.destroy?.();
 			this.view = null;
+			this.slider = null;
 			this.created = false;
 			if (onComplete) onComplete();
 		}, 1400);
@@ -94,11 +102,22 @@ export class About extends Page {
 
 	update(time) {
 		if (!this.isActive || !this.view) return;
+
+		if (this.slider) {
+			const targetStrength = this.slider.currentSpeed * 0.1;
+			this.smoothedStrength +=
+				(targetStrength - this.smoothedStrength) * 0.1;
+
+			this.view.setStrength(this.smoothedStrength);
+			this.view.setProgress(this.slider.currentProgress);
+		}
+
 		this.view.update(time);
 	}
 
 	destroy() {
 		this.view?.destroy?.();
+		this.slider?.destroy?.();
 		super.destroy();
 	}
 }

@@ -10,7 +10,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		super(element, {
 			triggerStart: 'top bottom',
 			triggerEnd: 'bottom +=60%',
-			scrub: 1.1,
+			scrub: 0.8,
 			markers: true,
 			cleanup: false,
 		});

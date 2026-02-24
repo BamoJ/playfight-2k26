@@ -4,6 +4,7 @@ class TextureCache {
 	constructor() {
 		this.cache = new Map();
 		this.loader = new TextureLoader();
+		this.loader.setCrossOrigin('anonymous');
 		this.pending = new Map();
 	}
 
