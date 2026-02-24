@@ -1,5 +1,7 @@
 import ParaReveal from '@animations/texts/ParaReveal';
 import HeroScroll from './scroll/HeroScroll';
+import AboutNav from './scroll/AboutNav';
+import AboutStoryScroll from './scroll/AboutStoryScroll';
 
 export default class Animation {
 	constructor() {
@@ -22,15 +24,34 @@ export default class Animation {
 			});
 
 		/**
-		 * SCROLL ANIMATIONS
+		 * SCROLL ANIMATIONS (single-element queries)
 		 */
-		document
-			.querySelectorAll('[data-anim-hero-scroll="container"]')
-			.forEach((element) => {
-				const animation = new HeroScroll(element);
-				this.collection.push(animation);
-				animation.init();
-			});
+		const heroScrollEl = document.querySelector(
+			'[data-anim-hero-scroll="container"]',
+		);
+		if (heroScrollEl) {
+			const animation = new HeroScroll(heroScrollEl);
+			this.collection.push(animation);
+			animation.init();
+		}
+
+		const aboutNavEl = document.querySelector(
+			'[data-anim-about-nav="true"]',
+		);
+		if (aboutNavEl) {
+			const animation = new AboutNav(aboutNavEl);
+			this.collection.push(animation);
+			animation.init();
+		}
+
+		const aboutScrollEl = document.querySelector(
+			'[data-anim-about-scroll="container"]',
+		);
+		if (aboutScrollEl) {
+			const animation = new AboutStoryScroll(aboutScrollEl);
+			this.collection.push(animation);
+			animation.init();
+		}
 	}
 
 	destroy() {
