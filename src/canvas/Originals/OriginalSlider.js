@@ -37,9 +37,13 @@ export class OriginalSlider extends Core {
 	}
 
 	#hoistLightboxes() {
+		const portal = document.querySelector(
+			'.original_lightbox_video_portal',
+		);
+		if (!portal) return;
 		this.wrapper
 			.querySelectorAll('[data-video-lightbox-status]')
-			.forEach((el) => document.body.appendChild(el));
+			.forEach((el) => portal.appendChild(el));
 	}
 
 	#handleLinks() {
