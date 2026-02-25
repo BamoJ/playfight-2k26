@@ -55,7 +55,7 @@ export default class ServiceList extends ComponentCore {
 			});
 			const splitVisualText = new SplitText(this.imgText[i], {
 				type: 'chars, words',
-				mask: 'chars',
+				mask: 'words',
 			});
 
 			gsap.set(splitBold.chars, { yPercent: 110 });
@@ -114,7 +114,7 @@ export default class ServiceList extends ComponentCore {
 
 			tl.to(
 				item.dots,
-				{ scale: 1, duration: 1, ease: 'power2.out' },
+				{ scale: 1, duration: 0.75, ease: 'back.out' },
 				0,
 			);
 
@@ -133,9 +133,11 @@ export default class ServiceList extends ComponentCore {
 				{ yPercent: 100, visibility: 'visible' },
 				{
 					yPercent: 0,
-					duration: 0.4,
+					duration: 0.6,
 					ease: 'power3.out',
-					stagger: { amount: 0.2 },
+					stagger: {
+						amount: 0.15,
+					},
 				},
 				0.1,
 			);

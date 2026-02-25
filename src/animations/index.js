@@ -3,6 +3,7 @@ import HeroScroll from './scroll/HeroScroll';
 import AboutNav from './scroll/AboutNav';
 import AboutStoryScroll from './scroll/AboutStoryScroll';
 import LogoWallCycle from './scroll/LogoWallCycle';
+import ServiceListScroll from './scroll/ServiceListScroll';
 
 export default class Animation {
 	constructor() {
@@ -50,6 +51,15 @@ export default class Animation {
 		);
 		if (aboutScrollEl) {
 			const animation = new AboutStoryScroll(aboutScrollEl);
+			this.collection.push(animation);
+			animation.init();
+		}
+
+		const serviceListEl = document.querySelector(
+			'[data-service-hover="container"]',
+		);
+		if (serviceListEl) {
+			const animation = new ServiceListScroll(serviceListEl);
 			this.collection.push(animation);
 			animation.init();
 		}

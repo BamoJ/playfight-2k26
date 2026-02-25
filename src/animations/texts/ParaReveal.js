@@ -5,15 +5,15 @@ export default class ParaReveal extends AnimationCore {
 	constructor(element) {
 		super(element, {
 			triggerStart: 'top 75%',
-			duration: 1.2,
-			ease: easings.paragraphEase,
+			duration: 1.4,
+			ease: 'power3.out',
 		});
 
 		// IMPORTANT: If element has display:contents, use first child as trigger
 		const computedStyle = window.getComputedStyle(element);
 		if (computedStyle.display === 'contents') {
 			this.triggerElement = element.querySelector(
-				'p, h1, h2, h3, h4, h5, h6, li',
+				'p, h1, h2, h3, h4, h5, h6, li, div',
 			);
 		}
 		this.element.originalContent = this.element.innerHTML;
@@ -56,13 +56,13 @@ export default class ParaReveal extends AnimationCore {
 			return;
 		}
 
-		if (richTextElements.length > 0) {
-			this.element._split = new SplitText(richTextElements, {
-				type: 'lines',
-				mask: 'lines',
-				linesClass: 'lineChildren',
-			});
-		}
+		const targets =
+			richTextElements.length > 0 ? richTextElements : [this.element];
+		this.element._split = new SplitText(targets, {
+			type: 'lines',
+			mask: 'lines',
+			linesClass: 'lineChildren',
+		});
 	}
 
 	animate() {
@@ -71,7 +71,8 @@ export default class ParaReveal extends AnimationCore {
 			const children = this.element.querySelectorAll(
 				'p, h1, h2, h3, h4, h5, h6, li',
 			);
-			this.timeline.from(children, {
+			const targets = children.length > 0 ? children : [this.element];
+			this.timeline.from(targets, {
 				opacity: 0,
 				duration: 0.85,
 				ease: 'sine.out',
@@ -90,7 +91,7 @@ export default class ParaReveal extends AnimationCore {
 				yPercent: 0,
 				duration: this.options.duration,
 				ease: this.options.ease,
-				stagger: 0.035,
+				stagger: 0.055,
 			},
 		);
 	}
