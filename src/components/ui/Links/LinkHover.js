@@ -24,17 +24,19 @@ export default class LinkHover extends ComponentCore {
 				smartWrap: true,
 			});
 
-			const tl = gsap.timeline({ paused: true });
-
-			tl.to(split.chars, {
-				y: '-1.3em',
-				rotate: 0.001,
-				duration: 0.6,
-				ease: 'power3.out',
-				stagger: { amount: 0.1, from: 'random' },
+			const indices = Array.from(
+				{ length: split.chars.length },
+				(_, i) => i,
+			);
+			for (let i = indices.length - 1; i > 0; i--) {
+				const j = Math.floor(Math.random() * (i + 1));
+				[indices[i], indices[j]] = [indices[j], indices[i]];
+			}
+			split.chars.forEach((el, i) => {
+				el.style.transitionDelay = `${indices[i] * 0.015}s`;
 			});
 
-			return { link, tl, split };
+			return { link, split };
 		});
 	}
 
@@ -49,20 +51,16 @@ export default class LinkHover extends ComponentCore {
 	removeEventListeners() {
 		if (!this.items) return;
 		this.items.forEach(({ link }) => {
-			link.removeEventListener('mouseenter', this.handleMouseLeave);
+			link.removeEventListener('mouseenter', this.handleMouseEnter);
 			link.removeEventListener('mouseleave', this.handleMouseLeave);
 		});
 	}
 
 	handleMouseEnter(e) {
-		const item = this.items.find((i) => i.link === e.currentTarget);
-		if (!item) return;
-		item.tl.timeScale(1).play();
+		e.currentTarget.classList.add('is-hover');
 	}
 
 	handleMouseLeave(e) {
-		const item = this.items.find((i) => i.link === e.currentTarget);
-		if (!item) return;
-		item.tl.timeScale(1.4).reverse();
+		e.currentTarget.classList.remove('is-hover');
 	}
 }

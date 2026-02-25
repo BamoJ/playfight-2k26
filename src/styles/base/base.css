@@ -26,3 +26,8 @@ body > :first-child {
 	transform: translateX(-40px);
 	opacity: 0.5;
 }
+
+[data-logo-wall-item] {
+	overflow: hidden;
+	perspective: 100px;
+}

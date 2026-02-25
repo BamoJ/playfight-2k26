@@ -2,6 +2,7 @@ import ParaReveal from '@animations/texts/ParaReveal';
 import HeroScroll from './scroll/HeroScroll';
 import AboutNav from './scroll/AboutNav';
 import AboutStoryScroll from './scroll/AboutStoryScroll';
+import LogoWallCycle from './scroll/LogoWallCycle';
 
 export default class Animation {
 	constructor() {
@@ -52,6 +53,14 @@ export default class Animation {
 			this.collection.push(animation);
 			animation.init();
 		}
+
+		document
+			.querySelectorAll('[data-logo-wall-cycle-init]')
+			.forEach((element) => {
+				const animation = new LogoWallCycle(element);
+				this.collection.push(animation);
+				animation.init();
+			});
 	}
 
 	destroy() {
