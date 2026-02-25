@@ -1,5 +1,28 @@
 # WebGL + Webflow Boilerplate
 
+## IMPORTANT — Claude Must Read Skills Before Every Task
+
+Before planning or writing any code, Claude MUST read the relevant skill file(s) from `.claude/skills/`. Match the task to the skill:
+
+| If the task involves... | Read this skill |
+| --- | --- |
+| New WebGL page, Page lifecycle, scene setup | `/webgl-page` |
+| DOM elements → WebGL planes, textures, cover UV, portals | `/webgl-dom-page` |
+| Cross-page navigation, page detection, `_leaveTimer` | `/canvas-nav` |
+| GLSL shaders, uniforms, vertex/fragment effects | `/shader` |
+| DOMPlane hover, position sync, bounding rect | `/dom-plane` |
+| Page transitions, Taxi routing, Lenis | `/transition` |
+| Scroll animations, GSAP, ScrollTrigger, SplitText | `/scroll-anim` |
+| DOM components, menus, modals, Taxi lifecycle | `/component` |
+| Webflow data attributes, script loading, preloader | `/webflow` |
+| smooothy slider — config, callbacks, destroy | `/smoothyslider` |
+| Debugging anything broken | `/debug` |
+| Performance, 60fps, frame drops | `/perf-audit` |
+
+Read the full skill file before forming a plan. Skills contain patterns, gotchas, and reference implementations that override generic assumptions.
+
+---
+
 ## What This Is
 
 A reusable starter for Webflow sites with custom WebGL experiences. Built with Three.js, GSAP, Taxi (page routing), and Lenis (smooth scroll). HTML lives in Webflow — this repo is the JS/WebGL layer injected via `<script>`.
