@@ -3,11 +3,13 @@ import TransitionManager from '@transitions';
 import SmoothScroll from '@utils/SmoothScroll';
 import Canvas from '@canvas';
 import { Originals } from '@canvas/Originals';
+import { About } from '@canvas/About';
 import emitter from '@utils/Emitter';
 
 // --- Page Registry (WebGL) ---
 const pages = {
 	originals: Originals,
+	about: About,
 };
 
 // --- Transition Registry ---

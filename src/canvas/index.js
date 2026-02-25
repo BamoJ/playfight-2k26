@@ -56,13 +56,22 @@ export default class Canvas {
 	 * Override or extend this for custom routing logic.
 	 */
 	detectPageName(el = document) {
-		// Check data attributes first
-		const pageAttr =
+		// Query from the latest [data-taxi-view] to handle Taxi navigation
+		// (body attributes persist across navigations, only view content swaps)
+		const view =
 			el === document
+				? Array.from(
+						document.querySelectorAll('[data-taxi-view]'),
+					).pop() || document
+				: el;
+
+		const pageAttr =
+			view === document
 				? document.body.dataset.page ||
-					document.querySelector('[data-page]')?.dataset.page
-				: el.dataset?.page ||
-					el.querySelector('[data-page]')?.dataset.page;
+					document.querySelector('[data-page]')?.dataset
+						.page
+				: view.dataset?.page ||
+					view.querySelector('[data-page]')?.dataset.page;
 
 		if (pageAttr && this.registry[pageAttr]) return pageAttr;
 

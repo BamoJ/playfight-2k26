@@ -1,9 +1,9 @@
 import { DOMPlane } from '../DOMPlane';
 import TextureCache from '../utils/TextureCache';
-import vertexShader from './shaders/vertex.glsl';
-import fragmentShader from './shaders/fragment.glsl';
+import vertexShader from './shaders/sliderVert.glsl';
+import fragmentShader from './shaders/sliderFrag.glsl';
 
-export class OriginalsView extends DOMPlane {
+export class AboutView extends DOMPlane {
 	constructor(options) {
 		super({
 			...options,
@@ -46,7 +46,7 @@ export class OriginalsView extends DOMPlane {
 					done();
 				})
 				.catch((err) => {
-					console.error('[OriginalsView] Texture error:', err);
+					console.error('[AboutView] Texture error:', err);
 					done();
 				});
 		});
@@ -84,7 +84,6 @@ export class OriginalsView extends DOMPlane {
 			this.imageGroup.add(mesh);
 		});
 
-		// Hide DOM images once WebGL planes are ready
 		this.template
 			.querySelectorAll('[data-gl-img="true"]')
 			.forEach((img) => {

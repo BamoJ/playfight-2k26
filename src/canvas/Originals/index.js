@@ -41,7 +41,9 @@ export class Originals extends Page {
 	}
 
 	initSlider(template = document) {
-		const wrapper = template.querySelector('[data-slider]');
+		const wrapper = template.querySelector(
+			'[data-slider="originals"]',
+		);
 		if (!wrapper) return;
 
 		this.slider = new OriginalSlider(wrapper);
@@ -53,7 +55,7 @@ export class Originals extends Page {
 			camera: this.camera,
 			viewport: this.viewport,
 			screen: this.screen,
-			template,
+			template: this.slider?.wrapper || template,
 		});
 	}
 
@@ -61,10 +63,7 @@ export class Originals extends Page {
 		if (this._leaveTimer) {
 			clearTimeout(this._leaveTimer);
 			this._leaveTimer = null;
-		}
-
-		if (this.view && this.created) {
-			this.view.destroy?.();
+			this.view?.destroy?.();
 			this.slider?.destroy?.();
 			this.view = null;
 			this.slider = null;
