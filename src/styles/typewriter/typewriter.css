@@ -1,4 +1,5 @@
-.hero_blinking_cursor {
+.hero_blinking_cursor,
+.blinking_cursor {
 	animation: blink 1.2s step-start infinite;
 }
 
