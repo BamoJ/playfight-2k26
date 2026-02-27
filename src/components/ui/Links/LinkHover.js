@@ -14,7 +14,9 @@ export default class LinkHover extends ComponentCore {
 
 	createElements() {
 		const links = [
-			...document.querySelectorAll('[data-anim-link-hover]'),
+			...document.querySelectorAll(
+				'[data-anim-link-hover], [data-anim-main-link-hover] ',
+			),
 		];
 		if (!links.length) return;
 
