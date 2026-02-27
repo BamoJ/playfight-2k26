@@ -1,29 +1,73 @@
 import { gsap } from 'gsap';
 
 export const MenuAnimations = {
-	open: ({ menu, container, closeBtn }) => {
+	open: ({ menu, menuLineTop, menuLineBottom }) => {
 		const tl = gsap.timeline();
 
 		tl.to(menu, {
 			clipPath: 'inset(0 0 0% 0%)',
 			duration: 1.6,
 			ease: 'expo.inOut',
-		}).fromTo(
-			closeBtn,
-			{ opacity: 0 },
+		});
+		tl.to(
+			menuLineTop,
 			{
-				opacity: 1,
-				duration: 1,
-				ease: 'sine.out',
+				y: 5,
+				duration: 0.6,
+				ease: 'power4.out',
 			},
-			'<+0.2',
+			'<+.35',
 		);
+		tl.to(
+			menuLineBottom,
+			{
+				y: -5,
+				duration: 0.6,
+				ease: 'power4.out',
+			},
+			'<',
+		)
+			.to(
+				menuLineTop,
+				{
+					rotate: -45,
+					duration: 0.6,
+					ease: 'back.inOut(1.2)',
+				},
+				'<+.1',
+			)
+			.to(
+				menuLineBottom,
+				{
+					rotate: 45,
+					duration: 0.6,
+					ease: 'back.inOut(1.2)',
+				},
+				'<',
+			);
 
 		return tl;
 	},
 
-	close: ({ background, menu }) => {
+	close: ({ menu, menuLineTop, menuLineBottom }) => {
 		const tl = gsap.timeline();
+
+		tl.to(menuLineTop, {
+			y: 0,
+			rotate: 0,
+			duration: 0.4,
+			ease: 'expo.out',
+		});
+		tl.to(
+			menuLineBottom,
+			{
+				y: 0,
+				rotate: 0,
+				duration: 0.4,
+				ease: 'expo.out',
+			},
+			'<',
+		);
 		tl.to(
 			menu,
 			{
@@ -33,6 +77,7 @@ export const MenuAnimations = {
 			},
 			'<',
 		);
+
 		return tl;
 	},
 };

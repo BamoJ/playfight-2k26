@@ -16,7 +16,7 @@ export default class AboutStoryScroll extends AnimationCore {
 	constructor(element, options = {}) {
 		super(element, {
 			triggerStart: 'top bottom',
-			triggerEnd: 'bottom +=80%',
+			triggerEnd: 'bottom +=50%',
 			scrub: 1,
 			markers: true,
 			cleanup: false,
@@ -67,6 +67,9 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.kanji = this.textElementWrap.querySelector(
 			'.el_kanji_parent',
 		);
+		this.kanjiScrambled = this.textElementWrap.querySelector(
+			'[data-el-kanji-scrambled]',
+		);
 		this.kanjiTargetFlip =
 			this.textElementWrap.querySelector('.target_kanji');
 
@@ -80,26 +83,45 @@ export default class AboutStoryScroll extends AnimationCore {
 	animate() {
 		gsap.set(this.split.words, {
 			x: '-50vw',
-			opacity: 0.1,
-			filter: 'blur(4px)',
+			opacity: 0.6,
+			scaleX: 0.2,
+			filter: 'blur(5px)',
 		});
 
-		gsap.set(this.signature, { opacity: 0, x: -50 });
+		gsap.set(this.signature, {
+			opacity: 0,
+			x: -50,
+		});
 
-		this.timeline.to(
-			this.split.words,
-			{
-				x: 0,
-				opacity: 1,
-				filter: 'blur(0px)',
-				stagger: {
-					from: 'start',
-					each: 0.01,
+		this.timeline
+			.to(
+				this.split.words,
+				{
+					x: 0,
+					scaleX: 1,
+					stagger: {
+						from: 'start',
+						each: 0.01,
+					},
+					ease: 'elastic.out(1, 0.82)',
+					duration: 1,
 				},
-				ease: 'elastic.out(1, 0.8)',
-			},
-			0,
-		);
+				0,
+			)
+			.to(
+				this.split.words,
+				{
+					opacity: 1,
+					filter: 'blur(0px)',
+					stagger: {
+						from: 'start',
+						each: 0.01,
+					},
+					duration: 1,
+					ease: 'power3.out',
+				},
+				0.2,
+			);
 
 		// Ornament Flip animations — each tied to a line block
 		const ornaments = [
@@ -139,12 +161,12 @@ export default class AboutStoryScroll extends AnimationCore {
 			// Flip.from: animates from captured origin → current target position
 			const flipTl = Flip.from(state, {
 				scale: false,
-				ease: 'power1.out',
-				duration: 1,
+				ease: 'back.out(1.5)',
+				duration: 1.5,
 			});
 
 			// Stagger each ornament: 0, 0.5, 1.0, 1.5...
-			const pos = (i * staggerOffset) / 1.2;
+			const pos = (i * staggerOffset) / 1;
 
 			this.timeline.add(flipTl, pos);
 			this.timeline.to(
@@ -153,7 +175,7 @@ export default class AboutStoryScroll extends AnimationCore {
 					opacity: 1,
 					filter: 'blur(0px)',
 					duration: 1,
-					ease: 'elastic.out(0.5, 1.3)',
+					ease: 'slow(0.7, 0.7, false)',
 				},
 				pos,
 			);

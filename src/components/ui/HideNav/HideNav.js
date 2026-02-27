@@ -40,6 +40,7 @@ export default class HideNav extends ComponentCore {
 				duration: 0.4,
 				stagger: 0.1,
 				ease: 'power4.out',
+				opacity: 0,
 			});
 		}
 		if (this.navSVG) {
@@ -59,6 +60,7 @@ export default class HideNav extends ComponentCore {
 				duration: 0.5,
 				stagger: 0.08,
 				ease: 'power4.out',
+				opacity: 1,
 			});
 		}
 		if (this.navSVG) {

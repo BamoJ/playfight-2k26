@@ -165,7 +165,7 @@ export default class ServiceListScroll extends AnimationCore {
 				yPercent: 0,
 				duration: 0.4,
 				ease: 'none',
-				stagger: { amount: 0.15, from: 'random' },
+				stagger: { amount: 0.15 },
 			},
 			position,
 		);
@@ -176,7 +176,7 @@ export default class ServiceListScroll extends AnimationCore {
 				yPercent: 110,
 				duration: 0.4,
 				ease: 'none',
-				stagger: { amount: 0.1, from: 'random' },
+				stagger: { amount: 0.1 },
 			},
 			position,
 		);
@@ -187,7 +187,7 @@ export default class ServiceListScroll extends AnimationCore {
 				yPercent: 110,
 				duration: 0.4,
 				ease: 'none',
-				stagger: { amount: 0.15, from: 'random' },
+				stagger: { amount: 0.15 },
 			},
 			position,
 		);

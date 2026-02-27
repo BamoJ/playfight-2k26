@@ -36,7 +36,7 @@ export default class ButtonHover extends ComponentCore {
 					paused: true,
 					defaults: { ease: 'back.out(1.2)' },
 					onReverseComplete: () =>
-						gsap.set(btn, { clearProps: 'width,scale' }),
+						gsap.set(btn, { clearProps: 'width, scale' }),
 				});
 
 				tl.to(
@@ -44,7 +44,7 @@ export default class ButtonHover extends ComponentCore {
 					{
 						width: hoverWidth,
 						scale: 1.05,
-						duration: 0.3,
+						duration: 0.34,
 						ease: 'power2.out',
 					},
 					0,

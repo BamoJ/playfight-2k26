@@ -22,8 +22,14 @@ export default class MenuComponent extends ComponentCore {
 			menuSmallLinks: document.querySelectorAll(
 				'.menu_top_link_bottom',
 			),
+			menulineTop: document.querySelector('[data-menu="line-top"]'),
+			menulineBottom: document.querySelector(
+				'[data-menu="line-bottom"]',
+			),
 		};
 		this.el.menu.style.pointerEvents = 'none';
+
+		console.log(this.el);
 	}
 
 	createEvents() {
@@ -103,7 +109,8 @@ export default class MenuComponent extends ComponentCore {
 		MenuAnimations.open({
 			menu: this.el.menu,
 			container: this.el.container,
-			closeBtn: this.el.closeBtn,
+			menuLineTop: this.el.menulineTop,
+			menuLineBottom: this.el.menulineBottom,
 		});
 
 		this.isOpen = true;
@@ -114,8 +121,8 @@ export default class MenuComponent extends ComponentCore {
 
 		MenuAnimations.close({
 			menu: this.el.menu,
-			container: this.el.container,
-			closeBtn: this.el.closeBtn,
+			menuLineTop: this.el.menulineTop,
+			menuLineBottom: this.el.menulineBottom,
 		}).then(() => {
 			this.el.menu.style.pointerEvents = 'none';
 			this.isOpen = false;

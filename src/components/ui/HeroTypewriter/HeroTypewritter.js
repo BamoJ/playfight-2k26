@@ -24,7 +24,9 @@ export default class HeroTypewriter extends ComponentCore {
 		this.container = document.querySelector('.hero_typewrite');
 		if (!this.container) return;
 		this.text = this.container.querySelector('.hero_typewrite_text');
-		this.cursor = this.container.querySelector('.hero_blinking_cursor');
+		this.cursor = this.container.querySelector(
+			'.hero_blinking_cursor',
+		);
 	}
 
 	createEvents() {
@@ -46,7 +48,7 @@ export default class HeroTypewriter extends ComponentCore {
 					text: current,
 					duration: current.length * 0.07,
 				})
-				.to(this.text, { duration: 0.8, ease: 'none' })
+				.to(this.text, { duration: 1.5, ease: 'none' })
 				.to(this.text, {
 					text: '',
 					duration: current.length * 0.04,
