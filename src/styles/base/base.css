@@ -17,6 +17,7 @@ body > :first-child {
 }
 
 .about_navigation_link {
+	will-change: transform;
 	transition:
 		transform 0.6s var(--ease-out-quart),
 		opacity 0.6s var(--ease-out-quart);

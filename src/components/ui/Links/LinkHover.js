@@ -35,7 +35,7 @@ export default class LinkHover extends ComponentCore {
 				[indices[i], indices[j]] = [indices[j], indices[i]];
 			}
 			split.chars.forEach((el, i) => {
-				el.style.transitionDelay = `${indices[i] * 0.015}s`;
+				el.style.transitionDelay = `${indices[i] * 0.02}s`;
 			});
 
 			return { link, split };

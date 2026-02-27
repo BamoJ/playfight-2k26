@@ -36,6 +36,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		 */
 
 		this.split = new SplitText(this.para, { type: 'words' });
+		gsap.set(this.split.words, { willChange: 'transform' });
 
 		/**
 		 * Small Ornament ELements

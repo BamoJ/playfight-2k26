@@ -1,6 +1,7 @@
 import AnimationCore from '@animations/_core/AnimationCore';
 import { SplitText } from 'gsap/SplitText';
 import { easings } from '@utils/easings';
+import { gsap } from 'gsap';
 export default class ParaReveal extends AnimationCore {
 	constructor(element) {
 		super(element, {
@@ -63,6 +64,7 @@ export default class ParaReveal extends AnimationCore {
 			mask: 'lines',
 			linesClass: 'lineChildren',
 		});
+		gsap.set(this.element._split.lines, { willChange: 'transform' });
 	}
 
 	animate() {
