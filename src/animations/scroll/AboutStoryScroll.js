@@ -36,7 +36,6 @@ export default class AboutStoryScroll extends AnimationCore {
 		 */
 
 		this.split = new SplitText(this.para, { type: 'words' });
-		gsap.set(this.split.words, { willChange: 'transform' });
 
 		/**
 		 * Small Ornament ELements
@@ -87,6 +86,7 @@ export default class AboutStoryScroll extends AnimationCore {
 			opacity: 0.6,
 			scaleX: 0.2,
 			filter: 'blur(5px)',
+			willChange: 'transform, opacity, filter',
 		});
 
 		gsap.set(this.signature, {

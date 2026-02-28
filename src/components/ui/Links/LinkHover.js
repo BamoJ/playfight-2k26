@@ -40,6 +40,23 @@ export default class LinkHover extends ComponentCore {
 
 			return { link, split };
 		});
+
+		// Clear stale active state, then mark current page links
+		const currentPath = window.location.pathname.replace(/\/$/, '');
+		this.items.forEach(({ link }) => {
+			if (!link.hasAttribute('data-anim-main-link-hover')) return;
+			link.classList.remove('is-hover');
+			delete link.dataset.activeLink;
+
+			const linkPath = new URL(
+				link.href,
+				window.location.origin,
+			).pathname.replace(/\/$/, '');
+			if (linkPath && linkPath !== '/' && currentPath === linkPath) {
+				link.classList.add('is-hover');
+				link.dataset.activeLink = '';
+			}
+		});
 	}
 
 	addEventListeners() {
@@ -63,6 +80,7 @@ export default class LinkHover extends ComponentCore {
 	}
 
 	handleMouseLeave(e) {
+		if ('activeLink' in e.currentTarget.dataset) return;
 		e.currentTarget.classList.remove('is-hover');
 	}
 }
