@@ -1,11 +1,11 @@
-import { gsap } from 'gsap';
+import gsap from 'gsap';
 import { Raycaster, Vector2 } from 'three';
 import { DOMPlane } from '../DOMPlane';
 import TextureCache from '../utils/TextureCache';
 import vertexShader from '../shaders/sharedVert.glsl';
 import fragmentShader from '../shaders/sharedFrag.glsl';
 
-export class HomeView extends DOMPlane {
+export class ProjectView extends DOMPlane {
 	constructor(options) {
 		super({
 			...options,
@@ -40,11 +40,6 @@ export class HomeView extends DOMPlane {
 		if (!images.length) return;
 
 		// Force layout so getBoundingClientRect works (images may be display:none in CSS)
-		images.forEach((img) => {
-			img.style.display = 'block';
-			img.style.visibility = 'hidden';
-		});
-
 		// Wait for DOM images to load (ensures getBoundingClientRect returns correct height
 		// when images use height:auto with no width/height HTML attributes)
 		const imgLoadPromises = images

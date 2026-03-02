@@ -68,8 +68,7 @@ export default class Canvas {
 		const pageAttr =
 			view === document
 				? document.body.dataset.page ||
-					document.querySelector('[data-page]')?.dataset
-						.page
+					document.querySelector('[data-page]')?.dataset.page
 				: view.dataset?.page ||
 					view.querySelector('[data-page]')?.dataset.page;
 
@@ -78,10 +77,7 @@ export default class Canvas {
 		// Fallback to URL
 		const path = window.location.pathname;
 		for (const key of Object.keys(this.registry)) {
-			if (
-				path === '/' &&
-				(key === 'home' || key === 'index')
-			)
+			if (path === '/' && (key === 'home' || key === 'index'))
 				return key;
 			if (path.includes(key)) return key;
 		}
@@ -96,9 +92,7 @@ export default class Canvas {
 		});
 
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
-		this.renderer.setPixelRatio(
-			Math.min(window.devicePixelRatio, 2),
-		);
+		this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 		this.renderer.setClearColor(0x000000, 0);
 		this.renderer.outputColorSpace = SRGBColorSpace;
 

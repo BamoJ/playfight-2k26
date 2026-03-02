@@ -6,6 +6,7 @@ import { Home } from '@canvas/Home';
 import { Work } from '@canvas/Work';
 import { Originals } from '@canvas/Originals';
 import { About } from '@canvas/About';
+import { Project } from '@canvas/Project';
 import emitter from '@utils/Emitter';
 
 // --- Page Registry (WebGL) ---
@@ -13,6 +14,7 @@ const pages = {
 	home: Home,
 	works: Work,
 	originals: Originals,
+	project: Project,
 	about: About,
 };
 
@@ -24,7 +26,7 @@ const pageTransitions = {
 	// about: AboutTransition,
 };
 
-// --- App ---
+// --- Main App ---
 class App {
 	constructor() {
 		new SmoothScroll();
