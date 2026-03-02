@@ -1,7 +1,7 @@
 ---
 name: perf-audit
 description: Audit and fix performance issues to maintain 60fps. Use when diagnosing frame drops, janky scroll, hover lag, transition stutter, or any performance degradation.
-user-invocable: true
+user-invokable: true
 ---
 
 # Performance Audit — 60fps Across All Browsers and Devices

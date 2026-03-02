@@ -1,7 +1,7 @@
 ---
 name: transition
 description: Build page transitions with Taxi.js routing, Lenis smooth scroll, and WebGL TransitionController. Use when creating page-to-page navigation, cross-page WebGL mesh animations, or custom transition effects.
-user-invocable: true
+user-invokable: true
 ---
 
 # Transition — Page Routing + WebGL Transitions

@@ -1,7 +1,7 @@
 ---
 name: canvas-nav
 description: Taxi + Canvas navigation patterns, lifecycle gotchas, and page detection. Use when a WebGL page isn't loading on navigation, pages are detecting incorrectly, transitions leave broken state, or you're building a new page that needs to survive cross-page navigation.
-user-invocable: true
+user-invokable: true
 ---
 
 # Canvas Navigation — Taxi + Canvas Lifecycle Patterns

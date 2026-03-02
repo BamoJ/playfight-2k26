@@ -1,7 +1,7 @@
 ---
 name: debug
 description: Diagnose and troubleshoot issues in the WebGL + Webflow system. Use when something is broken — shaders won't compile, pages don't detect, transitions break, textures don't load, animations don't fire, or events are lost.
-user-invocable: true
+user-invokable: true
 ---
 
 # Debug — Diagnostic Troubleshooting Guide

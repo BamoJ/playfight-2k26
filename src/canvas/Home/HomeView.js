@@ -29,6 +29,22 @@ export class HomeView extends DOMPlane {
 			img.style.visibility = 'hidden';
 		});
 
+		// Wait for DOM images to load (ensures getBoundingClientRect returns correct height
+		// when images use height:auto with no width/height HTML attributes)
+		const imgLoadPromises = images
+			.filter((img) => !img.complete)
+			.map(
+				(img) =>
+					new Promise((resolve) => {
+						img.addEventListener('load', resolve, {
+							once: true,
+						});
+						img.addEventListener('error', resolve, {
+							once: true,
+						});
+					}),
+			);
+
 		let settled = 0;
 		const uniqueSrcs = new Map();
 
@@ -38,10 +54,25 @@ export class HomeView extends DOMPlane {
 			uniqueSrcs.set(src, img);
 		});
 
+		let texturesReady = false;
+		let domImagesReady = imgLoadPromises.length === 0;
+
+		const tryCreatePlanes = () => {
+			if (texturesReady && domImagesReady) {
+				this.createPlanes(images);
+			}
+		};
+
+		Promise.all(imgLoadPromises).then(() => {
+			domImagesReady = true;
+			tryCreatePlanes();
+		});
+
 		const done = () => {
 			settled++;
 			if (settled === uniqueSrcs.size) {
-				this.createPlanes(images);
+				texturesReady = true;
+				tryCreatePlanes();
 			}
 		};
 
@@ -88,14 +119,6 @@ export class HomeView extends DOMPlane {
 			this.imagePlanes.push(mesh);
 			this.imageGroup.add(mesh);
 		});
-
-		// Hide DOM images once WebGL planes are ready
-		this.template
-			.querySelectorAll('[data-gl-img="true"]')
-			.forEach((img) => {
-				img.style.opacity = '0';
-			});
-
 		this.updatePlanesPositions();
 	}
 

@@ -1,7 +1,7 @@
 ---
 name: scroll-anim
 description: Build scroll-driven DOM animations with GSAP, ScrollTrigger, and SplitText. Use when adding reveal animations, parallax effects, text animations, or any scroll-triggered animation on DOM elements.
-user-invocable: true
+user-invokable: true
 ---
 
 # Scroll Animations — GSAP + ScrollTrigger + SplitText

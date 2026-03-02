@@ -23,11 +23,21 @@ export class WorkView extends DOMPlane {
 
 		if (!images.length) return;
 
-		// Force layout so getBoundingClientRect works (images may be display:none in CSS)
-		images.forEach((img) => {
-			img.style.display = 'block';
-			img.style.visibility = 'hidden';
-		});
+		// Wait for DOM images to load (ensures getBoundingClientRect returns correct height
+		// when images use height:auto with no width/height HTML attributes)
+		const imgLoadPromises = images
+			.filter((img) => !img.complete)
+			.map(
+				(img) =>
+					new Promise((resolve) => {
+						img.addEventListener('load', resolve, {
+							once: true,
+						});
+						img.addEventListener('error', resolve, {
+							once: true,
+						});
+					}),
+			);
 
 		let settled = 0;
 		const uniqueSrcs = new Map();
@@ -38,10 +48,25 @@ export class WorkView extends DOMPlane {
 			uniqueSrcs.set(src, img);
 		});
 
+		let texturesReady = false;
+		let domImagesReady = imgLoadPromises.length === 0;
+
+		const tryCreatePlanes = () => {
+			if (texturesReady && domImagesReady) {
+				this.createPlanes(images);
+			}
+		};
+
+		Promise.all(imgLoadPromises).then(() => {
+			domImagesReady = true;
+			tryCreatePlanes();
+		});
+
 		const done = () => {
 			settled++;
 			if (settled === uniqueSrcs.size) {
-				this.createPlanes(images);
+				texturesReady = true;
+				tryCreatePlanes();
 			}
 		};
 

@@ -1,7 +1,7 @@
 ---
 name: webflow
 description: Webflow integration patterns for this boilerplate. Use when setting up data attributes, connecting Webflow HTML to the JS/WebGL layer, configuring the preloader, or troubleshooting Webflow-specific issues.
-user-invocable: true
+user-invokable: true
 ---
 
 # Webflow — Integration Patterns

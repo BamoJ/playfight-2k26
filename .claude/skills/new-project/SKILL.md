@@ -1,7 +1,7 @@
 ---
 name: new-project
 description: Bootstrap a new project from this starter. Use when cloning the starter for a new client site, scaffolding pages, registering routes, and setting up Webflow data attributes.
-user-invocable: true
+user-invokable: true
 ---
 
 # New Project — Bootstrap from Starter

@@ -1,7 +1,7 @@
 ---
 name: component
 description: Build DOM components with proper Taxi.js lifecycle management. Use when creating UI elements like menus, cursor followers, theme toggles, modals, or any interactive DOM component.
-user-invocable: true
+user-invokable: true
 ---
 
 # Component — DOM Components with Taxi Lifecycle

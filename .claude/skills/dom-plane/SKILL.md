@@ -1,7 +1,7 @@
 ---
 name: dom-plane
 description: Map DOM elements to WebGL planes using DOMPlane. Use when overlaying Three.js planes on images, videos, or any DOM element with hover effects and scroll sync.
-user-invocable: true
+user-invokable: true
 ---
 
 # DOMPlane — DOM-to-WebGL Plane Mapping

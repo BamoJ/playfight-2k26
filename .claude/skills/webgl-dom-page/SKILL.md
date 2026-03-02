@@ -1,7 +1,7 @@
 ---
 name: webgl-dom-page
 description: Full pattern for a WebGL page that maps DOM elements to WebGL planes. Use when building a page that combines a DOMPlane view, texture loading, cover UV scaling, and optional interaction layer (drag, hover, click). Covers the Page + View orchestrator pattern, texture gotchas, and portal pattern for fixed elements inside transformed containers.
-user-invocable: true
+user-invokable: true
 ---
 
 # WebGL DOM Page — Page + View Orchestrator Pattern
@@ -139,6 +139,15 @@ export class YourView extends DOMPlane {
         const images = Array.from(this.template.querySelectorAll('[data-gl-img="true"]'));
         if (!images.length) return;
 
+        // Wait for DOM images to load — ensures getBoundingClientRect returns
+        // correct height when images use height:auto (no width/height HTML attrs)
+        const imgLoadPromises = images
+            .filter((img) => !img.complete)
+            .map((img) => new Promise((resolve) => {
+                img.addEventListener('load', resolve, { once: true });
+                img.addEventListener('error', resolve, { once: true });
+            }));
+
         // Deduplicate by src
         const uniqueSrcs = new Map();
         images.forEach((img) => {
@@ -146,11 +155,27 @@ export class YourView extends DOMPlane {
             if (src && !uniqueSrcs.has(src)) uniqueSrcs.set(src, img);
         });
 
+        // Gate createPlanes on BOTH textures AND DOM images being ready
+        let texturesReady = false;
+        let domImagesReady = imgLoadPromises.length === 0;
+
+        const tryCreatePlanes = () => {
+            if (texturesReady && domImagesReady) this.createPlanes(images);
+        };
+
+        Promise.all(imgLoadPromises).then(() => {
+            domImagesReady = true;
+            tryCreatePlanes();
+        });
+
         // settled counts both success AND failure — one bad image won't block the rest
         let settled = 0;
         const done = () => {
             settled++;
-            if (settled === uniqueSrcs.size) this.createPlanes(images);
+            if (settled === uniqueSrcs.size) {
+                texturesReady = true;
+                tryCreatePlanes();
+            }
         };
 
         uniqueSrcs.forEach((img, src) => {
@@ -249,6 +274,9 @@ let settled = 0;
 const done = () => { settled++; if (settled === total) createPlanes(); };
 TextureCache.load(src).then(() => done()).catch(() => done());
 ```
+
+### DOM images must be loaded before `createPlanes`
+`TextureCache` loads textures via internal `Image` objects — separate from the DOM `<img>` elements. If images use `height: auto` (natural aspect ratio), `getBoundingClientRect()` returns `height: 0` until the DOM image loads. Always gate `createPlanes()` on both TextureCache AND DOM image `load` events. See the `loadImages()` template above.
 
 ### `loading="lazy"` on Webflow images
 Webflow may set `loading="lazy"` on images. This doesn't affect `TextureCache` (it loads via URL directly, not from the DOM image element), but `img.src` is always populated regardless of lazy loading status.

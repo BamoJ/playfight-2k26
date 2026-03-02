@@ -1,7 +1,7 @@
 ---
 name: webgl-page
 description: Build new WebGL page subclasses. Use when creating a new page with Three.js visuals, setting up the page lifecycle, or registering a page in the canvas system.
-user-invocable: true
+user-invokable: true
 ---
 
 # WebGL Page — Build a New Page Subclass

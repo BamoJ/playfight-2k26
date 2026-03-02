@@ -1,7 +1,7 @@
 ---
 name: shader
 description: Write and debug GLSL shaders for the WebGL system. Use when creating new shader effects, modifying vertex/fragment shaders, adding uniforms, or writing GLSL includes.
-user-invocable: true
+user-invokable: true
 ---
 
 # Shader — GLSL Shaders in This System
