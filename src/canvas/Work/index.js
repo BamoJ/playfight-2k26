@@ -1,9 +1,9 @@
 import { Page } from '../Page';
 import emitter from '@utils/Emitter';
 import SmoothScroll from '@utils/SmoothScroll';
-import { HomeView } from './HomeView';
+import { WorkView } from './WorkView';
 
-export class Home extends Page {
+export class Work extends Page {
 	constructor(options) {
 		super(options);
 		this.view = null;
@@ -26,7 +26,7 @@ export class Home extends Page {
 	}
 
 	create(template = document) {
-		setTimeout(() => emitter.emit('home:enter-ready'), 0);
+		setTimeout(() => emitter.emit('work:enter-ready'), 0);
 
 		if (this.created) return;
 
@@ -39,7 +39,7 @@ export class Home extends Page {
 	}
 
 	initView(template = document) {
-		this.view = new HomeView({
+		this.view = new WorkView({
 			parent: this.elements,
 			camera: this.camera,
 			viewport: this.viewport,
@@ -61,7 +61,7 @@ export class Home extends Page {
 	}
 
 	transitionIn(onComplete) {
-		emitter.emit('home:enter-ready');
+		emitter.emit('work:enter-ready');
 		if (onComplete) onComplete();
 	}
 

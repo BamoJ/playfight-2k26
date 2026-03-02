@@ -34,10 +34,7 @@ class TextureCache {
 				},
 				undefined,
 				(err) => {
-					console.error(
-						`[TextureCache] Failed to load ${src}`,
-						err,
-					);
+					console.error(`[TextureCache] Failed to load ${src}`, err);
 					this.pending.delete(src);
 					reject(err);
 				},

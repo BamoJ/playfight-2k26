@@ -2,12 +2,16 @@ import '@styles/index.css';
 import TransitionManager from '@transitions';
 import SmoothScroll from '@utils/SmoothScroll';
 import Canvas from '@canvas';
+import { Home } from '@canvas/Home';
+import { Work } from '@canvas/Work';
 import { Originals } from '@canvas/Originals';
 import { About } from '@canvas/About';
 import emitter from '@utils/Emitter';
 
 // --- Page Registry (WebGL) ---
 const pages = {
+	home: Home,
+	works: Work,
 	originals: Originals,
 	about: About,
 };
