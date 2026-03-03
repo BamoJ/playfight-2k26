@@ -4,6 +4,7 @@ import { Flip } from 'gsap/Flip';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import gsap from 'gsap';
 import AnimationCore from '@animations/_core/AnimationCore';
+import Lottie from 'lottie-web';
 
 gsap.registerPlugin(
 	ScrollTrigger,
@@ -27,15 +28,24 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.para = this.element.querySelector(
 			'[data-anim-about-scroll="para"]',
 		);
-		this.signature = this.element.querySelector(
-			'.about_story_signature',
+		this.signatureContainer = this.element.querySelector(
+			'[data-anim-about-scroll="lottie"]',
 		);
 
 		this.split = new SplitText(this.para, { type: 'words' });
 
 		/**
-		 * Small Ornament ELements
+		 * LOTTIE SIGNATURE ANIMATION
+		 * - Lottie animation is controlled via GSAP timeline (play, pause, etc.)
+		 * - Lottie anim is set to autoplay: false and loop: false in JSON export
 		 */
+		this.lottie = Lottie.loadAnimation({
+			container: this.signatureContainer, // the dom element that will contain the animation
+			renderer: 'svg',
+			loop: false,
+			autoplay: false,
+			path: 'https://cdn.prod.website-files.com/697fef4d1b1e73b328ad49cd/69a7036b2157751d656eb83c_3.2.json',
+		});
 
 		/** CRFT */
 		this.textElementWrap = document.querySelector(
@@ -76,20 +86,40 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.kanjiOrigin = this.kanji?.parentElement;
 	}
 
+	createScrollTrigger() {
+		const triggerEl = this.triggerElement || this.element;
+		this.scrollTrigger = ScrollTrigger.create({
+			trigger: triggerEl,
+			start: this.options.triggerStart,
+			end: this.options.triggerEnd,
+			animation: this.timeline,
+			scrub: this.options.scrub,
+			markers: this.options.markers,
+			onUpdate: (self) => {
+				if (!this.lottie.totalFrames) return;
+				const start = 0.8;
+				const progress = Math.max(
+					0,
+					(self.progress - start) / (1 - start),
+				);
+				const frame = Math.min(
+					Math.round(progress * this.lottie.totalFrames),
+					this.lottie.totalFrames - 1,
+				);
+				this.lottie.goToAndStop(frame, true);
+			},
+		});
+	}
+
 	animate() {
-		const scrambleChars = '!@#$%^&*()_+{}|:<>?-=[];,./';
+		const scrambleChars = '!@#$%^&*()_+{}|:<>?-=[];,./©®';
 		const kanjiScrambleChars = '∆◊≈†‡§¶•ΩΣπ∂ƒ©®™≠±÷×∞µ√∫≤≥';
 
 		gsap.set(this.split.words, {
-			x: '-70vw',
-			opacity: 0,
-			filter: 'blur(10px)',
+			x: '-45vw',
+			opacity: 0.3,
+			filter: 'blur(5px)',
 			willChange: 'transform, opacity, filter',
-		});
-
-		gsap.set(this.signature, {
-			opacity: 0,
-			x: -50,
 		});
 
 		this.timeline
@@ -99,9 +129,9 @@ export default class AboutStoryScroll extends AnimationCore {
 					x: 0,
 					stagger: {
 						from: 'start',
-						each: 0.012,
+						each: 0.01,
 					},
-					ease: 'elastic.out(1.0,0.75)',
+					ease: 'elastic.inOut(1.0,0.85)',
 					duration: 1,
 				},
 				0,
@@ -145,7 +175,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		const validOrnaments = ornaments.filter(
 			({ el, target }) => el && target,
 		);
-		const staggerOffset = 0.5;
+		const staggerOffset = 0.4;
 
 		validOrnaments.forEach((ornament, i) => {
 			const { el, target } = ornament;
@@ -236,21 +266,6 @@ export default class AboutStoryScroll extends AnimationCore {
 				});
 			}
 		});
-
-		// Signature fade-in
-		this.timeline.fromTo(
-			this.signature,
-			{
-				opacity: 0,
-				x: -50,
-			},
-			{
-				opacity: 1,
-				x: 0,
-				ease: 'power2.out',
-			},
-			'>-0.4',
-		);
 	}
 
 	destroy() {
@@ -269,6 +284,7 @@ export default class AboutStoryScroll extends AnimationCore {
 			}
 		});
 
+		this.lottie?.destroy();
 		super.destroy();
 		if (this.split) this.split.revert();
 	}
