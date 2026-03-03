@@ -9,10 +9,10 @@ export default class ServiceListScroll extends AnimationCore {
 	constructor(element, options = {}) {
 		super(element, {
 			cleanup: false,
-			scrub: 2,
+			scrub: 1,
 			triggerStart: 'top 50%',
 			triggerEnd: 'bottom 50%',
-			markers: true,
+			markers: false,
 			...options,
 		});
 
@@ -113,7 +113,7 @@ export default class ServiceListScroll extends AnimationCore {
 				yPercent: 0,
 				duration: 0.5,
 				ease: 'none',
-				stagger: { amount: 0.1 },
+				stagger: { amount: 0.2 },
 			},
 			position + 0.05,
 		);
@@ -124,7 +124,7 @@ export default class ServiceListScroll extends AnimationCore {
 				yPercent: 0,
 				duration: 0.6,
 				ease: 'none',
-				stagger: { amount: 0.2 },
+				stagger: { amount: 0.2, from: 'start' },
 			},
 			position + 0.05,
 		);
@@ -152,7 +152,7 @@ export default class ServiceListScroll extends AnimationCore {
 				yPercent: 0,
 				duration: 0.4,
 				ease: 'none',
-				stagger: { amount: 0.5 },
+				stagger: { amount: 0.3 },
 			},
 			position + 0.1,
 		);
@@ -187,7 +187,7 @@ export default class ServiceListScroll extends AnimationCore {
 				yPercent: 110,
 				duration: 0.4,
 				ease: 'none',
-				stagger: { amount: 0.15 },
+				stagger: { amount: 0.2, from: 'end' },
 			},
 			position,
 		);

@@ -31,10 +31,6 @@ export default class AboutStoryScroll extends AnimationCore {
 			'.about_story_signature',
 		);
 
-		/**
-		 * Small Ornament ELements
-		 */
-
 		this.split = new SplitText(this.para, { type: 'words' });
 
 		/**
@@ -67,7 +63,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.kanji = this.textElementWrap.querySelector(
 			'.el_kanji_parent',
 		);
-		this.kanjiScrambled = this.textElementWrap.querySelector(
+		this.kanjiScrambled = this.textElementWrap.querySelectorAll(
 			'[data-el-kanji-scrambled]',
 		);
 		this.kanjiTargetFlip =
@@ -81,11 +77,13 @@ export default class AboutStoryScroll extends AnimationCore {
 	}
 
 	animate() {
+		const scrambleChars = '!@#$%^&*()_+{}|:<>?-=[];,./';
+		const kanjiScrambleChars = '∆◊≈†‡§¶•ΩΣπ∂ƒ©®™≠±÷×∞µ√∫≤≥';
+
 		gsap.set(this.split.words, {
-			x: '-50vw',
-			opacity: 0.6,
-			scaleX: 0.2,
-			filter: 'blur(5px)',
+			x: '-70vw',
+			opacity: 0,
+			filter: 'blur(10px)',
 			willChange: 'transform, opacity, filter',
 		});
 
@@ -99,12 +97,11 @@ export default class AboutStoryScroll extends AnimationCore {
 				this.split.words,
 				{
 					x: 0,
-					scaleX: 1,
 					stagger: {
 						from: 'start',
-						each: 0.01,
+						each: 0.012,
 					},
-					ease: 'elastic.out(1, 0.82)',
+					ease: 'elastic.out(1.0,0.75)',
 					duration: 1,
 				},
 				0,
@@ -121,7 +118,7 @@ export default class AboutStoryScroll extends AnimationCore {
 					duration: 1,
 					ease: 'power3.out',
 				},
-				0.2,
+				0.1,
 			);
 
 		// Ornament Flip animations — each tied to a line block
@@ -140,6 +137,9 @@ export default class AboutStoryScroll extends AnimationCore {
 
 		this.crftOriginalText = this.crftText?.textContent || '';
 		this.numberOriginalText = this.scrambledNumber?.textContent || '';
+		this.kanjiOriginalTexts = [...this.kanjiScrambled].map(
+			(el) => el.textContent || '',
+		);
 
 		// Filter to only valid ornaments
 		const validOrnaments = ornaments.filter(
@@ -167,7 +167,8 @@ export default class AboutStoryScroll extends AnimationCore {
 			});
 
 			// Stagger each ornament: 0, 0.5, 1.0, 1.5...
-			const pos = (i * staggerOffset) / 1;
+			const pos =
+				(i * staggerOffset) / 1 + (el === this.kanji ? 0.5 : 0);
 
 			this.timeline.add(flipTl, pos);
 			this.timeline.to(
@@ -188,7 +189,7 @@ export default class AboutStoryScroll extends AnimationCore {
 					{
 						scrambleText: {
 							text: this.crftOriginalText,
-							chars: '!@#$%^&*()_+{}|:<>?-=[];,./',
+							chars: scrambleChars,
 							speed: 2,
 							revealDelay: 0.5,
 							rightToLeft: true,
@@ -206,7 +207,7 @@ export default class AboutStoryScroll extends AnimationCore {
 					{
 						scrambleText: {
 							text: this.numberOriginalText,
-							chars: '@#$%^&*()_+{}|:<>?-=[];,./',
+							chars: scrambleChars,
 							speed: 1,
 							revealDelay: 0.9,
 						},
@@ -214,6 +215,25 @@ export default class AboutStoryScroll extends AnimationCore {
 					},
 					pos,
 				);
+			}
+
+			// ScrambleText on the kanji elements
+			if (el === this.kanji && this.kanjiScrambled.length) {
+				this.kanjiScrambled.forEach((kanjiEl, ki) => {
+					this.timeline.to(
+						kanjiEl,
+						{
+							scrambleText: {
+								text: this.kanjiOriginalTexts[ki],
+								chars: kanjiScrambleChars,
+								speed: 1,
+								revealDelay: 0.5,
+							},
+							duration: 1,
+						},
+						pos,
+					);
+				});
 			}
 		});
 
