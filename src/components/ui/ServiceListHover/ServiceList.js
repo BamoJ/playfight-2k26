@@ -83,9 +83,9 @@ export default class ServiceList extends ComponentCore {
 				item.splitMain.chars,
 				{
 					yPercent: -120,
-					duration: 0.5,
+					duration: 0.4,
 					ease: 'power3.out',
-					stagger: { amount: 0.2, from: 'random' },
+					stagger: { amount: 0.1, from: 'start' },
 				},
 				0,
 			);
@@ -94,9 +94,9 @@ export default class ServiceList extends ComponentCore {
 				item.splitBold.chars,
 				{
 					yPercent: 0,
-					duration: 0.5,
+					duration: 0.4,
 					ease: 'power3.out',
-					stagger: { amount: 0.2, from: 'random' },
+					stagger: { amount: 0.1, from: 'start' },
 				},
 				0.05,
 			);
@@ -105,16 +105,16 @@ export default class ServiceList extends ComponentCore {
 				item.splitBig.chars,
 				{
 					yPercent: 0,
-					duration: 0.4,
+					duration: 0.5,
 					ease: 'power3.out',
-					stagger: { amount: 0.1, from: 'random' },
+					stagger: { amount: 0.1, from: 'start' },
 				},
 				0.05,
 			);
 
 			tl.to(
 				item.dots,
-				{ scale: 1, duration: 0.75, ease: 'back.out' },
+				{ scale: 1, duration: 0.4, ease: 'back.out' },
 				0,
 			);
 
@@ -122,7 +122,7 @@ export default class ServiceList extends ComponentCore {
 				item.visual,
 				{
 					clipPath: 'inset(0 0% 0 0)',
-					duration: 0.8,
+					duration: 0.6,
 					ease: 'power3.inOut',
 				},
 				0,
@@ -133,10 +133,11 @@ export default class ServiceList extends ComponentCore {
 				{ yPercent: 100, visibility: 'visible' },
 				{
 					yPercent: 0,
-					duration: 0.6,
+					duration: 0.4,
 					ease: 'power3.out',
 					stagger: {
-						amount: 0.15,
+						amount: 0.1,
+						from: 'start',
 					},
 				},
 				0.1,
@@ -151,14 +152,14 @@ export default class ServiceList extends ComponentCore {
 			const item = this.items.find(
 				(i) => i.trigger === e.currentTarget,
 			);
-			if (item) item.tl.restart();
+			if (item) item.tl.timeScale(1).play();
 		};
 
 		this.onLeave = (e) => {
 			const item = this.items.find(
 				(i) => i.trigger === e.currentTarget,
 			);
-			if (item) item.tl.pause().progress(0);
+			if (item) item.tl.timeScale(2.2).reverse();
 		};
 	}
 

@@ -12,7 +12,7 @@ export const MenuAnimations = {
 		tl.to(
 			menuLineTop,
 			{
-				y: 5,
+				y: 6,
 				duration: 0.6,
 				ease: 'power4.out',
 			},
@@ -21,7 +21,7 @@ export const MenuAnimations = {
 		tl.to(
 			menuLineBottom,
 			{
-				y: -5,
+				y: -6,
 				duration: 0.6,
 				ease: 'power4.out',
 			},

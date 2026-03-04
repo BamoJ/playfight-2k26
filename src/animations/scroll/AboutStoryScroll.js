@@ -116,7 +116,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		const kanjiScrambleChars = '∆◊≈†‡§¶•ΩΣπ∂ƒ©®™≠±÷×∞µ√∫≤≥';
 
 		gsap.set(this.split.words, {
-			x: '-45vw',
+			x: '-35vw',
 			opacity: 0.3,
 			filter: 'blur(5px)',
 			willChange: 'transform, opacity, filter',
@@ -129,9 +129,9 @@ export default class AboutStoryScroll extends AnimationCore {
 					x: 0,
 					stagger: {
 						from: 'start',
-						each: 0.01,
+						each: 0.011,
 					},
-					ease: 'elastic.inOut(1.0,0.85)',
+					ease: 'elastic.inOut(0.9,0.85)',
 					duration: 1,
 				},
 				0,
@@ -143,7 +143,7 @@ export default class AboutStoryScroll extends AnimationCore {
 					filter: 'blur(0px)',
 					stagger: {
 						from: 'start',
-						each: 0.01,
+						each: 0.011,
 					},
 					duration: 1,
 					ease: 'power3.out',
@@ -175,7 +175,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		const validOrnaments = ornaments.filter(
 			({ el, target }) => el && target,
 		);
-		const staggerOffset = 0.4;
+		const staggerOffset = 0.5;
 
 		validOrnaments.forEach((ornament, i) => {
 			const { el, target } = ornament;
@@ -192,13 +192,12 @@ export default class AboutStoryScroll extends AnimationCore {
 			// Flip.from: animates from captured origin → current target position
 			const flipTl = Flip.from(state, {
 				scale: false,
-				ease: 'back.out(1.5)',
+				ease: 'back.out(1.85)',
 				duration: 1.5,
 			});
 
 			// Stagger each ornament: 0, 0.5, 1.0, 1.5...
-			const pos =
-				(i * staggerOffset) / 1 + (el === this.kanji ? 0.5 : 0);
+			const pos = i * staggerOffset + (el === this.kanji ? 0.5 : 0);
 
 			this.timeline.add(flipTl, pos);
 			this.timeline.to(

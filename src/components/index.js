@@ -16,7 +16,7 @@ import HeroTypewriter from '@ui/HeroTypewriter/HeroTypewritter';
 import HideNav from '@ui/HideNav/HideNav';
 import MouseImageTrail from '@ui/Mouse/MouseImageTrail';
 import PLModeSwitch from '@ui/PlaygroundModeSwitch/PLModeSwitch';
-// import ServiceList from './ui/ServiceListHover/ServiceList';
+import ServiceList from './ui/ServiceListHover/ServiceList';
 
 export default class Components {
 	constructor() {
@@ -36,7 +36,7 @@ export default class Components {
 		this.instances.callButtonHover = new CallButtonHover();
 		this.instances.linkHover = new LinkHover();
 		this.instances.plModeSwitch = new PLModeSwitch();
-		// this.instances.ServiceList = new ServiceList();
+		this.instances.ServiceList = new ServiceList();
 	}
 
 	get(name) {

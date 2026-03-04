@@ -1,0 +1,3 @@
+.nav_logo path {
+	will-change: transform, opacity;
+}

@@ -24,7 +24,7 @@ void main() {
 	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
 	// --- Motion Blur (8 samples, horizontal) ---
-	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 30.0;
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 10.0;
 
 	vec3 blurred = vec3(0.0);
 	const int SAMPLES = 8;

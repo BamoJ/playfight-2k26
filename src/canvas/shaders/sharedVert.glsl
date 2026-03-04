@@ -12,7 +12,7 @@ void main() {
 
 	// Z-axis wave: depth distortion on scroll (vertical position / viewport height)
 	float waveZ = sin(newPosition.y / uViewportSizes.y * PI + PI / 2.0) * -uStrength;
-	newPosition.z -= waveZ;
+	newPosition.z -= waveZ * 0.8; // Adjust strength of Z distortion
 	vUv = uv;
 
 	gl_Position = projectionMatrix * newPosition;

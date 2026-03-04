@@ -58,7 +58,7 @@ export class PlayerCore {
 		// Options from data attributes
 		this._updateSize =
 			el.getAttribute('data-player-update-size') || null;
-		this._hoverHideDelay = 3000;
+		this._hoverHideDelay = 1000;
 		this._seekThrottle = 180;
 	}
 

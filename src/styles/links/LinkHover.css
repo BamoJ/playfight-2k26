@@ -31,7 +31,7 @@ MAIN LINK HOVER ANIMATION
 	left: 0;
 	top: 50%;
 	width: 100%;
-	height: 2px;
+	height: 4px;
 	background: currentColor;
 	transform-origin: 100% 50%;
 	transform: scale3d(0, 1, 1);

@@ -13,8 +13,8 @@ uniform float uBulge;
 varying vec2 vUv;
 
 vec2 bulge(vec2 uv, vec2 center) {
-	float radius = 0.5;
-	float strength = 1.2;
+	float radius = 0.9; // Adjust as needed
+	float strength = 1.1;
 	uv -= center;
 	float dist = length(uv) / radius;
 	float distPow = pow(dist, 2.0);
@@ -34,17 +34,17 @@ void main() {
 	// --- RGB Shift on Y axis ---
 	float shiftAmount = uStrength * uScrollProgress * 0.95;
 
-	// --- Sharp sample (deduplicated: R+B share same shifted UV) ---
-	vec2 shiftedUv = coverUv + vec2(0.0, shiftAmount * 2.0);
-	vec4 shiftedSample = texture2D(uTexture, shiftedUv);
-	float sharpG = texture2D(uTexture, coverUv).g;
-	vec3 sharp = vec3(shiftedSample.r, sharpG, shiftedSample.b);
+	// --- Sharp sample — individual channel offsets ---
+	float sharpR = texture2D(uTexture, coverUv + vec2(0.0, shiftAmount * 2.0)).r;
+	float sharpG = texture2D(uTexture, coverUv + vec2(0.0, shiftAmount * 0.0)).g;
+	float sharpB = texture2D(uTexture, coverUv + vec2(0.0, shiftAmount * -2.0)).b;
+	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
 	// --- Motion Blur (8 samples, vertical) ---
-	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 30.0;
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0;
 
 	// Early-out: skip blur loop when not scrolling
-	if (blurAmount < 0.001) {
+	if(blurAmount < 0.001) {
 		gl_FragColor = vec4(sharp, uOpacity);
 		return;
 	}

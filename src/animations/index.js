@@ -1,9 +1,10 @@
 import ParaReveal from '@animations/texts/ParaReveal';
+import CountingNumbers from '@animations/countingnumbers/CountingNum';
 import HeroScroll from './scroll/HeroScroll';
 import AboutNav from './scroll/AboutNav';
 import AboutStoryScroll from './scroll/AboutStoryScroll';
 import LogoWallCycle from './scroll/LogoWallCycle';
-import ServiceListScroll from './scroll/ServiceListScroll';
+// import ServiceListScroll from './scroll/ServiceListScroll';
 
 export default class Animation {
 	constructor() {
@@ -55,14 +56,22 @@ export default class Animation {
 			animation.init();
 		}
 
-		const serviceListEl = document.querySelector(
-			'[data-service-hover="container"]',
-		);
-		if (serviceListEl) {
-			const animation = new ServiceListScroll(serviceListEl);
-			this.collection.push(animation);
-			animation.init();
-		}
+		// const serviceListEl = document.querySelector(
+		// 	'[data-service-hover="container"]',
+		// );
+		// if (serviceListEl) {
+		// 	const animation = new ServiceListScroll(serviceListEl);
+		// 	this.collection.push(animation);
+		// 	animation.init();
+		// }
+
+		document
+			.querySelectorAll('[data-anim-counting-num]')
+			.forEach((element) => {
+				const animation = new CountingNumbers(element);
+				this.collection.push(animation);
+				animation.init();
+			});
 
 		document
 			.querySelectorAll('[data-logo-wall-cycle-init]')

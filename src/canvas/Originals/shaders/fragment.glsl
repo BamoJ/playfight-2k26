@@ -15,9 +15,30 @@ void main() {
 
 	float shiftAmount = uStrength * uScrollProgress * 0.95;
 
-	float r = texture2D(uTexture, coverUv + vec2(shiftAmount * 2.0, 0.0)).r;
-	float g = texture2D(uTexture, coverUv).g;
-	float b = texture2D(uTexture, coverUv + vec2(shiftAmount * 2.0, 0.0)).b;
+	float sharpR = texture2D(uTexture, coverUv + vec2(shiftAmount * 2.0, 0.0)).r;
+	float sharpG = texture2D(uTexture, coverUv).g;
+	float sharpB = texture2D(uTexture, coverUv + vec2(shiftAmount * 2.0, 0.0)).b;
+	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
-	gl_FragColor = vec4(r, g, b, uOpacity);
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0;
+
+	if(blurAmount < 0.001) {
+		gl_FragColor = vec4(sharp, uOpacity);
+		return;
+	}
+
+	vec3 blurred = vec3(0.0);
+	const int SAMPLES = 8;
+	for(int i = 0; i < SAMPLES; i++) {
+		float offset = (float(i) / float(SAMPLES - 1) - 0.5) * blurAmount;
+		vec2 sampleUv = coverUv + vec2(offset, 0.0);
+		float r = texture2D(uTexture, sampleUv + vec2(shiftAmount * 2.0, 0.0)).r;
+		float g = texture2D(uTexture, sampleUv).g;
+		float b = texture2D(uTexture, sampleUv + vec2(shiftAmount * 2.0, 0.0)).b;
+		blurred += vec3(r, g, b);
+	}
+	blurred /= float(SAMPLES);
+
+	float blendFactor = smoothstep(0.0, 0.15, blurAmount);
+	gl_FragColor = vec4(mix(sharp, blurred, blendFactor), uOpacity);
 }

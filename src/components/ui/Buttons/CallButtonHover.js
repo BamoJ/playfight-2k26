@@ -28,6 +28,13 @@ export default class CallButtonHover extends ComponentCore {
 				smartWrap: true,
 			});
 
+			const calSVG = btn.querySelector('.cal');
+
+			gsap.set(calSVG, {
+				scale: 0,
+				display: 'block',
+			});
+
 			gsap.set(textHover, { opacity: 1, y: 0, filter: 'none' });
 
 			const defaultWidth = btn.offsetWidth;
@@ -45,7 +52,7 @@ export default class CallButtonHover extends ComponentCore {
 				btn,
 				{
 					width: hoverWidth,
-					scale: 1,
+					scale: 1.05,
 					duration: 0.34,
 					ease: 'power2.out',
 				},
@@ -75,21 +82,9 @@ export default class CallButtonHover extends ComponentCore {
 				0.1,
 			);
 
-			const dotSVG = btn.querySelector('.global_dots');
-			const calSVG = btn.querySelector('.cal');
-			gsap.set(calSVG, {
-				scale: 0,
-				display: 'block',
-			});
-
-			tl.to(
-				dotSVG,
-				{ scale: 0, duration: 0.15, ease: 'power2.in' },
-				0,
-			);
 			tl.to(
 				calSVG,
-				{ scale: 1, duration: 0.15, ease: 'power2.out', x: -3 },
+				{ scale: 1, duration: 0.15, ease: 'power2.out', x: -5 },
 				0.1,
 			);
 
