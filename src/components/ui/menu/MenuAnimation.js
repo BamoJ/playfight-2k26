@@ -12,7 +12,7 @@ export const MenuAnimations = {
 		tl.to(
 			menuLineTop,
 			{
-				y: 6,
+				y: 4,
 				duration: 0.6,
 				ease: 'power4.out',
 			},
@@ -21,7 +21,7 @@ export const MenuAnimations = {
 		tl.to(
 			menuLineBottom,
 			{
-				y: -6,
+				y: -4,
 				duration: 0.6,
 				ease: 'power4.out',
 			},
@@ -32,7 +32,7 @@ export const MenuAnimations = {
 				{
 					rotate: -45,
 					duration: 0.6,
-					ease: 'back.inOut(1.2)',
+					ease: 'circ.inOut',
 				},
 				'<+.1',
 			)
@@ -41,7 +41,7 @@ export const MenuAnimations = {
 				{
 					rotate: 45,
 					duration: 0.6,
-					ease: 'back.inOut(1.2)',
+					ease: 'circ.inOut',
 				},
 				'<',
 			);
