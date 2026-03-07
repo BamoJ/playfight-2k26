@@ -41,14 +41,16 @@ export default class HideNav extends ComponentCore {
 				stagger: 0.1,
 				ease: 'power4.out',
 				opacity: 0,
+				overwrite: true,
 			});
 		}
 		if (this.navSVG) {
 			gsap.to(this.navSVG.querySelectorAll('path'), {
 				yPercent: -150,
-				duration: 0.5,
+				duration: 0.3,
 				ease: 'power4.out',
-				stagger: { from: 'random', amount: 0.25 },
+				stagger: { from: 'random', amount: 0.1 },
+				overwrite: true,
 			});
 		}
 	}
@@ -61,6 +63,7 @@ export default class HideNav extends ComponentCore {
 				stagger: 0.08,
 				ease: 'power4.out',
 				opacity: 1,
+				overwrite: true,
 			});
 		}
 		if (this.navSVG) {
@@ -69,6 +72,7 @@ export default class HideNav extends ComponentCore {
 				duration: 0.9,
 				ease: 'power4.out',
 				stagger: { from: 'random', amount: 0.25 },
+				overwrite: true,
 			});
 		}
 	}

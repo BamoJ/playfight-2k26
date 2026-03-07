@@ -28,6 +28,14 @@ body > :first-child {
 	opacity: 0.5;
 }
 
+.about_navigation_link:has(~ .about_navigation_link.is-active) {
+	transform: translateY(-12px);
+}
+
+.about_navigation_link.is-active ~ .about_navigation_link {
+	transform: translateY(12px);
+}
+
 [data-logo-wall-item] {
 	overflow: hidden;
 	perspective: 100px;

@@ -25,14 +25,17 @@ export default class AboutStoryScroll extends AnimationCore {
 	}
 
 	createElements() {
-		this.para = this.element.querySelector(
-			'[data-anim-about-scroll="para"]',
-		);
+		this.para = this.element
+			.querySelector('[data-anim-about-scroll="para"]')
+			.querySelector('.g_paragraph');
 		this.signatureContainer = this.element.querySelector(
 			'[data-anim-about-scroll="lottie"]',
 		);
 
-		this.split = new SplitText(this.para, { type: 'words' });
+		const paraLines = this.para.querySelectorAll('p');
+		this.split = new SplitText(paraLines, {
+			type: 'lines',
+		});
 
 		/**
 		 * LOTTIE SIGNATURE ANIMATION
@@ -115,40 +118,40 @@ export default class AboutStoryScroll extends AnimationCore {
 		const scrambleChars = '!@#$%^&*()_+{}|:<>?-=[];,./©®';
 		const kanjiScrambleChars = '∆◊≈†‡§¶•ΩΣπ∂ƒ©®™≠±÷×∞µ√∫≤≥';
 
-		gsap.set(this.split.words, {
-			x: '-35vw',
-			opacity: 0.3,
+		gsap.set(this.split.lines, {
+			x: '-25vw',
+			opacity: 0.2,
 			filter: 'blur(5px)',
 			willChange: 'transform, opacity, filter',
 		});
 
 		this.timeline
 			.to(
-				this.split.words,
+				this.split.lines,
 				{
 					x: 0,
 					stagger: {
 						from: 'start',
-						each: 0.011,
+						each: 0.1,
 					},
-					ease: 'elastic.inOut(0.9,0.85)',
-					duration: 1,
+					ease: 'elastic.inOut(0.3,1.0)',
+					duration: 2,
 				},
 				0,
 			)
 			.to(
-				this.split.words,
+				this.split.lines,
 				{
 					opacity: 1,
 					filter: 'blur(0px)',
 					stagger: {
 						from: 'start',
-						each: 0.011,
+						each: 0.1,
 					},
-					duration: 1,
-					ease: 'power3.out',
+					duration: 2,
+					ease: 'none',
 				},
-				0.1,
+				0,
 			);
 
 		// Ornament Flip animations — each tied to a line block
@@ -170,7 +173,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.kanjiOriginalTexts = [...this.kanjiScrambled].map(
 			(el) => el.textContent || '',
 		);
-
+		0;
 		// Filter to only valid ornaments
 		const validOrnaments = ornaments.filter(
 			({ el, target }) => el && target,

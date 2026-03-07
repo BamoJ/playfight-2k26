@@ -9,7 +9,7 @@
 	text-shadow: 0px 1.3em currentColor;
 	transform: translateY(0em) rotate(0.001deg);
 	will-change: transform;
-	transition: transform 0.5s cubic-bezier(0.625, 0.05, 0, 1);
+	transition: transform 0.3s cubic-bezier(0.625, 0.05, 0, 1);
 }
 
 [data-anim-link-hover].is-hover div {

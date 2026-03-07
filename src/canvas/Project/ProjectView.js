@@ -1,5 +1,3 @@
-import gsap from 'gsap';
-import { Raycaster, Vector2 } from 'three';
 import { DOMPlane } from '../DOMPlane';
 import TextureCache from '../utils/TextureCache';
 import vertexShader from '../shaders/sharedVert.glsl';
@@ -15,19 +13,6 @@ export class ProjectView extends DOMPlane {
 			},
 		});
 		this.template = options.template || document;
-		this.raycaster = new Raycaster();
-		this.mouseNDC = new Vector2(-10, -10);
-		this.hoveredPlane = null;
-		this.mouseDirty = false;
-
-		this._onMouseMove = (e) => {
-			this.mouseNDC.x = (e.clientX / window.innerWidth) * 2 - 1;
-			this.mouseNDC.y = -(e.clientY / window.innerHeight) * 2 + 1;
-			this.mouseDirty = true;
-		};
-		window.addEventListener('mousemove', this._onMouseMove, {
-			signal: this.abortController.signal,
-		});
 
 		this.loadImages();
 	}
@@ -39,7 +24,6 @@ export class ProjectView extends DOMPlane {
 
 		if (!images.length) return;
 
-		// Force layout so getBoundingClientRect works (images may be display:none in CSS)
 		// Wait for DOM images to load (ensures getBoundingClientRect returns correct height
 		// when images use height:auto with no width/height HTML attributes)
 		const imgLoadPromises = images
@@ -87,14 +71,14 @@ export class ProjectView extends DOMPlane {
 			}
 		};
 
-		uniqueSrcs.forEach((img, src) => {
+		uniqueSrcs.forEach((_img, src) => {
 			TextureCache.load(src)
 				.then((texture) => {
 					this.textures.push({ texture, src });
 					done();
 				})
 				.catch((err) => {
-					console.error('[HomeView] Texture error:', err);
+					console.error('[ProjectView] Texture error:', err);
 					done();
 				});
 		});
@@ -118,9 +102,7 @@ export class ProjectView extends DOMPlane {
 					? [planeAspect / imageAspect, 1.0]
 					: [1.0, imageAspect / planeAspect];
 
-			mesh.material.uniforms.uCoverScale = {
-				value: coverScale,
-			};
+			mesh.material.uniforms.uCoverScale = { value: coverScale };
 			mesh.material.uniforms.uStrength = { value: 0 };
 			mesh.material.uniforms.uScrollProgress = { value: 0 };
 			mesh.material.uniforms.uViewportSizes = {
@@ -128,7 +110,6 @@ export class ProjectView extends DOMPlane {
 			};
 			mesh.material.uniforms.uMouse = { value: [0.5, 0.5] };
 			mesh.material.uniforms.uBulge = { value: 0 };
-			mesh.userData.targetMouseUV = { x: 0.5, y: 0.5 };
 
 			this.imagePlanes.push(mesh);
 			this.imageGroup.add(mesh);
@@ -156,66 +137,12 @@ export class ProjectView extends DOMPlane {
 
 	update({ delta }) {
 		this.updatePlanesPositions();
-		if (this.imagePlanes[0]?.material.uniforms.uStrength.value !== 0) {
-			this.mouseDirty = true;
-		}
-		this.updateBulge();
 
 		this.imagePlanes.forEach((plane) => {
 			if (plane.material.uniforms.uTime) {
 				plane.material.uniforms.uTime.value += delta * 0.001;
 			}
-
-			const mouse = plane.material.uniforms.uMouse.value;
-			const target = plane.userData.targetMouseUV;
-			const ease = 0.07;
-
-			if (plane.userData.isHovered) {
-				mouse[0] += (target.x - mouse[0]) * ease;
-				mouse[1] += (target.y - mouse[1]) * ease;
-			} else {
-				mouse[0] += (0.5 - mouse[0]) * ease;
-				mouse[1] += (0.5 - mouse[1]) * ease;
-			}
 		});
-	}
-
-	updateBulge() {
-		if (!this.imagePlanes.length || !this.mouseDirty) return;
-		this.mouseDirty = false;
-
-		this.raycaster.setFromCamera(this.mouseNDC, this.camera);
-		const intersects = this.raycaster.intersectObjects(this.imagePlanes);
-
-		const hit = intersects.length > 0 ? intersects[0] : null;
-		const hitPlane = hit ? hit.object : null;
-
-		if (hitPlane !== this.hoveredPlane) {
-			if (this.hoveredPlane) {
-				this.hoveredPlane.userData.isHovered = false;
-				gsap.to(this.hoveredPlane.material.uniforms.uBulge, {
-					value: 0,
-					duration: 0.4,
-					ease: 'power2.out',
-					overwrite: true,
-				});
-			}
-			if (hitPlane) {
-				hitPlane.userData.isHovered = true;
-				gsap.to(hitPlane.material.uniforms.uBulge, {
-					value: 1,
-					duration: 0.6,
-					ease: 'power2.out',
-					overwrite: true,
-				});
-			}
-			this.hoveredPlane = hitPlane;
-		}
-
-		if (hit && hit.uv) {
-			hitPlane.userData.targetMouseUV.x = hit.uv.x;
-			hitPlane.userData.targetMouseUV.y = hit.uv.y;
-		}
 	}
 
 	onResize(viewport, screen) {
