@@ -1,8 +1,12 @@
 import { gsap } from 'gsap';
 
 export const MenuAnimations = {
-	open: ({ menu, menuLineTop, menuLineBottom }) => {
+	open: ({ menu, menuLineTop, menuLineBottom, lineWraps }) => {
 		const tl = gsap.timeline();
+
+		if (lineWraps) {
+			tl.set(lineWraps, { overflow: 'visible' }, 0);
+		}
 
 		tl.to(menu, {
 			clipPath: 'inset(0 0 0% 0%)',
@@ -49,7 +53,7 @@ export const MenuAnimations = {
 		return tl;
 	},
 
-	close: ({ menu, menuLineTop, menuLineBottom }) => {
+	close: ({ menu, menuLineTop, menuLineBottom, lineWraps }) => {
 		const tl = gsap.timeline();
 
 		tl.to(menuLineTop, {
@@ -77,6 +81,10 @@ export const MenuAnimations = {
 			},
 			'<',
 		);
+
+		if (lineWraps) {
+			tl.set(lineWraps, { overflow: 'hidden' });
+		}
 
 		return tl;
 	},

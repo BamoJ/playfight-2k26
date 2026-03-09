@@ -1,7 +1,7 @@
 import ComponentCore from '@component-core/ComponentCore';
 import { MenuAnimations } from './MenuAnimation';
-import { gsap } from 'gsap';
 import SmoothScroll from '@utils/SmoothScroll';
+import emitter from '@utils/Emitter';
 
 export default class MenuComponent extends ComponentCore {
 	constructor() {
@@ -26,10 +26,9 @@ export default class MenuComponent extends ComponentCore {
 			menulineBottom: document.querySelector(
 				'[data-menu="line-bottom"]',
 			),
+			lineWraps: document.querySelectorAll('.nav_button_line_wrap'),
 		};
 		this.el.menu.style.pointerEvents = 'none';
-
-		console.log(this.el);
 	}
 
 	createEvents() {
@@ -106,11 +105,13 @@ export default class MenuComponent extends ComponentCore {
 		if (this.isOpen) return;
 		this.scroll.stopScroll();
 		this.el.menu.style.pointerEvents = 'auto';
+		emitter.emit('menu:open');
 		MenuAnimations.open({
 			menu: this.el.menu,
 			container: this.el.container,
 			menuLineTop: this.el.menulineTop,
 			menuLineBottom: this.el.menulineBottom,
+			lineWraps: this.el.lineWraps,
 		});
 
 		this.isOpen = true;
@@ -123,9 +124,11 @@ export default class MenuComponent extends ComponentCore {
 			menu: this.el.menu,
 			menuLineTop: this.el.menulineTop,
 			menuLineBottom: this.el.menulineBottom,
+			lineWraps: this.el.lineWraps,
 		}).then(() => {
 			this.el.menu.style.pointerEvents = 'none';
 			this.isOpen = false;
+			emitter.emit('menu:close');
 
 			this.scroll.startScroll(); // Restart main scroll when menu is closed
 		});

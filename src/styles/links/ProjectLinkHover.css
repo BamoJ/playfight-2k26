@@ -9,7 +9,7 @@
 	position: absolute;
 	width: 100%;
 	height: 1px;
-	background: currentColor;
+	background: white;
 	bottom: 0;
 	left: 0;
 	pointer-events: none;
