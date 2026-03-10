@@ -4,6 +4,7 @@ import HeroScroll from './scroll/HeroScroll';
 import AboutNav from './scroll/AboutNav';
 import AboutStoryScroll from './scroll/AboutStoryScroll';
 import LogoWallCycle from './scroll/LogoWallCycle';
+import ImageParallax from './global/ImageParallax';
 // import ServiceListScroll from './scroll/ServiceListScroll';
 
 export default class Animation {
@@ -64,6 +65,17 @@ export default class Animation {
 		// 	this.collection.push(animation);
 		// 	animation.init();
 		// }
+
+		//**
+		// IMAGE PARALLAX ANIMATIONS */
+
+		document
+			.querySelectorAll('[data-anim-parallax="true"]')
+			.forEach((element) => {
+				const animation = new ImageParallax(element);
+				this.collection.push(animation);
+				animation.init();
+			});
 
 		document
 			.querySelectorAll('[data-anim-counting-num]')

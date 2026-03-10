@@ -4,6 +4,7 @@
 @import './videoplayer/player.css';
 @import './typewriter/typewriter.css';
 @import './buttons/buttons.css';
+@import './buttons/lightbox-button.css';
 @import './links/LinkHover.css';
 @import './nav/nav.css';
 @import './links/ProjectLinkHover.css';

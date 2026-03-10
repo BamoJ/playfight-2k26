@@ -9,6 +9,7 @@
 import MenuComponent from '@ui/menu/MenuComponent';
 import VideoPlayerManager from '@components/VideoPlayer/VideoPlayerManager';
 import ButtonHover from '@ui/Buttons/ButtonHover';
+import LightboxButtonHover from '@ui/Buttons/LightboxButtonHover';
 import CallButtonHover from '@ui/Buttons/CallButtonHover';
 import LinkHover from '@ui/Links/LinkHover';
 import NavButtonHover from '@ui/Buttons/NavButtonHover';
@@ -19,6 +20,7 @@ import MouseImageTrail from '@ui/Mouse/MouseImageTrail';
 import PLModeSwitch from '@ui/PlaygroundModeSwitch/PLModeSwitch';
 import ServiceList from './ui/ServiceListHover/ServiceList';
 import NavLogoMorph from './ui/Buttons/NavLogoMorph';
+import PlaygroundButtonHover from './ui/Buttons/PlaygroundButtonHover';
 
 export default class Components {
 	constructor() {
@@ -32,11 +34,14 @@ export default class Components {
 		this.instances.menu = new MenuComponent();
 		this.instances.videoPlayer = new VideoPlayerManager();
 		this.instances.navLogoMorph = new NavLogoMorph();
+		this.instances.playgroundButtonHover =
+			new PlaygroundButtonHover();
 
 		this.instances.heroTypewriter = new HeroTypewriter();
 		this.instances.hideNav = new HideNav();
 		this.instances.mouseImageTrail = new MouseImageTrail();
 		this.instances.buttonHover = new ButtonHover();
+		this.instances.lightboxButtonHover = new LightboxButtonHover();
 		this.instances.callButtonHover = new CallButtonHover();
 		this.instances.linkHover = new LinkHover();
 		this.instances.plModeSwitch = new PLModeSwitch();

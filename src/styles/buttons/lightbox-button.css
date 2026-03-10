@@ -1,0 +1,11 @@
+.media_lightbox_btn_inner {
+	will-change: width, padding-right, height;
+}
+
+.media_lightbox_btn_info {
+	will-change: width, opacity;
+}
+
+.media_lightbox_btn_play_btn {
+	will-change: transform;
+}

@@ -76,7 +76,7 @@ export default class Canvas {
 
 		// Fallback to URL
 		const path = window.location.pathname;
-		for (const key of Object.keys(this.registry)) {
+		for (const key of Object.keys(this.registry || {})) {
 			if (path === '/' && (key === 'home' || key === 'index'))
 				return key;
 			if (path.includes(key)) return key;
