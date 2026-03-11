@@ -21,6 +21,7 @@ import PLModeSwitch from '@ui/PlaygroundModeSwitch/PLModeSwitch';
 import ServiceList from './ui/ServiceListHover/ServiceList';
 import NavLogoMorph from './ui/Buttons/NavLogoMorph';
 import PlaygroundButtonHover from './ui/Buttons/PlaygroundButtonHover';
+import Lightbox from './Lightbox/Lightbox';
 
 export default class Components {
 	constructor() {
@@ -46,6 +47,7 @@ export default class Components {
 		this.instances.linkHover = new LinkHover();
 		this.instances.plModeSwitch = new PLModeSwitch();
 		this.instances.ServiceList = new ServiceList();
+		this.instances.lightbox = new Lightbox();
 	}
 
 	get(name) {

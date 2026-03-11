@@ -10,7 +10,9 @@ export default class PlaygroundButtonHover extends ComponentCore {
 	}
 
 	createElements() {
-		const buttons = document.querySelectorAll('.playground_mode_switch_btn');
+		const buttons = document.querySelectorAll(
+			'.playground_mode_switch_btn',
+		);
 		if (!buttons.length) return;
 		this.items = [...buttons].map((btn) => {
 			const recCenter = btn.querySelector(
@@ -23,8 +25,6 @@ export default class PlaygroundButtonHover extends ComponentCore {
 				paused: true,
 				defaults: { ease: 'power3.inOut', duration: 0.4 },
 			});
-
-			console.log('recCenter:', recCenter);
 
 			if (pgBtnSvgPath) {
 				tl.to(

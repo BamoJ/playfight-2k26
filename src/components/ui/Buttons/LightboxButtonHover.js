@@ -10,211 +10,206 @@ export default class LightboxButtonHover extends ComponentCore {
 		super();
 		this.handleEnter = this.handleEnter.bind(this);
 		this.handleLeave = this.handleLeave.bind(this);
+		this.items = [];
 		this.init();
 	}
 
 	createElements() {
-		this.wraps = document.querySelectorAll(
-			'.media_lightbox_btn_parent',
-		);
+		this.items = [
+			...document.querySelectorAll('.media_lightbox_btn_parent'),
+		]
+			.map((wrap) => {
+				const pill = wrap.querySelector('.media_lightbox_btn_inner');
+				const infoBlock = wrap.querySelector(
+					'.media_lightbox_btn_info',
+				);
+				const iconBtn = wrap.querySelector(
+					'.media_lightbox_btn_play_btn',
+				);
 
-		this.wraps.forEach((wrap) => {
-			const pill = wrap.querySelector('.media_lightbox_btn_inner');
-			const infoBlock = wrap.querySelector(
-				'.media_lightbox_btn_info',
-			);
-			const iconBtn = wrap.querySelector(
-				'.media_lightbox_btn_play_btn',
-			);
+				if (!pill || !infoBlock || !iconBtn) return null;
 
-			if (!pill || !infoBlock || !iconBtn) return;
+				const iconNextSibling = iconBtn.nextSibling;
+				const pillDefaultW = pill.offsetWidth;
+				const pillOrigPadR = parseFloat(
+					getComputedStyle(pill).paddingRight,
+				);
 
-			wrap._iconNextSibling = iconBtn.nextSibling;
+				gsap.set(pill, {
+					height: pill.offsetHeight,
+					width: pillDefaultW,
+				});
 
-			const pillDefaultW = pill.offsetWidth;
-			const pillOrigPadR = parseFloat(
-				getComputedStyle(pill).paddingRight,
-			);
+				gsap.set(infoBlock, {
+					display: 'flex',
+					width: 'auto',
+					visibility: 'hidden',
+				});
+				const infoW = infoBlock.offsetWidth + 1;
+				gsap.set(infoBlock, {
+					width: 0,
+					opacity: 0,
+					visibility: 'visible',
+				});
 
-			gsap.set(pill, { height: pill.offsetHeight });
+				const split = new SplitText(infoBlock, {
+					type: 'chars',
+					smartWrap: true,
+					mask: 'chars',
+				});
 
-			// Measure infoBlock natural width while hidden
-			gsap.set(infoBlock, {
-				display: 'flex',
-				width: 'auto',
-				visibility: 'hidden',
-			});
-			const infoW = infoBlock.offsetWidth + 1;
-			gsap.set(infoBlock, {
-				width: 0,
-				opacity: 0,
-				visibility: 'visible',
-			});
-
-			const split = new SplitText(infoBlock, {
-				type: 'chars',
-				smartWrap: true,
-				mask: 'chars',
-			});
-			gsap.set(split.chars, {
-				yPercent: 100,
-				opacity: 0,
-				filter: 'blur(4px)',
-			});
-
-			const pillHoverW = pillDefaultW + infoW + iconBtn.offsetWidth;
-
-			// --- Enter timeline ---
-			const tlIn = gsap.timeline({ paused: true });
-			tlIn.to(
-				pill,
-				{
-					width: pillHoverW,
-					paddingRight: 0,
-					duration: 0.5,
-					ease: 'power2.out',
-				},
-				0,
-			);
-			tlIn.to(
-				infoBlock,
-				{
-					width: infoW,
-					opacity: 1,
-					duration: 0.5,
-					ease: 'power2.out',
-				},
-				0.05,
-			);
-			tlIn.fromTo(
-				split.chars,
-				{ yPercent: 100, opacity: 0, filter: 'blur(4px)' },
-				{
-					yPercent: 0,
-					opacity: 1,
-					filter: 'blur(0px)',
-					duration: 0.2,
-					stagger: { amount: 0.12, grid: [10, 5] },
-				},
-				0,
-			);
-
-			// --- Leave timeline ---
-			const tlOut = gsap.timeline({ paused: true });
-			tlOut.to(
-				split.chars,
-				{
+				gsap.set(split.chars, {
 					yPercent: 100,
 					opacity: 0,
 					filter: 'blur(4px)',
-					duration: 0.2,
-					stagger: { amount: 0.1, from: 'start' },
-				},
-				0,
-			);
-			tlOut.to(
-				infoBlock,
-				{
-					width: 0,
-					opacity: 0,
-					duration: 0.4,
-					ease: 'power3.out',
-				},
-				0,
-			);
-			tlOut.to(
-				pill,
-				{
-					width: pillDefaultW,
-					paddingRight: pillOrigPadR,
-					duration: 0.4,
-					ease: 'power3.out',
-				},
-				0,
-			);
+				});
 
-			wrap._tlIn = tlIn;
-			wrap._tlOut = tlOut;
-		});
+				return {
+					wrap,
+					pill,
+					infoBlock,
+					iconBtn,
+					iconNextSibling,
+					pillDefaultW,
+					pillOrigPadR,
+					infoW,
+					pillHoverW: pillDefaultW + infoW + iconBtn.offsetWidth,
+					split,
+					flipTween: null,
+				};
+			})
+			.filter(Boolean);
+
+		this.wraps = this.items.map((item) => item.wrap);
 	}
 
 	addEventListeners() {
-		this.wraps.forEach((wrap) => {
+		this.items.forEach(({ wrap }) => {
 			wrap.addEventListener('mouseenter', this.handleEnter);
 			wrap.addEventListener('mouseleave', this.handleLeave);
 		});
 	}
 
 	removeEventListeners() {
-		this.wraps.forEach((wrap) => {
+		this.items.forEach(({ wrap }) => {
 			wrap.removeEventListener('mouseenter', this.handleEnter);
 			wrap.removeEventListener('mouseleave', this.handleLeave);
 		});
 	}
 
-	handleEnter(e) {
-		const wrap = e.currentTarget;
-		const pill = wrap.querySelector('.media_lightbox_btn_inner');
-		const iconBtn = wrap.querySelector(
-			'.media_lightbox_btn_play_btn',
-		);
+	getItem(wrap) {
+		return this.items.find((item) => item.wrap === wrap);
+	}
 
-		wrap._tlOut?.pause(0);
-		wrap._tlIn?.restart();
+	killMotion(item) {
+		if (!item) return;
 
-		const state = Flip.getState(iconBtn);
-		pill.appendChild(iconBtn);
-		Flip.from(state, {
-			duration: 0.3,
-			ease: 'power1.out',
+		item.flipTween?.kill();
+		gsap.set(item.iconBtn, { clearProps: 'transform' });
+		gsap.killTweensOf(item.pill);
+		gsap.killTweensOf(item.infoBlock);
+		gsap.killTweensOf(item.split.chars);
+	}
+
+	moveIcon(item, targetParent, beforeNode = null) {
+		if (!item || item.iconBtn.parentNode === targetParent) return;
+
+		item.flipTween?.kill();
+
+		const state = Flip.getState(item.iconBtn);
+
+		if (beforeNode) {
+			targetParent.insertBefore(item.iconBtn, beforeNode);
+		} else {
+			targetParent.appendChild(item.iconBtn);
+		}
+
+		item.flipTween = Flip.from(state, {
+			duration: 0.4,
+			ease: 'power2.out',
+			overwrite: true,
 		});
+	}
+
+	handleEnter(e) {
+		const item = this.getItem(e.currentTarget);
+		if (!item) return;
+
+		this.killMotion(item);
+
+		gsap.to(item.pill, {
+			width: item.pillHoverW,
+			paddingRight: 10,
+			duration: 0.5,
+			ease: 'power2.out',
+			overwrite: true,
+		});
+
+		gsap.to(item.infoBlock, {
+			width: item.infoW,
+			opacity: 1,
+			duration: 0.5,
+			ease: 'power2.out',
+			overwrite: true,
+			delay: 0.05,
+		});
+
+		gsap.to(item.split.chars, {
+			yPercent: 0,
+			opacity: 1,
+			filter: 'blur(0px)',
+			duration: 0.3,
+			stagger: { amount: 0.12, grid: [10, 5] },
+			overwrite: true,
+		});
+
+		this.moveIcon(item, item.pill);
 	}
 
 	handleLeave(e) {
-		const wrap = e.currentTarget;
-		const iconBtn = wrap.querySelector(
-			'.media_lightbox_btn_play_btn',
-		);
+		const item = this.getItem(e.currentTarget);
+		if (!item) return;
 
-		wrap._tlIn?.pause();
-		wrap._tlOut?.restart();
+		this.killMotion(item);
 
-		const state = Flip.getState(iconBtn);
-		wrap.insertBefore(iconBtn, wrap._iconNextSibling || null);
-		Flip.from(state, {
-			duration: 0.3,
-			ease: 'power1.out',
+		gsap.to(item.split.chars, {
+			yPercent: 100,
+			opacity: 0,
+			filter: 'blur(4px)',
+			duration: 0.2,
+			stagger: { amount: 0.01, from: 'center' },
+			overwrite: true,
 		});
+
+		gsap.to(item.infoBlock, {
+			width: 0,
+			opacity: 0,
+			duration: 0.3,
+			ease: 'sine.out',
+			overwrite: true,
+		});
+
+		gsap.to(item.pill, {
+			width: item.pillDefaultW,
+			paddingRight: item.pillOrigPadR,
+			duration: 0.3,
+			ease: 'sine.out',
+			overwrite: true,
+			delay: 0,
+		});
+
+		this.moveIcon(item, item.wrap, item.iconNextSibling || null);
 	}
 
 	destroy() {
-		this.wraps.forEach((wrap) => {
-			if (wrap._tlIn) {
-				wrap._tlIn.kill();
-				wrap._tlIn = null;
-			}
-			if (wrap._tlOut) {
-				wrap._tlOut.kill();
-				wrap._tlOut = null;
-			}
-
-			const pill = wrap.querySelector('.media_lightbox_btn_inner');
-			const infoBlock = wrap.querySelector(
-				'.media_lightbox_btn_info',
-			);
-			const iconBtn = wrap.querySelector(
-				'.media_lightbox_btn_play_btn',
-			);
-
-			if (iconBtn) {
-				gsap.killTweensOf(iconBtn);
-				if (wrap._iconNextSibling && iconBtn.parentNode !== wrap) {
-					wrap.insertBefore(iconBtn, wrap._iconNextSibling);
-				}
-			}
-			if (pill) gsap.set(pill, { clearProps: 'all' });
-			if (infoBlock) gsap.set(infoBlock, { clearProps: 'all' });
-		});
 		super.destroy();
+
+		this.items.forEach((item) => {
+			this.killMotion(item);
+			item.split?.revert();
+		});
+
+		this.items = [];
+		this.wraps = [];
 	}
 }

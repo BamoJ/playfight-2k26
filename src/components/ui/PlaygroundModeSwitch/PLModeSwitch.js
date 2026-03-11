@@ -5,7 +5,7 @@ import { Flip } from 'gsap/Flip';
 export default class PLModeSwitch extends ComponentCore {
 	constructor() {
 		super();
-		this.currentMode = '10';
+		this.currentMode = '4';
 		this.init();
 	}
 
