@@ -210,14 +210,17 @@ export default class Lightbox extends ComponentCore {
 		const img = trigger.querySelector('img');
 		const state = Flip.getState(img);
 
-		// Lock trigger height so grid doesn't collapse
+		// Lock trigger + parent dimensions so grid doesn't collapse when img leaves
 		const triggerRect = trigger.getBoundingClientRect();
 		trigger.parentElement.style.height = `${triggerRect.height}px`;
+		trigger.style.width = `${triggerRect.width}px`;
+		trigger.style.height = `${triggerRect.height}px`;
 
 		// Mark original element and parent
 		trigger.setAttribute('data-lightbox', 'original-parent');
 		img.setAttribute('data-lightbox', 'original');
 
+		gallery._openedIndex = index;
 		this.updateActiveItem(gallery, index);
 
 		// Listen for outside clicks
@@ -244,7 +247,7 @@ export default class Lightbox extends ComponentCore {
 			if (otherTrigger !== trigger) {
 				gsap.to(otherTrigger, {
 					autoAlpha: 0.8,
-					duration: 0.2,
+					duration: 0.3,
 					overwrite: true,
 				});
 			}
@@ -256,9 +259,10 @@ export default class Lightbox extends ComponentCore {
 			tl.add(
 				Flip.from(state, {
 					targets: img,
-					absolute: true,
+					absolute: false,
 					duration: 0.8,
 					ease: 'expo.inOut',
+					scale: true,
 				}),
 				0,
 			);
@@ -268,7 +272,7 @@ export default class Lightbox extends ComponentCore {
 		tl.to(
 			gallery.wrapper,
 			{
-				backgroundColor: 'rgba(0,0,0,0.7)',
+				backgroundColor: 'rgba(0,0,0,0.9)',
 				duration: 0.4,
 			},
 			0.2,
@@ -279,7 +283,7 @@ export default class Lightbox extends ComponentCore {
 				autoAlpha: 1,
 				y: '0rem',
 				duration: 0.6,
-				stagger: { each: 0.1, from: 'center' },
+				stagger: { each: 0.1, from: 'start' },
 			},
 			0.2,
 		);
@@ -309,56 +313,87 @@ export default class Lightbox extends ComponentCore {
 			? originalTrigger.parentElement
 			: null;
 
-		// Make trigger parent visible so Flip can compute the correct target rect
-		if (originalTrigger) {
-			gsap.set(originalTrigger.parentElement, { autoAlpha: 1 });
-		}
+		// Did the user navigate to a different slide?
+		const currentIndex = Array.from(gallery.items).findIndex((item) =>
+			item.classList.contains('is-active'),
+		);
+		const navigated = currentIndex !== gallery._openedIndex;
 
-		const tl = gsap.timeline({
-			defaults: { ease: 'power2.inOut' },
-		});
+		const cleanup = () => {
+			gallery.wrapper.classList.remove('is-active');
+			gsap.set(gallery.wrapper, { clearProps: 'zIndex' });
 
-		// FLIP image back to trigger
-		if (originalImg && originalTrigger) {
+			gallery.items.forEach((item) => {
+				item.classList.remove('is-active');
+				const lightboxImage = item.querySelector('img');
+				if (lightboxImage) {
+					lightboxImage.style.display = '';
+				}
+			});
+
+			if (heightLockedEl) {
+				heightLockedEl.style.removeProperty('height');
+			}
+
+			if (originalTrigger) {
+				originalTrigger.style.removeProperty('width');
+				originalTrigger.style.removeProperty('height');
+			}
+
+			gsap.set(gallery.triggerParents, {
+				clearProps: 'opacity,visibility',
+			});
+
+			this.scrollInstance.startScroll();
+		};
+
+		if (!navigated && originalImg && originalTrigger) {
+			// Capture state while image is in lightbox (inside wrapper = above everything)
 			const state = Flip.getState(originalImg);
-			originalTrigger.appendChild(originalImg);
 
-			// Run Flip directly (not via timeline) so transforms apply same tick — no flash
+			// Fit image to trigger's rect WITHOUT moving it in the DOM — stays in wrapper
+			Flip.fit(originalImg, originalTrigger, { scale: true });
+
+			// Animate from lightbox position to fitted trigger position
 			Flip.from(state, {
 				targets: originalImg,
-				absolute: false,
-				duration: 0.6,
-				zIndex: 1000,
-				ease: 'power2.out',
+				scale: true,
+				absolute: true,
+				duration: 0.8,
+				ease: 'expo.out',
 				onComplete: () => {
+					// NOW move to trigger and clean up
+					originalTrigger.appendChild(originalImg);
 					gsap.set(originalImg, { clearProps: 'all' });
 					originalTrigger.setAttribute('data-lightbox', 'trigger');
 					originalImg.removeAttribute('data-lightbox');
-
-					gallery.wrapper.classList.remove('is-active');
-
-					gallery.items.forEach((item) => {
-						item.classList.remove('is-active');
-						const lightboxImage = item.querySelector('img');
-						if (lightboxImage) {
-							lightboxImage.style.display = '';
-						}
-					});
-
-					if (heightLockedEl) {
-						heightLockedEl.style.removeProperty('height');
-					}
-
-					gsap.set(gallery.triggerParents, {
-						clearProps: 'opacity,visibility',
-					});
-
-					this.scrollInstance.startScroll();
+					cleanup();
 				},
+			});
+		} else {
+			// Navigated to a different slide — fade out active slide, silently return original img
+			const activeItem = gallery.items[currentIndex];
+
+			if (originalImg && originalTrigger) {
+				gsap.set(originalImg, { clearProps: 'all' });
+				originalTrigger.appendChild(originalImg);
+				originalTrigger.setAttribute('data-lightbox', 'trigger');
+				originalImg.removeAttribute('data-lightbox');
+			}
+
+			gsap.to(activeItem, {
+				autoAlpha: 0,
+				duration: 0.3,
+				ease: 'power3.out',
+				onComplete: cleanup,
 			});
 		}
 
 		// Fade out nav, wrapper bg, fade in trigger parents — all simultaneously
+		const tl = gsap.timeline({
+			defaults: { ease: 'power3.out' },
+		});
+
 		tl.to(
 			gallery.nav,
 			{
