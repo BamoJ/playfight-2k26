@@ -1,17 +1,11 @@
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { SplitText } from 'gsap/SplitText';
-import { Flip } from 'gsap/Flip';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import gsap from 'gsap';
 import AnimationCore from '@animations/_core/AnimationCore';
 import Lottie from 'lottie-web';
 
-gsap.registerPlugin(
-	ScrollTrigger,
-	SplitText,
-	Flip,
-	ScrambleTextPlugin,
-);
+gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin);
 
 export default class AboutStoryScroll extends AnimationCore {
 	constructor(element, options = {}) {
@@ -52,25 +46,18 @@ export default class AboutStoryScroll extends AnimationCore {
 
 		/** CRFT */
 		this.textElementWrap = document.querySelector(
-			'.about_story_text_element',
+			'.about_story_elements',
 		);
-		this.crftText =
-			this.textElementWrap.querySelector('.el_crft div');
-		this.crftTargetFlip =
-			this.textElementWrap.querySelector('.target_crft');
+		this.crftText = this.textElementWrap.querySelector('.el_crft');
 
 		/** Blinking Cursor */
 		this.blinkingCursor = this.textElementWrap.querySelector(
 			'.blinking_cursor',
 		);
-		this.blinkingCursorTargetFlip =
-			this.textElementWrap.querySelector('.target_cursor');
 
 		/** Scarambled Number */
 		this.scrambledNumber =
 			this.textElementWrap.querySelector('.el_num_txt');
-		this.scrambledNumberTargetFlip =
-			this.textElementWrap.querySelector('.target_num');
 
 		/** Kanji */
 		this.kanji = this.textElementWrap.querySelector(
@@ -79,14 +66,6 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.kanjiScrambled = this.textElementWrap.querySelectorAll(
 			'[data-el-kanji-scrambled]',
 		);
-		this.kanjiTargetFlip =
-			this.textElementWrap.querySelector('.target_kanji');
-
-		/** Store origin parents for destroy cleanup */
-		this.crftOrigin = this.crftText?.parentElement;
-		this.cursorOrigin = this.blinkingCursor?.parentElement;
-		this.numberOrigin = this.scrambledNumber?.parentElement;
-		this.kanjiOrigin = this.kanji?.parentElement;
 	}
 
 	createScrollTrigger() {
@@ -119,7 +98,7 @@ export default class AboutStoryScroll extends AnimationCore {
 		const kanjiScrambleChars = '∆◊≈†‡§¶•ΩΣπ∂ƒ©®™≠±÷×∞µ√∫≤≥';
 
 		gsap.set(this.split.lines, {
-			x: '-25vw',
+			x: '-15vw',
 			opacity: 0.2,
 			filter: 'blur(5px)',
 			willChange: 'transform, opacity, filter',
@@ -154,65 +133,24 @@ export default class AboutStoryScroll extends AnimationCore {
 				0,
 			);
 
-		// Ornament Flip animations — each tied to a line block
+		// Ornament elements
 		const ornaments = [
-			{ el: this.crftText, target: this.crftTargetFlip },
-			{
-				el: this.blinkingCursor,
-				target: this.blinkingCursorTargetFlip,
-			},
-			{
-				el: this.scrambledNumber,
-				target: this.scrambledNumberTargetFlip,
-			},
-			{ el: this.kanji, target: this.kanjiTargetFlip },
-		];
+			this.crftText,
+			this.blinkingCursor,
+			this.scrambledNumber,
+			this.kanji,
+		].filter(Boolean);
 
 		this.crftOriginalText = this.crftText?.textContent || '';
 		this.numberOriginalText = this.scrambledNumber?.textContent || '';
 		this.kanjiOriginalTexts = [...this.kanjiScrambled].map(
 			(el) => el.textContent || '',
 		);
-		0;
-		// Filter to only valid ornaments
-		const validOrnaments = ornaments.filter(
-			({ el, target }) => el && target,
-		);
+
 		const staggerOffset = 0.5;
 
-		validOrnaments.forEach((ornament, i) => {
-			const { el, target } = ornament;
-
-			// Capture origin state FIRST (clean, no transforms applied)
-			const state = Flip.getState(el);
-
-			// Move element to target container
-			target.append(el);
-
-			// Set initial hidden state (after DOM move)
-			gsap.set(el, { opacity: 0.5, filter: 'blur(4px)' });
-
-			// Flip.from: animates from captured origin → current target position
-			const flipTl = Flip.from(state, {
-				scale: false,
-				ease: 'back.out(1.85)',
-				duration: 1.5,
-			});
-
-			// Stagger each ornament: 0, 0.5, 1.0, 1.5...
+		ornaments.forEach((el, i) => {
 			const pos = i * staggerOffset + (el === this.kanji ? 0.5 : 0);
-
-			this.timeline.add(flipTl, pos);
-			this.timeline.to(
-				el,
-				{
-					opacity: 1,
-					filter: 'blur(0px)',
-					duration: 1,
-					ease: 'slow(0.7, 0.7, false)',
-				},
-				pos,
-			);
 
 			// ScrambleText on CRFT
 			if (el === this.crftText) {
@@ -260,6 +198,7 @@ export default class AboutStoryScroll extends AnimationCore {
 								chars: kanjiScrambleChars,
 								speed: 1,
 								revealDelay: 0.5,
+								rightToLeft: true,
 							},
 							duration: 1,
 						},
@@ -271,20 +210,11 @@ export default class AboutStoryScroll extends AnimationCore {
 	}
 
 	destroy() {
-		// Move ornaments back to their origin parents
-		const ornamentPairs = [
-			{ el: this.crftText, origin: this.crftOrigin },
-			{ el: this.blinkingCursor, origin: this.cursorOrigin },
-			{ el: this.scrambledNumber, origin: this.numberOrigin },
-			{ el: this.kanji, origin: this.kanjiOrigin },
-		];
-
-		ornamentPairs.forEach(({ el, origin }) => {
-			if (el && origin) {
-				gsap.set(el, { clearProps: 'transform,opacity,filter' });
-				origin.append(el);
-			}
-		});
+		[this.crftText, this.blinkingCursor, this.scrambledNumber, this.kanji]
+			.filter(Boolean)
+			.forEach((el) =>
+				gsap.set(el, { clearProps: 'transform,opacity,filter' }),
+			);
 
 		this.lottie?.destroy();
 		super.destroy();
