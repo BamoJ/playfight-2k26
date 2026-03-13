@@ -48,7 +48,9 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.textElementWrap = document.querySelector(
 			'.about_story_elements',
 		);
-		this.crftText = this.textElementWrap.querySelector('.el_crft');
+		this.crftText = this.textElementWrap.querySelectorAll(
+			'.el_crft [data-el="crft"]',
+		);
 
 		/** Blinking Cursor */
 		this.blinkingCursor = this.textElementWrap.querySelector(
@@ -66,6 +68,28 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.kanjiScrambled = this.textElementWrap.querySelectorAll(
 			'[data-el-kanji-scrambled]',
 		);
+
+		/** CRTV */
+		this.crtvText =
+			this.textElementWrap.querySelectorAll('.el_crtv div');
+
+		/** EL BORN */
+		this.elBorn = this.textElementWrap.querySelectorAll(
+			'.el_born_text div',
+		);
+
+		// EL PF LOGO //
+		this.pfTxt = document.querySelector('.elf_pf_txt');
+		this.pfR = this.textElementWrap.querySelector('.el_r_txt');
+
+		console.log(this.pfR, this.pfTxt);
+
+		/** CREATIVE PROD */
+		this.creativeProdTxt = this.textElementWrap.querySelectorAll(
+			'.el_creative_prod_post div',
+		);
+
+		console.log(this.creativeProdTxt);
 	}
 
 	createScrollTrigger() {
@@ -97,6 +121,16 @@ export default class AboutStoryScroll extends AnimationCore {
 		const scrambleChars = '!@#$%^&*()_+{}|:<>?-=[];,./©®';
 		const kanjiScrambleChars = '∆◊≈†‡§¶•ΩΣπ∂ƒ©®™≠±÷×∞µ√∫≤≥';
 
+		/** Easing for scramble + move animations */
+
+		const scrambleMoveEase = 'elastic.out(1,0.7)';
+
+		/* ==============================================
+		 *
+		 *   PARAGRAPH LINES — move + fade in + blur out
+		 *
+		 * ============================================== */
+
 		gsap.set(this.split.lines, {
 			x: '-15vw',
 			opacity: 0.2,
@@ -111,9 +145,9 @@ export default class AboutStoryScroll extends AnimationCore {
 					x: 0,
 					stagger: {
 						from: 'start',
-						each: 0.1,
+						each: 0.15,
 					},
-					ease: 'elastic.inOut(0.3,1.0)',
+					ease: 'elastic.inOut(0.4,1.0)',
 					duration: 2,
 				},
 				0,
@@ -125,7 +159,7 @@ export default class AboutStoryScroll extends AnimationCore {
 					filter: 'blur(0px)',
 					stagger: {
 						from: 'start',
-						each: 0.1,
+						each: 0.15,
 					},
 					duration: 2,
 					ease: 'none',
@@ -133,84 +167,254 @@ export default class AboutStoryScroll extends AnimationCore {
 				0,
 			);
 
-		// Ornament elements
-		const ornaments = [
-			this.crftText,
-			this.blinkingCursor,
-			this.scrambledNumber,
-			this.kanji,
-		].filter(Boolean);
+		/* ==============================================
+		 *
+		 *   CRFT — scramble + move
+		 *
+		 * ============================================== */
+		this.timeline
+			.to(
+				this.crftText,
+				{
+					scrambleText: (_, target) => ({
+						text: target.textContent,
+						chars: scrambleChars,
+						tweenLength: false,
+						speed: 0.8,
+						rightToLeft: true,
+					}),
+					duration: 2,
+					ease: 'none',
+				},
+				1.3,
+			)
+			.from(
+				this.crftText,
+				{
+					x: '10vw',
+					duration: 2,
+					filter: 'blur(5px)',
+					opacity: 0,
+					ease: scrambleMoveEase,
+					stagger: 0.1,
+				},
+				'<+.1',
+			);
 
-		this.crftOriginalText = this.crftText?.textContent || '';
-		this.numberOriginalText = this.scrambledNumber?.textContent || '';
-		this.kanjiOriginalTexts = [...this.kanjiScrambled].map(
-			(el) => el.textContent || '',
-		);
-
-		const staggerOffset = 0.5;
-
-		ornaments.forEach((el, i) => {
-			const pos = i * staggerOffset + (el === this.kanji ? 0.5 : 0);
-
-			// ScrambleText on CRFT
-			if (el === this.crftText) {
-				this.timeline.to(
-					el,
+		/* ==============================================
+		 *
+		 *   PF LOGO — scramble + move
+		 *
+		 * ============================================== */
+		if (this.pfTxt) {
+			this.timeline
+				.to(
+					this.pfTxt,
 					{
-						scrambleText: {
-							text: this.crftOriginalText,
+						scrambleText: (_, target) => ({
+							text: target.textContent,
 							chars: scrambleChars,
-							speed: 2,
-							revealDelay: 0.5,
+							tweenLength: false,
+							speed: 0.85,
 							rightToLeft: true,
-						},
-						duration: 1,
+						}),
+						duration: 2,
+						ease: 'none',
 					},
-					pos,
-				);
-			}
-
-			// ScrambleText on the number element
-			if (el === this.scrambledNumber) {
-				this.timeline.to(
-					el,
+					1,
+				)
+				.from(
+					this.pfTxt,
 					{
-						scrambleText: {
-							text: this.numberOriginalText,
-							chars: scrambleChars,
-							speed: 1,
-							revealDelay: 0.9,
-						},
-						duration: 1,
+						x: '-5vw',
+						duration: 2,
+						opacity: 0,
+						ease: scrambleMoveEase,
 					},
-					pos,
+					'<',
 				);
-			}
+		}
 
-			// ScrambleText on the kanji elements
-			if (el === this.kanji && this.kanjiScrambled.length) {
-				this.kanjiScrambled.forEach((kanjiEl, ki) => {
-					this.timeline.to(
-						kanjiEl,
-						{
-							scrambleText: {
-								text: this.kanjiOriginalTexts[ki],
-								chars: kanjiScrambleChars,
-								speed: 1,
-								revealDelay: 0.5,
-								rightToLeft: true,
-							},
-							duration: 1,
-						},
-						pos,
-					);
-				});
-			}
-		});
+		/* ==============================================
+		 *
+		 *   EL BORN — scramble + move
+		 *
+		 * ============================================== */
+		this.timeline
+			.to(
+				this.elBorn,
+				{
+					scrambleText: (_, target) => ({
+						text: target.textContent,
+						chars: scrambleChars,
+						tweenLength: false,
+						speed: 0.5,
+						rightToLeft: false,
+					}),
+					duration: 2,
+				},
+				1.6,
+			)
+			.from(
+				this.elBorn,
+				{
+					x: '-7.5vw',
+					filter: 'blur(5px)',
+					duration: 2,
+					opacity: 0.6,
+					ease: scrambleMoveEase,
+					stagger: 0.061,
+				},
+				'<+.4',
+			);
+
+		/* ==============================================
+		 *
+		 *   NUMBER — scramble + move
+		 *
+		 * ============================================== */
+		this.timeline
+			.to(
+				this.scrambledNumber,
+				{
+					scrambleText: (_, target) => ({
+						text: target.textContent,
+						chars: scrambleChars,
+						tweenLength: false,
+						speed: 0.8,
+					}),
+					duration: 3,
+				},
+				1.9,
+			)
+			.from(
+				this.scrambledNumber,
+				{
+					x: '15vw',
+					filter: 'blur(5px)',
+					duration: 2,
+					opacity: 0.3,
+					ease: scrambleMoveEase,
+					stagger: 0.15,
+				},
+				'<+.2',
+			);
+
+		/* ==============================================
+		 *
+		 *   CRTV — scramble + move
+		 *
+		 * ============================================== */
+		this.timeline
+			.to(
+				this.crtvText,
+				{
+					scrambleText: (_, target) => ({
+						text: target.textContent,
+						chars: scrambleChars,
+						tweenLength: false,
+						speed: 0.5,
+						revealDelay: 1,
+						rightToLeft: true,
+					}),
+					stagger: 0.1,
+					duration: 3,
+				},
+				3.6,
+			)
+			.from(
+				this.crtvText,
+				{
+					x: '-5vw',
+					filter: 'blur(5px)',
+					duration: 2,
+					opacity: 0,
+					ease: scrambleMoveEase,
+					stagger: 0.1,
+				},
+				'<+.5',
+			);
+
+		/* ==============================================
+		 *
+		 *   KANJI — scramble + move
+		 *
+		 * ============================================== */
+		if (this.kanjiScrambled.length) {
+			this.timeline.to(
+				this.kanjiScrambled,
+				{
+					scrambleText: (_, target) => ({
+						text: target.textContent,
+						chars: kanjiScrambleChars,
+						tweenLength: false,
+						speed: 1,
+						revealDelay: 0.5,
+						rightToLeft: true,
+					}),
+					duration: 2,
+				},
+				2.7,
+			);
+		}
+
+		/* ==============================================
+		 *
+		 *   PF R — scramble + move
+		 *
+		 * ============================================== */
+		if (this.pfR) {
+			this.timeline.to(
+				this.pfR,
+				{
+					scrambleText: (_, target) => ({
+						text: target.textContent,
+						chars: scrambleChars,
+						tweenLength: false,
+						speed: 0.8,
+						rightToLeft: true,
+					}),
+					duration: 3,
+				},
+				4.6,
+			);
+		}
+
+		/* ==============================================
+		 *
+		 *   CREATIVE PROD — scramble + move
+		 *
+		 * ============================================== */
+		this.timeline.to(
+			this.creativeProdTxt,
+			{
+				scrambleText: (_, target) => ({
+					text: target.textContent,
+					chars: scrambleChars,
+					tweenLength: false,
+					speed: 1,
+					revealDelay: 0.5,
+					rightToLeft: true,
+				}),
+				stagger: 0.1,
+				duration: 2,
+			},
+			4.6,
+		);
 	}
 
 	destroy() {
-		[this.crftText, this.blinkingCursor, this.scrambledNumber, this.kanji]
+		[
+			this.crftText,
+			this.elBorn,
+			this.crtvText,
+			this.scrambledNumber,
+			this.kanjiScrambled,
+			this.creativeProdTxt,
+			this.blinkingCursor,
+			this.pfTxt,
+			this.pfR,
+		]
 			.filter(Boolean)
 			.forEach((el) =>
 				gsap.set(el, { clearProps: 'transform,opacity,filter' }),

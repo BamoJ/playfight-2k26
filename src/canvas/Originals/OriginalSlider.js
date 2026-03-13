@@ -19,6 +19,9 @@ export class OriginalSlider extends Core {
 				this.currentSpeed = instance.speed;
 				this.currentProgress = instance.progress;
 				this.currentParallax = instance.parallaxValues;
+				if (Math.abs(instance.speed) > 0.1) {
+					this.lastMoveTime = Date.now();
+				}
 			},
 		});
 
@@ -27,6 +30,7 @@ export class OriginalSlider extends Core {
 		this.currentSpeed = 0;
 		this.currentProgress = 0;
 		this.currentParallax = [];
+		this.lastMoveTime = 0;
 
 		this._raf = this._raf.bind(this);
 		this._running = false;
@@ -73,7 +77,8 @@ export class OriginalSlider extends Core {
 
 			const handleMouseUp = () => {
 				const deltaTime = Date.now() - startTime;
-				if (!isDragging && deltaTime < 200) {
+				const timeSinceMove = Date.now() - this.lastMoveTime;
+				if (!isDragging && deltaTime < 120 && timeSinceMove > 600) {
 					item.click();
 				}
 				startTime = 0;
