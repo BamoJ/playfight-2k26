@@ -249,11 +249,11 @@ export default class AboutStoryScroll extends AnimationCore {
 						chars: scrambleChars,
 						tweenLength: false,
 						speed: 0.5,
-						rightToLeft: false,
+						rightToLeft: true,
 					}),
 					duration: 2,
 				},
-				1.6,
+				1.8,
 			)
 			.from(
 				this.elBorn,
@@ -261,7 +261,7 @@ export default class AboutStoryScroll extends AnimationCore {
 					x: '-7.5vw',
 					filter: 'blur(5px)',
 					duration: 2,
-					opacity: 0.6,
+					opacity: 0.3,
 					ease: scrambleMoveEase,
 					stagger: 0.061,
 				},
