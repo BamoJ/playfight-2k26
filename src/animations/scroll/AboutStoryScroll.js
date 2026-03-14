@@ -385,22 +385,34 @@ export default class AboutStoryScroll extends AnimationCore {
 		 *   CREATIVE PROD — scramble + move
 		 *
 		 * ============================================== */
-		this.timeline.to(
-			this.creativeProdTxt,
-			{
-				scrambleText: (_, target) => ({
-					text: target.textContent,
-					chars: scrambleChars,
-					tweenLength: false,
-					speed: 1,
-					revealDelay: 0.5,
-					rightToLeft: true,
-				}),
-				stagger: 0.1,
-				duration: 2,
-			},
-			4.6,
-		);
+		this.timeline
+			.to(
+				this.creativeProdTxt,
+				{
+					scrambleText: (_, target) => ({
+						text: target.textContent,
+						chars: scrambleChars,
+						tweenLength: false,
+						speed: 1,
+						rightToLeft: true,
+					}),
+					stagger: 0.1,
+					duration: 2,
+				},
+				4.2,
+			)
+			.from(
+				this.creativeProdTxt,
+				{
+					x: '-10vw',
+					filter: 'blur(5px)',
+					duration: 2,
+					opacity: 0,
+					ease: scrambleMoveEase,
+					stagger: 0.1,
+				},
+				'<+.4',
+			);
 	}
 
 	destroy() {
