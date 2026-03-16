@@ -38,7 +38,7 @@ export default class GlobalTransition extends Transition {
 			{ opacity: 0 },
 			{
 				opacity: 1,
-				duration: 0.6,
+				duration: 0.3,
 				ease: 'sine.in',
 			},
 			this.fromElement ? 0.3 : 0,

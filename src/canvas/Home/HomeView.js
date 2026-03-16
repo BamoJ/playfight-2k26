@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { Raycaster, Vector2 } from 'three';
 import { DOMPlane } from '../DOMPlane';
 import TextureCache from '../utils/TextureCache';
+import emitter from '@utils/Emitter';
 import vertexShader from '../shaders/sharedVert.glsl';
 import fragmentShader from '../shaders/sharedFrag.glsl';
 
@@ -133,12 +134,42 @@ export class HomeView extends DOMPlane {
 			};
 			mesh.material.uniforms.uMouse = { value: [0.5, 0.5] };
 			mesh.material.uniforms.uBulge = { value: 0 };
+			mesh.material.uniforms.uPageTransition = { value: 0 };
 			mesh.userData.targetMouseUV = { x: 0.5, y: 0.5 };
 
 			this.imagePlanes.push(mesh);
 			this.imageGroup.add(mesh);
 		});
 		this.updatePlanesPositions();
+		this.setupClickHandlers();
+	}
+
+	setupClickHandlers() {
+		this.imagePlanes.forEach((mesh) => {
+			const link = mesh.userData.img.closest('a[href]');
+			if (!link) return;
+
+			link.addEventListener('click', () => {
+				if (window.matchMedia('(max-width: 768px)').matches) return;
+
+				emitter.emit('webgl:transition:prepare', {
+					mesh,
+					targetUrl: link.href,
+					sourcePage: 'home',
+					startPosition: null,
+				});
+
+				// Fade out all other planes
+				this.imagePlanes.forEach((plane) => {
+					if (plane === mesh) return;
+					gsap.to(plane.material.uniforms.uOpacity, {
+						value: 0,
+						duration: 0.5,
+						ease: 'sine.out',
+					});
+				});
+			}, { signal: this.abortController.signal });
+		});
 	}
 
 	setStrength(value) {

@@ -1,6 +1,16 @@
 import { Mesh, PlaneGeometry } from 'three';
 import { gsap } from 'gsap';
+import CustomEase from 'gsap/CustomEase';
 import emitter from '@utils/Emitter';
+
+gsap.registerPlugin(CustomEase);
+
+const FADE = {
+	duration: 0.3,
+	ease: 'sine.out',
+};
+
+const TRANSITION = CustomEase.create('transition', '0.4, 0, 0.2, 1');
 
 /**
  * TransitionController — handles cross-page WebGL mesh transitions.
@@ -70,17 +80,15 @@ export class TransitionController {
 					const sourceValue =
 						sourcePlane.material.uniforms[key].value;
 
-					if (
+					if (Array.isArray(sourceValue)) {
+						clonedMaterial.uniforms[key].value = [...sourceValue];
+					} else if (
 						sourceValue &&
 						typeof sourceValue === 'object' &&
 						sourceValue.clone
 					) {
-						clonedMaterial.uniforms[key].value =
-							sourceValue.clone();
-					} else if (
-						sourceValue &&
-						typeof sourceValue === 'object'
-					) {
+						clonedMaterial.uniforms[key].value = sourceValue.clone();
+					} else if (sourceValue && typeof sourceValue === 'object') {
 						clonedMaterial.uniforms[key].value = {
 							...sourceValue,
 						};
@@ -228,13 +236,13 @@ export class TransitionController {
 		if (this.transitionMesh.material.uniforms.uOpacity) {
 			this.timeline.to(
 				this.transitionMesh.material.uniforms.uOpacity,
-				{ value: 0, duration: 0.5, ease: 'power2.inOut' },
+				{ value: 0, duration: FADE.duration, ease: FADE.ease },
 				1.5,
 			);
 		} else {
 			this.timeline.to(
 				this.transitionMesh.material,
-				{ opacity: 0, duration: 0.5, ease: 'power2.inOut' },
+				{ opacity: 0, duration: FADE.duration, ease: FADE.ease },
 				1.5,
 			);
 		}
@@ -327,8 +335,7 @@ export class TransitionController {
 		}
 
 		const p = sizeProxy.progress;
-		const shaderZoom =
-			this.transitionMesh.userData.shaderZoom || 1.0;
+		const shaderZoom = this.transitionMesh.userData.shaderZoom || 1.0;
 
 		const uOffset = idealUOffset * p;
 		const vOffset = idealVOffset * p;
@@ -339,8 +346,7 @@ export class TransitionController {
 		const endComp = 1.0 / shaderZoom;
 		const compensation = startComp + (endComp - startComp) * p;
 
-		const uvs =
-			this.transitionMesh.geometry.attributes.uv;
+		const uvs = this.transitionMesh.geometry.attributes.uv;
 		for (let i = 0; i < uvs.count; i++) {
 			const u = uvs.getX(i);
 			const v = uvs.getY(i);

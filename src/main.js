@@ -7,6 +7,7 @@ import { Work } from '@canvas/Work';
 import { Originals } from '@canvas/Originals';
 import { About } from '@canvas/About';
 import { Project } from '@canvas/Project';
+import ProjectTransition from '@transitions/pages/project';
 import emitter from '@utils/Emitter';
 
 // --- Page Registry (WebGL) ---
@@ -22,7 +23,7 @@ const pages = {
 // Import page-specific transitions (optional).
 // Pages without a transition use GlobalEnter by default.
 const pageTransitions = {
-	// project: ProjectTransition,
+	project: ProjectTransition,
 	// about: AboutTransition,
 };
 

@@ -64,7 +64,9 @@ export default class ParaReveal extends AnimationCore {
 			mask: 'lines',
 			linesClass: 'lineChildren',
 		});
-		gsap.set(this.element._split.lines, { willChange: 'transform' });
+		if (this.element._split.lines.length > 0) {
+			gsap.set(this.element._split.lines, { willChange: 'transform' });
+		}
 	}
 
 	animate() {

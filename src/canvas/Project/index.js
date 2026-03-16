@@ -36,6 +36,35 @@ export class Project extends Page {
 		this.scene.add(this.elements);
 		this.created = true;
 		this.emit('create');
+		this.notifyTransitionTarget();
+	}
+
+	notifyTransitionTarget() {
+		const heroImg = document.querySelector('[data-project-hero]');
+		if (!heroImg) return;
+
+		// Use offsetLeft/Top accumulation for document-space coords.
+		// getBoundingClientRect() would be wrong here because the old page
+		// may still be scrolled down — document coords = viewport coords at scroll 0.
+		let el = heroImg;
+		let left = 0;
+		let top = 0;
+		while (el) {
+			left += el.offsetLeft;
+			top += el.offsetTop;
+			el = el.offsetParent;
+		}
+
+		emitter.emit('webgl:transition:target-ready', {
+			rect: {
+				left,
+				top,
+				width: heroImg.offsetWidth,
+				height: heroImg.offsetHeight,
+			},
+			viewport: this.viewport,
+			screen: this.screen,
+		});
 	}
 
 	initView(template = document) {

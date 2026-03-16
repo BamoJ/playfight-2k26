@@ -364,20 +364,31 @@ export default class AboutStoryScroll extends AnimationCore {
 		 *
 		 * ============================================== */
 		if (this.pfR) {
-			this.timeline.to(
-				this.pfR,
-				{
-					scrambleText: (_, target) => ({
-						text: target.textContent,
-						chars: scrambleChars,
-						tweenLength: false,
-						speed: 0.8,
-						rightToLeft: true,
-					}),
-					duration: 3,
-				},
-				4.6,
-			);
+			this.timeline
+				.to(
+					this.pfR,
+					{
+						scrambleText: (_, target) => ({
+							text: target.textContent,
+							chars: scrambleChars,
+							tweenLength: false,
+							speed: 0.8,
+							rightToLeft: true,
+						}),
+						duration: 3,
+					},
+					4.6,
+				)
+				.from(
+					this.pfR,
+					{
+						y: '15',
+						duration: 2,
+						opacity: 0,
+						ease: scrambleMoveEase,
+					},
+					'<',
+				);
 		}
 
 		/* ==============================================

@@ -15,6 +15,8 @@ export default class ImageParallax extends AnimationCore {
 	}
 
 	animate() {
+		if (!this.element) return;
+
 		gsap.set(this.element, {
 			scale: 1.3,
 			willChange: 'transform, scale',
