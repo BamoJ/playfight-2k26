@@ -55,6 +55,14 @@ export default class TransitionManager {
 			}
 
 			onEnter({ to, trigger, done }) {
+				// Snap body + first-child background to new theme instantly
+				const firstChild = document.body.firstElementChild;
+				document.body.style.transition = 'none';
+				if (firstChild) firstChild.style.transition = 'none';
+				void document.body.offsetHeight;
+				document.body.style.transition = '';
+				if (firstChild) firstChild.style.transition = '';
+
 				to.classList.add('is-transition');
 
 				super.onEnter({ to, trigger }, () => {

@@ -7,7 +7,7 @@ gsap.registerPlugin(CustomEase);
 
 const FADE = {
 	duration: 0.3,
-	ease: 'sine.out',
+	ease: 'sine.in',
 };
 
 const TRANSITION = CustomEase.create('transition', '0.4, 0, 0.2, 1');
@@ -139,7 +139,15 @@ export class TransitionController {
 
 		this.timeline = gsap.timeline();
 
-		// Reset interaction uniforms
+		/* ====================================================
+		 *
+		 *
+		 *  RESET — zero out interaction uniforms so the
+		 *  clone starts clean (no hover, scroll, or bulge
+		 *  artifacts carrying into the transition)
+		 *
+		 *
+		 * ==================================================== */
 		const uniforms = this.transitionMesh.material.uniforms;
 
 		if (uniforms.uHover) {
@@ -175,18 +183,18 @@ export class TransitionController {
 			);
 		}
 
-		if (uniforms.uWaveIntensity) {
+		if (uniforms.uBulge) {
 			this.timeline.to(
-				uniforms.uWaveIntensity,
-				{ value: 0, duration: 0.1, ease: 'power2.out' },
+				uniforms.uBulge,
+				{ value: 0, duration: 0.35, ease: 'sine.out' },
 				0,
 			);
 		}
 
-		if (uniforms.uTransition) {
+		if (uniforms.uStrength) {
 			this.timeline.to(
-				uniforms.uTransition,
-				{ value: 0, duration: 0.1, ease: 'power2.out' },
+				uniforms.uStrength,
+				{ value: 0, duration: 0.35, ease: 'sine.out' },
 				0,
 			);
 		}
@@ -212,27 +220,45 @@ export class TransitionController {
 			onComplete: () => this.cleanup(),
 		});
 
-		// Animate position
+		/* ====================================================
+		 *
+		 *
+		 *  POSITION — fly mesh to target DOM coordinates
+		 *
+		 *
+		 * ==================================================== */
 		this.timeline.to(
 			this.transitionMesh.position,
 			{
 				x: targetX,
 				y: targetY,
 				z: 0,
-				duration: 1.5,
+				duration: 1.25,
 				ease: 'expo.inOut',
 			},
 			0,
 		);
 
-		// Handoff to HTML
+		/* ====================================================
+		 *
+		 *
+		 *  HANDOFF — Emitter/Signal HTML image to fade in
+		 *
+		 *
+		 * ==================================================== */
 		this.timeline.call(
 			() => emitter.emit('webgl:transition:handoff'),
 			null,
 			1.3,
 		);
 
-		// Fade out WebGL plane
+		/* ====================================================
+		 *
+		 *
+		 *  FADE — dissolve WebGL plane after handoff
+		 *
+		 *
+		 * ==================================================== */
 		if (this.transitionMesh.material.uniforms.uOpacity) {
 			this.timeline.to(
 				this.transitionMesh.material.uniforms.uOpacity,
@@ -247,7 +273,13 @@ export class TransitionController {
 			);
 		}
 
-		// Animate geometry size
+		/* ====================================================
+		 *
+		 *
+		 *  SIZE — morph geometry to target dimensions
+		 *
+		 *
+		 * ==================================================== */
 		const startWidth =
 			this.transitionMesh.geometry.parameters.width *
 			this.transitionMesh.scale.x;
@@ -267,7 +299,7 @@ export class TransitionController {
 				width: targetWidth,
 				height: targetHeight,
 				progress: 1,
-				duration: 1.5,
+				duration: 1.25,
 				ease: 'expo.inOut',
 				onUpdate: () => {
 					const oldGeometry = this.transitionMesh.geometry;
@@ -277,15 +309,6 @@ export class TransitionController {
 						64,
 						64,
 					);
-
-					// UV correction for object-fit: cover
-					if (this.transitionMesh.userData.img) {
-						const img = this.transitionMesh.userData.img;
-						if (img.naturalWidth && img.naturalHeight) {
-							this.correctUVs(img, sizeProxy);
-						}
-					}
-
 					this.transitionMesh.scale.set(1, 1, 1);
 					oldGeometry.dispose();
 				},
@@ -293,7 +316,13 @@ export class TransitionController {
 			0,
 		);
 
-		// Page transition shader effect
+		/* ====================================================
+		 *
+		 *
+		 *  SHADER — sine wave distortion during flight
+		 *
+		 *
+		 * ==================================================== */
 		if (
 			this.transitionMesh.material.uniforms.uPageTransition ===
 			undefined
@@ -307,59 +336,51 @@ export class TransitionController {
 
 		this.timeline.to(
 			this.transitionMesh.material.uniforms.uPageTransition,
-			{ value: 1, duration: 1.5, ease: 'power1.inOut' },
+			{ value: 1, duration: 1.25, ease: 'power1.inOut' },
 			0,
 		);
-	}
 
-	/**
-	 * Correct UVs during transition to handle object-fit: cover.
-	 */
-	correctUVs(img, sizeProxy) {
-		const imgAspect = img.naturalWidth / img.naturalHeight;
-		const targetAspect = sizeProxy.width / sizeProxy.height;
+		/* ====================================================
+		 *
+		 *
+		 *  UV COVER — animate uCoverScale source → target
+		 *
+		 *
+		 * ==================================================== */
+		const uniforms = this.transitionMesh.material.uniforms;
+		if (uniforms.uCoverScale && this.transitionMesh.userData.img) {
+			const img = this.transitionMesh.userData.img;
+			const imgAspect = img.naturalWidth / img.naturalHeight;
+			const targetAspect = targetWidth / targetHeight;
 
-		let idealUScale = 1,
-			idealVScale = 1;
-		let idealUOffset = 0,
-			idealVOffset = 0;
+			const targetCoverScale =
+				imgAspect > targetAspect
+					? [targetAspect / imgAspect, 1.0]
+					: [1.0, imgAspect / targetAspect];
 
-		if (imgAspect > targetAspect) {
-			const visibleU = targetAspect / imgAspect;
-			idealUOffset = (1 - visibleU) / 2;
-			idealUScale = visibleU;
-		} else {
-			const visibleV = imgAspect / targetAspect;
-			idealVOffset = (1 - visibleV) / 2;
-			idealVScale = visibleV;
+			const sourceCoverScale = [...uniforms.uCoverScale.value];
+
+			const coverProxy = { t: 0 };
+			this.timeline.to(
+				coverProxy,
+				{
+					t: 1,
+					duration: 1.25,
+					ease: 'expo.inOut',
+					onUpdate: () => {
+						uniforms.uCoverScale.value[0] =
+							sourceCoverScale[0] +
+							(targetCoverScale[0] - sourceCoverScale[0]) *
+								coverProxy.t;
+						uniforms.uCoverScale.value[1] =
+							sourceCoverScale[1] +
+							(targetCoverScale[1] - sourceCoverScale[1]) *
+								coverProxy.t;
+					},
+				},
+				0,
+			);
 		}
-
-		const p = sizeProxy.progress;
-		const shaderZoom = this.transitionMesh.userData.shaderZoom || 1.0;
-
-		const uOffset = idealUOffset * p;
-		const vOffset = idealVOffset * p;
-		const uScale = 1 + (idealUScale - 1) * p;
-		const vScale = 1 + (idealVScale - 1) * p;
-
-		const startComp = 1.0;
-		const endComp = 1.0 / shaderZoom;
-		const compensation = startComp + (endComp - startComp) * p;
-
-		const uvs = this.transitionMesh.geometry.attributes.uv;
-		for (let i = 0; i < uvs.count; i++) {
-			const u = uvs.getX(i);
-			const v = uvs.getY(i);
-
-			let newU = uOffset + u * uScale;
-			let newV = vOffset + v * vScale;
-
-			newU = (newU - 0.5) * compensation + 0.5;
-			newV = (newV - 0.5) * compensation + 0.5;
-
-			uvs.setXY(i, newU, newV);
-		}
-		uvs.needsUpdate = true;
 	}
 
 	handleTargetReady({ rect, viewport, screen }) {

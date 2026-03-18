@@ -19,29 +19,41 @@ export default class GlobalTransition extends Transition {
 			},
 		});
 
-		// Fade out old content
+		/*
+		 * ───────────────────────────────────────
+		 *  Fade out old content
+		 *  Old page fades to 0 over 0.65s
+		 * ───────────────────────────────────────
+		 */
 		if (this.fromElement) {
 			tl.to(
 				this.fromElement,
 				{
 					opacity: 0,
-					duration: 0.6,
-					ease: 'sine.out',
+					duration: 0.65,
+					ease: 'sine.in',
 				},
 				0,
 			);
 		}
 
-		// Fade in new content
+		/*
+		 * ───────────────────────────────────────
+		 *  Fade in new content
+		 *  New page fades in over 0.65s,
+		 *  starting at 0.7s (cross-fade overlap)
+		 *  animationComplete fires at timeline end
+		 * ───────────────────────────────────────
+		 */
 		tl.fromTo(
 			to,
 			{ opacity: 0 },
 			{
 				opacity: 1,
-				duration: 0.3,
-				ease: 'sine.in',
+				duration: 0.65,
+				ease: 'sine.out',
 			},
-			this.fromElement ? 0.3 : 0,
+			this.fromElement ? 0.7 : 0,
 		);
 	}
 }

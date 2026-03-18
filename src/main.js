@@ -8,6 +8,8 @@ import { Originals } from '@canvas/Originals';
 import { About } from '@canvas/About';
 import { Project } from '@canvas/Project';
 import ProjectTransition from '@transitions/pages/project';
+import PlaygroundTransition from '@transitions/pages/playground';
+import OriginalsTransition from '@transitions/pages/originals';
 import emitter from '@utils/Emitter';
 
 // --- Page Registry (WebGL) ---
@@ -24,6 +26,8 @@ const pages = {
 // Pages without a transition use GlobalEnter by default.
 const pageTransitions = {
 	project: ProjectTransition,
+	playground: PlaygroundTransition,
+	originals: OriginalsTransition,
 	// about: AboutTransition,
 };
 

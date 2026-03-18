@@ -121,24 +121,16 @@ export class DOMPlane {
 				const bounds = container.getBoundingClientRect();
 
 				mesh.userData.targetMouseUV = {
-					x:
-						((e.clientX - bounds.left) / bounds.width) *
-							2 -
-						1,
-					y:
-						-((e.clientY - bounds.top) / bounds.height) *
-							2 +
-						1,
+					x: ((e.clientX - bounds.left) / bounds.width) * 2 - 1,
+					y: -((e.clientY - bounds.top) / bounds.height) * 2 + 1,
 				};
 
 				const worldX =
-					(e.clientX / this.screen.width) *
-						this.viewport.width -
+					(e.clientX / this.screen.width) * this.viewport.width -
 					this.viewport.width / 2;
 				const worldY =
 					this.viewport.height / 2 -
-					(e.clientY / this.screen.height) *
-						this.viewport.height;
+					(e.clientY / this.screen.height) * this.viewport.height;
 
 				mesh.userData.targetWorldPos = {
 					x: worldX,
@@ -173,8 +165,7 @@ export class DOMPlane {
 	// DOM pixel → WebGL world X
 	updateX(left, width) {
 		return (
-			((left + width / 2) / this.screen.width) *
-				this.viewport.width -
+			((left + width / 2) / this.screen.width) * this.viewport.width -
 			this.viewport.width / 2
 		);
 	}
@@ -183,8 +174,7 @@ export class DOMPlane {
 	updateY(top, height) {
 		return (
 			this.viewport.height / 2 -
-			((top + height / 2) / this.screen.height) *
-				this.viewport.height
+			((top + height / 2) / this.screen.height) * this.viewport.height
 		);
 	}
 
@@ -205,10 +195,8 @@ export class DOMPlane {
 				const targetWorld = plane.userData.targetWorldPos;
 
 				const ease = 0.09;
-				currentWorld.x +=
-					(targetWorld.x - currentWorld.x) * ease;
-				currentWorld.y +=
-					(targetWorld.y - currentWorld.y) * ease;
+				currentWorld.x += (targetWorld.x - currentWorld.x) * ease;
+				currentWorld.y += (targetWorld.y - currentWorld.y) * ease;
 
 				plane.userData.worldPos = currentWorld;
 				plane.position.x = currentWorld.x;
@@ -249,19 +237,12 @@ export class DOMPlane {
 				const bounds = img.getBoundingClientRect();
 
 				const width =
-					(bounds.width / this.screen.width) *
-					this.viewport.width;
+					(bounds.width / this.screen.width) * this.viewport.width;
 				const height =
-					(bounds.height / this.screen.height) *
-					this.viewport.height;
+					(bounds.height / this.screen.height) * this.viewport.height;
 
 				plane.geometry.dispose();
-				plane.geometry = new PlaneGeometry(
-					width,
-					height,
-					32,
-					32,
-				);
+				plane.geometry = new PlaneGeometry(width, height, 32, 32);
 			});
 		}
 	}

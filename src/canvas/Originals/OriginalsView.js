@@ -1,3 +1,4 @@
+import { gsap } from 'gsap';
 import { DOMPlane } from '../DOMPlane';
 import TextureCache from '../utils/TextureCache';
 import vertexShader from './shaders/vertex.glsl';
@@ -63,8 +64,7 @@ export class OriginalsView extends DOMPlane {
 			// Cover UV scaling
 			const bounds = img.getBoundingClientRect();
 			const imageAspect =
-				texEntry.texture.image.width /
-				texEntry.texture.image.height;
+				texEntry.texture.image.width / texEntry.texture.image.height;
 			const planeAspect = bounds.width / bounds.height;
 			const coverScale =
 				imageAspect > planeAspect
@@ -74,6 +74,8 @@ export class OriginalsView extends DOMPlane {
 			mesh.material.uniforms.uCoverScale = {
 				value: coverScale,
 			};
+			mesh.material.uniforms.uOpacity = { value: 0 };
+			mesh.material.uniforms.uEntrance = { value: 1 };
 			mesh.material.uniforms.uStrength = { value: 0 };
 			mesh.material.uniforms.uScrollProgress = { value: 0 };
 			mesh.material.uniforms.uViewportSizes = {
@@ -84,14 +86,52 @@ export class OriginalsView extends DOMPlane {
 			this.imageGroup.add(mesh);
 		});
 
-		// Hide DOM images once WebGL planes are ready
-		this.template
-			.querySelectorAll('[data-gl-img="true"]')
-			.forEach((img) => {
-				img.style.opacity = '0';
-			});
-
 		this.updatePlanesPositions();
+		this.animateEntrance();
+	}
+
+	/*
+	 * ───────────────────────────────────────
+	 *  Entrance animation
+	 *  Planes slide in from right + motion
+	 *  blur, staggered sequentially
+	 * ───────────────────────────────────────
+	 */
+	animateEntrance() {
+		/*
+		 * ───────────────────────────────────────
+		 *  Sort by visual X position
+		 *  Deferred one frame so smooothy has
+		 *  applied its CSS transforms first
+		 *  Stagger left → right
+		 * ───────────────────────────────────────
+		 */
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				const sorted = [...this.imagePlanes].sort(
+					(a, b) =>
+						a.userData.img.getBoundingClientRect().left -
+						b.userData.img.getBoundingClientRect().left,
+				);
+
+				sorted.forEach((plane, i) => {
+					const delay = i * 0.046;
+
+					gsap.to(plane.material.uniforms.uOpacity, {
+						value: 1,
+						duration: 0.6,
+						ease: 'sine.out',
+						delay,
+					});
+					gsap.to(plane.material.uniforms.uEntrance, {
+						value: 0,
+						duration: 1.65,
+						ease: 'power4.out',
+						delay,
+					});
+				});
+			});
+		});
 	}
 
 	setStrength(value) {

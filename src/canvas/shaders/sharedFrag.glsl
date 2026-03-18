@@ -13,7 +13,7 @@ uniform float uBulge;
 varying vec2 vUv;
 
 vec2 bulge(vec2 uv, vec2 center) {
-	float radius = 0.9; // Adjust as needed
+	float radius = 1.2; // Adjust as needed
 	float strength = 1.1;
 	uv -= center;
 	float dist = length(uv) / radius;

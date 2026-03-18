@@ -6,6 +6,7 @@ uniform float uTime;
 uniform float uStrength;
 uniform float uScrollProgress;
 uniform float uOpacity;
+uniform float uEntrance;
 uniform vec2 uCoverScale;
 
 varying vec2 vUv;
@@ -20,7 +21,8 @@ void main() {
 	float sharpB = texture2D(uTexture, coverUv + vec2(shiftAmount * 2.0, 0.0)).b;
 	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
-	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0;
+	float entranceBlur = uEntrance * 2.0;
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0 + entranceBlur;
 
 	if(blurAmount < 0.001) {
 		gl_FragColor = vec4(sharp, uOpacity);

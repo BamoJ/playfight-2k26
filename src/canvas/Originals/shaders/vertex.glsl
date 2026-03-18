@@ -4,6 +4,7 @@ uniform float uStrength;
 uniform vec2 uViewportSizes;
 uniform float uScrollProgress;
 uniform float uTime;
+uniform float uEntrance;
 
 varying vec2 vUv;
 
@@ -15,6 +16,9 @@ void main() {
 
 	newPosition.x += targetDisplacementX * 0.55;
 	newPosition.z += targetDisplacementZ * 1.25;
+
+	// Entrance animation — offset X rightward, animated 1→0
+	newPosition.x += uEntrance * uViewportSizes.x * 3.0;
 
 	vUv = uv;
 

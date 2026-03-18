@@ -32,6 +32,7 @@ export class Originals extends Page {
 		if (this.created) return;
 
 		this.calculateViewport();
+
 		this.initSlider(template);
 		this.initView(template);
 
@@ -91,7 +92,7 @@ export class Originals extends Page {
 			this.slider = null;
 			this.created = false;
 			if (onComplete) onComplete();
-		}, 1400);
+		}, 1);
 	}
 
 	onResize() {

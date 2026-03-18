@@ -8,12 +8,13 @@ export default class ProjectTransition extends Transition {
 	}
 
 	onEnter({ to }, animationComplete) {
-		// Snap body background to new theme color instantly (no visible blip)
-		document.body.style.transition = 'none';
-		void document.body.offsetHeight;
-		document.body.style.transition = '';
-
-		// Fade out old content so the WebGL clone mesh is visible
+		/*
+		 * ───────────────────────────────────────
+		 *  Fade out old content
+		 *  Hides old page so the WebGL clone
+		 *  mesh flying animation is visible
+		 * ───────────────────────────────────────
+		 */
 		if (this.fromElement) {
 			gsap.to(this.fromElement, {
 				opacity: 0,
@@ -22,18 +23,36 @@ export default class ProjectTransition extends Transition {
 			});
 		}
 
-		// Keep new content invisible while WebGL animates
+		/*
+		 * ───────────────────────────────────────
+		 *  Hide new content
+		 *  Keeps new page invisible while
+		 *  WebGL transition animates
+		 * ───────────────────────────────────────
+		 */
 		gsap.set(to, { opacity: 0 });
 
 		const readyDelay = this.fromElement ? 0.4 : 0;
 
 		gsap.delayedCall(readyDelay, () => {
-			// Fire animationComplete so TransitionManager swaps pages,
-			// resets scroll, and emits transition:complete —
-			// which triggers canvas.onChange() → Project.create() → notifyTransitionTarget()
+			/*
+			 * ───────────────────────────────────────
+			 *  Fire animationComplete early
+			 *  Triggers transition:complete → canvas
+			 *  page swap → Project.create() →
+			 *  notifyTransitionTarget()
+			 * ───────────────────────────────────────
+			 */
 			animationComplete();
 
-			// Reveal new content when WebGL hands off
+			/*
+			 * ───────────────────────────────────────
+			 *  Reveal on WebGL handoff
+			 *  Waits for TransitionController to
+			 *  emit handoff, then fades in new
+			 *  content underneath the WebGL plane
+			 * ───────────────────────────────────────
+			 */
 			const onHandoff = () => {
 				gsap.to(to, {
 					opacity: 1,
@@ -47,7 +66,13 @@ export default class ProjectTransition extends Transition {
 
 			emitter.once('webgl:transition:handoff', onHandoff);
 
-			// Fallback if WebGL transition never fires (mobile, missing hero)
+			/*
+			 * ───────────────────────────────────────
+			 *  Fallback reveal (3s timeout)
+			 *  If WebGL transition never fires
+			 *  (mobile, missing hero), force reveal
+			 * ───────────────────────────────────────
+			 */
 			const fallbackTimer = setTimeout(() => {
 				emitter.off('webgl:transition:handoff', onHandoff);
 				if (parseFloat(to.style.opacity) < 1) {

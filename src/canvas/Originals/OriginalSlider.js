@@ -6,7 +6,6 @@ export class OriginalSlider extends Core {
 			infinite: true,
 			snap: true,
 			scrollInput: false,
-			scrollSensitivity: 1,
 			virtualScroll: {
 				mouseMultiplier: 0.85,
 				touchMultiplier: 1.25,

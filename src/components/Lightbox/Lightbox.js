@@ -282,8 +282,8 @@ export default class Lightbox extends ComponentCore {
 			{
 				autoAlpha: 1,
 				y: '0rem',
-				duration: 0.6,
-				stagger: { each: 0.1, from: 'start' },
+				duration: 0.85,
+				stagger: { amount: 0.3, from: 'start' },
 			},
 			0.2,
 		);
@@ -391,7 +391,7 @@ export default class Lightbox extends ComponentCore {
 
 		// Fade out nav, wrapper bg, fade in trigger parents — all simultaneously
 		const tl = gsap.timeline({
-			defaults: { ease: 'power3.out' },
+			defaults: { ease: 'power4.out' },
 		});
 
 		tl.to(
