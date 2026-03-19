@@ -59,7 +59,7 @@ export default class TransitionManager {
 				const firstChild = document.body.firstElementChild;
 				document.body.style.transition = 'none';
 				if (firstChild) firstChild.style.transition = 'none';
-				void document.body.offsetHeight;
+				const _reflow = document.body.offsetHeight;
 				document.body.style.transition = '';
 				if (firstChild) firstChild.style.transition = '';
 
