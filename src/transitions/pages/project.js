@@ -2,7 +2,7 @@ import { Transition } from '@unseenco/taxi';
 import { gsap } from 'gsap';
 import emitter from '@utils/Emitter';
 
-export default class ProjectTransition extends Transition {
+export default class WorkTransition extends Transition {
 	onLeave({ done }) {
 		done();
 	}
@@ -35,14 +35,6 @@ export default class ProjectTransition extends Transition {
 		const readyDelay = this.fromElement ? 0.4 : 0;
 
 		gsap.delayedCall(readyDelay, () => {
-			/*
-			 * ───────────────────────────────────────
-			 *  Fire animationComplete early
-			 *  Triggers transition:complete → canvas
-			 *  page swap → Project.create() →
-			 *  notifyTransitionTarget()
-			 * ───────────────────────────────────────
-			 */
 			animationComplete();
 
 			/*
@@ -73,22 +65,9 @@ export default class ProjectTransition extends Transition {
 			 *  (mobile, missing hero), force reveal
 			 * ───────────────────────────────────────
 			 */
-			const fallbackTimer = setTimeout(() => {
+			gsap.delayedCall(3, () => {
 				emitter.off('webgl:transition:handoff', onHandoff);
-				if (parseFloat(to.style.opacity) < 1) {
-					gsap.to(to, {
-						opacity: 1,
-						duration: 0.3,
-						ease: 'sine.in',
-						onComplete: () => {
-							gsap.set(to, { clearProps: 'opacity' });
-						},
-					});
-				}
-			}, 3000);
-
-			emitter.once('webgl:transition:complete', () => {
-				clearTimeout(fallbackTimer);
+				onHandoff();
 			});
 		});
 	}

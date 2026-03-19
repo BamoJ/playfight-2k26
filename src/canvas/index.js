@@ -7,6 +7,7 @@ import {
 
 import Time from './utils/Time';
 import { TransitionController } from './TransitionController';
+import emitter from '@utils/Emitter';
 
 /**
  * Canvas — the WebGL renderer and page lifecycle manager.
@@ -38,6 +39,10 @@ export default class Canvas {
 
 		this.addEventListeners();
 		this.time.on('tick', () => this.update());
+
+		emitter.on('transition:start', () => {
+			this.currentPage?.view?.fadeOut();
+		});
 
 		this.initCurrentPage();
 

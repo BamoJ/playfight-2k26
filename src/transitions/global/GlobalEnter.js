@@ -26,15 +26,11 @@ export default class GlobalTransition extends Transition {
 		 * ───────────────────────────────────────
 		 */
 		if (this.fromElement) {
-			tl.to(
-				this.fromElement,
-				{
-					opacity: 0,
-					duration: 0.65,
-					ease: 'sine.in',
-				},
-				0,
-			);
+			tl.to(this.fromElement, {
+				opacity: 0,
+				duration: 0.45,
+				ease: 'sine.in',
+			});
 		}
 
 		/*
@@ -51,7 +47,7 @@ export default class GlobalTransition extends Transition {
 			{
 				opacity: 1,
 				duration: 0.65,
-				ease: 'sine.out',
+				ease: 'sine.in',
 			},
 			this.fromElement ? 0.7 : 0,
 		);

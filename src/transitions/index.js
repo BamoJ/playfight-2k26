@@ -1,4 +1,5 @@
 import { Core } from '@unseenco/taxi';
+import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import SmoothScroll from '@utils/SmoothScroll';
 import Components from '@components';
@@ -77,6 +78,16 @@ export default class TransitionManager {
 					scrollInstance.startScroll();
 					manager.animation = new Animation();
 					manager.component = new Components();
+
+					const fromFooter = trigger?.closest('[data-footer]');
+					if (fromFooter) {
+						const hideNav = manager.component.instances.hideNav;
+						if (hideNav) {
+							hideNav.startHidden();
+							gsap.delayedCall(0.5, () => hideNav._show());
+						}
+					}
+
 					ScrollTrigger.refresh();
 
 					emitter.emit('transition:complete');

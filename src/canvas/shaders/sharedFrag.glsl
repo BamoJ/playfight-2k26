@@ -9,6 +9,7 @@ uniform float uOpacity;
 uniform vec2 uCoverScale;
 uniform vec2 uMouse;
 uniform float uBulge;
+uniform float uEntrance;
 
 varying vec2 vUv;
 
@@ -41,7 +42,8 @@ void main() {
 	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
 	// --- Motion Blur (8 samples, vertical) ---
-	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0;
+	float entranceBlur = uEntrance * 1.5;
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0 + entranceBlur;
 
 	// Early-out: skip blur loop when not scrolling
 	if(blurAmount < 0.001) {

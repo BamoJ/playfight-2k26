@@ -33,6 +33,17 @@ export default class HideNav extends ComponentCore {
 	addEventListeners() {}
 	removeEventListeners() {}
 
+	startHidden() {
+		if (this.navBtnLine?.length) {
+			gsap.set(this.navBtnLine, { xPercent: 100, opacity: 0 });
+		}
+		if (this.navSVG) {
+			gsap.set(this.navSVG.querySelectorAll('path'), {
+				yPercent: -150,
+			});
+		}
+	}
+
 	_hide() {
 		if (this.navBtnLine && this.navBtnLine.length) {
 			gsap.to(this.navBtnLine, {

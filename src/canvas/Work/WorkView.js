@@ -129,6 +129,8 @@ export class WorkView extends DOMPlane {
 			mesh.material.uniforms.uMouse = { value: [0.5, 0.5] };
 			mesh.material.uniforms.uBulge = { value: 0 };
 			mesh.material.uniforms.uPageTransition = { value: 0 };
+			mesh.material.uniforms.uOpacity.value = 0;
+			mesh.material.uniforms.uEntrance = { value: 1 };
 			mesh.userData.targetMouseUV = { x: 0.5, y: 0.5 };
 
 			this.imagePlanes.push(mesh);
@@ -144,6 +146,25 @@ export class WorkView extends DOMPlane {
 
 		this.updatePlanesPositions();
 		this.setupClickHandlers();
+		this.animateEntrance();
+	}
+
+	animateEntrance() {
+		const delay = 0.3;
+		gsap.delayedCall(delay, () => {
+			this.imagePlanes.forEach((plane) => {
+				gsap.to(plane.material.uniforms.uOpacity, {
+					value: 1,
+					duration: 0.8,
+					ease: 'sine.out',
+				});
+				gsap.to(plane.material.uniforms.uEntrance, {
+					value: 0,
+					duration: 1.5,
+					ease: 'power2.out',
+				});
+			});
+		});
 	}
 
 	setupClickHandlers() {
@@ -151,26 +172,30 @@ export class WorkView extends DOMPlane {
 			const link = mesh.userData.img.closest('a[href]');
 			if (!link) return;
 
-			link.addEventListener('click', () => {
-				if (window.matchMedia('(max-width: 768px)').matches) return;
+			link.addEventListener(
+				'click',
+				() => {
+					if (window.matchMedia('(max-width: 768px)').matches) return;
 
-				emitter.emit('webgl:transition:prepare', {
-					mesh,
-					targetUrl: link.href,
-					sourcePage: 'works',
-					startPosition: null,
-				});
-
-				// Fade out all other planes
-				this.imagePlanes.forEach((plane) => {
-					if (plane === mesh) return;
-					gsap.to(plane.material.uniforms.uOpacity, {
-						value: 0,
-						duration: 0.5,
-						ease: 'sine.out',
+					emitter.emit('webgl:transition:prepare', {
+						mesh,
+						targetUrl: link.href,
+						sourcePage: 'works',
+						startPosition: null,
 					});
-				});
-			}, { signal: this.abortController.signal });
+
+					// Fade out all other planes
+					this.imagePlanes.forEach((plane) => {
+						if (plane === mesh) return;
+						gsap.to(plane.material.uniforms.uOpacity, {
+							value: 0,
+							duration: 0.5,
+							ease: 'sine.out',
+						});
+					});
+				},
+				{ signal: this.abortController.signal },
+			);
 		});
 	}
 
@@ -194,7 +219,9 @@ export class WorkView extends DOMPlane {
 
 	update({ delta }) {
 		this.updatePlanesPositions();
-		if (this.imagePlanes[0]?.material.uniforms.uStrength.value !== 0) {
+		if (
+			this.imagePlanes[0]?.material.uniforms.uStrength.value !== 0
+		) {
 			this.mouseDirty = true;
 		}
 		this.updateBulge();
@@ -223,7 +250,9 @@ export class WorkView extends DOMPlane {
 		this.mouseDirty = false;
 
 		this.raycaster.setFromCamera(this.mouseNDC, this.camera);
-		const intersects = this.raycaster.intersectObjects(this.imagePlanes);
+		const intersects = this.raycaster.intersectObjects(
+			this.imagePlanes,
+		);
 
 		const hit = intersects.length > 0 ? intersects[0] : null;
 		const hitPlane = hit ? hit.object : null;

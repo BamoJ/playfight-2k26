@@ -5,6 +5,7 @@ import {
 	TextureLoader,
 	Group,
 } from 'three';
+import { gsap } from 'gsap';
 
 /**
  * DOMPlane — maps DOM elements (images, videos) to WebGL planes.
@@ -249,6 +250,16 @@ export class DOMPlane {
 
 	show() {
 		this.imageGroup.visible = true;
+	}
+
+	fadeOut(duration = 0.4, ease = 'sine.in') {
+		this.imagePlanes.forEach((plane) => {
+			gsap.to(plane.material.uniforms.uOpacity, {
+				value: 0,
+				duration,
+				ease,
+			});
+		});
 	}
 
 	hide() {

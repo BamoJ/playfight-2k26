@@ -37,19 +37,16 @@ export default class MenuComponent extends ComponentCore {
 	}
 
 	addEventListeners() {
+		this.events.close = this.close.bind(this);
+		emitter.on('transition:start', this.events.close);
+
+		document.addEventListener('keydown', this.events.keydown);
+
 		if (this.el.openBtn) {
 			this.el.openBtn.addEventListener('click', this.events.click);
-			this.el.openBtn.addEventListener(
-				'keydown',
-				this.events.keydown,
-			);
 		}
 		if (this.el.closeBtn) {
 			this.el.closeBtn.addEventListener('click', this.events.click);
-			this.el.closeBtn.addEventListener(
-				'keydown',
-				this.events.keydown,
-			);
 		}
 		if (this.el.menuLinks.length) {
 			this.el.menuLinks.forEach((link) => {
@@ -64,21 +61,17 @@ export default class MenuComponent extends ComponentCore {
 	}
 
 	removeEventListeners() {
+		emitter.off('transition:start', this.events.close);
+
+		document.removeEventListener('keydown', this.events.keydown);
+
 		if (this.el.openBtn) {
 			this.el.openBtn.removeEventListener('click', this.events.click);
-			this.el.openBtn.removeEventListener(
-				'keydown',
-				this.events.keydown,
-			);
 		}
 		if (this.el.closeBtn) {
 			this.el.closeBtn.removeEventListener(
 				'click',
 				this.events.click,
-			);
-			this.el.closeBtn.removeEventListener(
-				'keydown',
-				this.events.keydown,
 			);
 		}
 		if (this.el.menuLinks.length) {

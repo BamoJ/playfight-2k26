@@ -18,7 +18,7 @@ void main() {
 	newPosition.z += targetDisplacementZ * 1.25;
 
 	// Entrance animation — offset X rightward, animated 1→0
-	newPosition.x += uEntrance * uViewportSizes.x * 3.0;
+	newPosition.x += uEntrance * uViewportSizes.x * 1.75;
 
 	vUv = uv;
 

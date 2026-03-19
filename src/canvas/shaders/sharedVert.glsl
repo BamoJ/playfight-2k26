@@ -7,6 +7,7 @@ uniform vec2 uViewportSizes;
 uniform float uScrollProgress;
 uniform float uTime;
 uniform float uPageTransition;
+uniform float uEntrance;
 
 varying vec2 vUv;
 
@@ -16,6 +17,19 @@ void main() {
 	// Z-axis wave: depth distortion on scroll (vertical position / viewport height)
 	float waveZ = sin(newPosition.y / uViewportSizes.y * PI + PI / 2.0) * -uStrength;
 	newPosition.z -= waveZ * 0.8; // Adjust strength of Z distortion
+
+	// --- Entrance: paper flying from below with Z sine flutter ---
+	if(uEntrance > 0.0) {
+		newPosition.y -= uEntrance * uViewportSizes.y * 1.0;
+
+		float entranceWaveZ = sin(newPosition.y / uViewportSizes.x * PI) * uEntrance;
+		newPosition.z += entranceWaveZ * 1.0;
+
+		// Ripple across plane surface
+		float ripplePhase = uEntrance * PI * 4.0;
+		float ripple = cos(uv.y * PI * 1.0 - ripplePhase) * uEntrance * 0.5;
+		newPosition.z += ripple;
+	}
 
 	// --- Page transition: paper ripple + perlin noise ---
 	if(uPageTransition > 0.0) {

@@ -119,13 +119,13 @@ export class OriginalsView extends DOMPlane {
 
 					gsap.to(plane.material.uniforms.uOpacity, {
 						value: 1,
-						duration: 0.6,
+						duration: 0.75,
 						ease: 'sine.out',
 						delay,
 					});
 					gsap.to(plane.material.uniforms.uEntrance, {
 						value: 0,
-						duration: 1.65,
+						duration: 1.5,
 						ease: 'power4.out',
 						delay,
 					});

@@ -7,9 +7,11 @@ import { Work } from '@canvas/Work';
 import { Originals } from '@canvas/Originals';
 import { About } from '@canvas/About';
 import { Project } from '@canvas/Project';
-import ProjectTransition from '@transitions/pages/project';
-import PlaygroundTransition from '@transitions/pages/playground';
+import ProjectTransition from '@/transitions/pages/project';
+import WorksTransition from '@/transitions/pages/works';
+import PlaygroundTransition from '@/transitions/pages/playground';
 import OriginalsTransition from '@transitions/pages/originals';
+import AboutTransition from '@transitions/pages/about';
 import emitter from '@utils/Emitter';
 
 // --- Page Registry (WebGL) ---
@@ -28,7 +30,8 @@ const pageTransitions = {
 	project: ProjectTransition,
 	playground: PlaygroundTransition,
 	originals: OriginalsTransition,
-	// about: AboutTransition,
+	works: WorksTransition,
+	about: AboutTransition,
 };
 
 // --- Main App ---
