@@ -12,6 +12,7 @@ import WorksTransition from '@/transitions/pages/works';
 import PlaygroundTransition from '@/transitions/pages/playground';
 import OriginalsTransition from '@transitions/pages/originals';
 import AboutTransition from '@transitions/pages/about';
+import HomeTransition from '@transitions/pages/home';
 import emitter from '@utils/Emitter';
 
 // --- Page Registry (WebGL) ---
@@ -27,6 +28,7 @@ const pages = {
 // Import page-specific transitions (optional).
 // Pages without a transition use GlobalEnter by default.
 const pageTransitions = {
+	home: HomeTransition,
 	project: ProjectTransition,
 	playground: PlaygroundTransition,
 	originals: OriginalsTransition,

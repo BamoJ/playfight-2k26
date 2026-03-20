@@ -128,7 +128,9 @@ export default class TransitionManager {
 				for (const [name, trans] of Object.entries(
 					this.specificTransitions,
 				)) {
-					if (path.includes(name)) {
+					const isHome =
+						name === 'home' && (path === '/' || path === '/index' || path === '/index.html');
+					if (isHome || path.includes(name)) {
 						trans.fromElement = this.fromElement;
 						trans.onEnter(args, done);
 						return;

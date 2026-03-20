@@ -31,7 +31,7 @@ export default class OriginalsTransition extends Transition {
 		 */
 		gsap.set(to, { opacity: 0 });
 
-		const readyDelay = this.fromElement ? 1 : 0;
+		const readyDelay = this.fromElement ? 0.7 : 0;
 
 		gsap.delayedCall(readyDelay, () => {
 			/*
