@@ -13,6 +13,7 @@ export class OriginalsView extends DOMPlane {
 				fragment: fragmentShader,
 			},
 		});
+		this.onReady = options.onReady;
 		this.template = options.template || document;
 		this.loadImages();
 	}
@@ -61,8 +62,8 @@ export class OriginalsView extends DOMPlane {
 
 			const mesh = this.createPlane(texEntry.texture, img, index);
 
-			// Cover UV scaling
-			const bounds = img.getBoundingClientRect();
+			// Cover UV scaling — reuse bounds cached by createPlane
+			const bounds = mesh.userData.bounds;
 			const imageAspect =
 				texEntry.texture.image.width / texEntry.texture.image.height;
 			const planeAspect = bounds.width / bounds.height;
@@ -87,6 +88,7 @@ export class OriginalsView extends DOMPlane {
 		});
 
 		this.updatePlanesPositions();
+		this.onReady?.();
 		this.animateEntrance();
 	}
 
@@ -106,29 +108,29 @@ export class OriginalsView extends DOMPlane {
 		 *  Stagger left → right
 		 * ───────────────────────────────────────
 		 */
-		requestAnimationFrame(() => {
-			requestAnimationFrame(() => {
-				const sorted = [...this.imagePlanes].sort(
-					(a, b) =>
-						a.userData.img.getBoundingClientRect().left -
-						b.userData.img.getBoundingClientRect().left,
-				);
+		const delay = 0.2; // Delay to allow smooothy to apply transforms
 
-				sorted.forEach((plane, i) => {
-					const delay = i * 0.046;
+		gsap.delayedCall(delay, () => {
+			const sorted = [...this.imagePlanes].sort(
+				(a, b) =>
+					a.userData.img.getBoundingClientRect().left -
+					b.userData.img.getBoundingClientRect().left,
+			);
 
-					gsap.to(plane.material.uniforms.uOpacity, {
-						value: 1,
-						duration: 0.75,
-						ease: 'sine.out',
-						delay,
-					});
-					gsap.to(plane.material.uniforms.uEntrance, {
-						value: 0,
-						duration: 1.5,
-						ease: 'power4.out',
-						delay,
-					});
+			sorted.forEach((plane, i) => {
+				const delay = i * 0.046;
+
+				gsap.to(plane.material.uniforms.uOpacity, {
+					value: 1,
+					duration: 0.75,
+					ease: 'sine.out',
+					delay,
+				});
+				gsap.to(plane.material.uniforms.uEntrance, {
+					value: 0,
+					duration: 1.5,
+					ease: 'power4.out',
+					delay,
 				});
 			});
 		});

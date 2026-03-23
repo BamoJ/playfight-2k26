@@ -29,7 +29,7 @@ export default class HomeTransition extends Transition {
 		 */
 		gsap.set(to, { opacity: 0 });
 
-		const readyDelay = this.fromElement ? 0.6 : 0;
+		const readyDelay = this.fromElement ? 0.8 : 0;
 
 		gsap.delayedCall(readyDelay, () => {
 			/*

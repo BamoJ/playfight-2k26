@@ -22,7 +22,7 @@ void main() {
 	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
 	float entranceBlur = uEntrance * 2.0;
-	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0 + entranceBlur;
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 2.0 + entranceBlur;
 
 	if(blurAmount < 0.001) {
 		gl_FragColor = vec4(sharp, uOpacity);

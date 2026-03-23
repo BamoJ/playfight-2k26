@@ -27,8 +27,6 @@ export class Originals extends Page {
 	}
 
 	create(template = document) {
-		setTimeout(() => emitter.emit('originals:enter-ready'), 0);
-
 		if (this.created) return;
 
 		this.calculateViewport();
@@ -57,6 +55,9 @@ export class Originals extends Page {
 			viewport: this.viewport,
 			screen: this.screen,
 			template: this.slider?.wrapper || template,
+			onReady: () => {
+				emitter.emit('originals:enter-ready');
+			},
 		});
 	}
 
@@ -75,7 +76,6 @@ export class Originals extends Page {
 	}
 
 	transitionIn(onComplete) {
-		emitter.emit('originals:enter-ready');
 		if (onComplete) onComplete();
 	}
 
