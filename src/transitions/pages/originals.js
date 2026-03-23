@@ -88,14 +88,14 @@ export default class OriginalsTransition extends Transition {
 						},
 					);
 					gsap.from(title, {
-						yPercent: 100,
+						yPercent: 120,
 						duration: 1,
 						ease: 'power3.out',
 						delay: 0.6,
 						stagger: 0.1,
 					});
 					gsap.from(smallTexts, {
-						yPercent: 100,
+						yPercent: 120,
 						duration: 1,
 						ease: 'power3.out',
 						delay: 0.7,
@@ -114,7 +114,7 @@ export default class OriginalsTransition extends Transition {
 			};
 
 			emitter.once('originals:enter-ready', startAnimations);
-			gsap.delayedCall(1, startAnimations); // fallback
+			gsap.delayedCall(0.6, startAnimations); // fallback
 		});
 	}
 }
