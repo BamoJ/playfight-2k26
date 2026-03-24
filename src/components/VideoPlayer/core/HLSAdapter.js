@@ -1,4 +1,4 @@
-import Hls from 'hls.js';
+import Hls from 'hls.js/dist/hls.light.mjs';
 import { bestLevel, resolveUrl } from './utils.js';
 
 /**

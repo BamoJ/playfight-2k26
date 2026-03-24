@@ -3,7 +3,7 @@ import { SplitText } from 'gsap/SplitText';
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin';
 import gsap from 'gsap';
 import AnimationCore from '@animations/_core/AnimationCore';
-import Lottie from 'lottie-web';
+import Lottie from 'lottie-web/build/player/lottie_light';
 
 gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin);
 
