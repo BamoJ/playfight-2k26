@@ -150,6 +150,7 @@ export class DOMPlane {
 	 * Sync a single plane to its DOM element position.
 	 */
 	updatePlanePosition(plane) {
+		if (this.frozen) return;
 		if (plane.userData.worldPos) return;
 
 		const { img } = plane.userData;
@@ -249,10 +250,12 @@ export class DOMPlane {
 	}
 
 	show() {
+		this.frozen = false;
 		this.imageGroup.visible = true;
 	}
 
 	fadeOut(duration = 0.4, ease = 'sine.in') {
+		this.frozen = true;
 		this.imagePlanes.forEach((plane) => {
 			gsap.to(plane.material.uniforms.uOpacity, {
 				value: 0,

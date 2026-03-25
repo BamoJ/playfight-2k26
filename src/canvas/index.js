@@ -42,6 +42,11 @@ export default class Canvas {
 
 		emitter.on('transition:start', () => {
 			this.currentPage?.view?.fadeOut();
+			this.isTransitioning = true;
+		});
+
+		emitter.on('transition:complete', () => {
+			this.isTransitioning = false;
 		});
 
 		this.initCurrentPage();
@@ -177,6 +182,7 @@ export default class Canvas {
 
 	update() {
 		Object.values(this.pages).forEach((page) => {
+			if (this.isTransitioning && page === this.currentPage) return;
 			if (page.update) page.update(this.time);
 		});
 

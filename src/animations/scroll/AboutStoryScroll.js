@@ -13,7 +13,6 @@ export default class AboutStoryScroll extends AnimationCore {
 			triggerStart: 'top bottom',
 			triggerEnd: 'bottom +=50%',
 			scrub: 1,
-			markers: true,
 			cleanup: false,
 		});
 	}

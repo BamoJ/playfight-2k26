@@ -28,7 +28,7 @@ export default class GlobalTransition extends Transition {
 		if (this.fromElement) {
 			tl.to(this.fromElement, {
 				opacity: 0,
-				duration: 0.45,
+				duration: 0.4,
 				ease: 'sine.in',
 			});
 		}
@@ -49,7 +49,7 @@ export default class GlobalTransition extends Transition {
 				duration: 0.65,
 				ease: 'sine.in',
 			},
-			this.fromElement ? 0.7 : 0,
+			this.fromElement ? 0.8 : 0,
 		);
 	}
 }

@@ -24,6 +24,10 @@ export default class SmoothScroll {
 			...options,
 		});
 
+		if ('scrollRestoration' in history) {
+			history.scrollRestoration = 'manual';
+		}
+
 		this.lenis.on('scroll', () => {
 			ScrollTrigger.update();
 		});
@@ -44,7 +48,11 @@ export default class SmoothScroll {
 	}
 
 	scrollTo(target, options = {}) {
-		this.lenis.scrollTo(target, { immediate: true, force: true, ...options });
+		this.lenis.scrollTo(target, {
+			immediate: true,
+			force: true,
+			...options,
+		});
 	}
 
 	startScroll() {
@@ -53,5 +61,8 @@ export default class SmoothScroll {
 
 	stopScroll() {
 		this.lenis.stop();
+	}
+	resize() {
+		this.lenis.resize();
 	}
 }
