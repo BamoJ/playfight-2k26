@@ -69,6 +69,8 @@ export default class TransitionManager {
 				to.classList.add('is-transition');
 
 				super.onEnter({ to, trigger }, () => {
+					const wasNavHidden =
+						manager.component?.instances?.hideNav?._st?.isActive;
 					if (manager.component) manager.component.destroy();
 					if (manager.animation) manager.animation.destroy();
 					if (this.fromElement) {
@@ -86,7 +88,7 @@ export default class TransitionManager {
 					const fromFooter =
 						trigger instanceof Element &&
 						trigger.closest('[data-footer]');
-					if (fromFooter) {
+					if (fromFooter || wasNavHidden) {
 						const hideNav = manager.component.instances.hideNav;
 						if (hideNav) {
 							hideNav.startHidden();
