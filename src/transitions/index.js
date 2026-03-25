@@ -40,6 +40,7 @@ export default class TransitionManager {
 		return class extends TransitionClass {
 			onLeave({ from, trigger, done }) {
 				scrollInstance.stopScroll();
+				document.documentElement.style.overflow = 'hidden';
 				emitter.emit('transition:start');
 
 				if (
@@ -65,15 +66,6 @@ export default class TransitionManager {
 					if (firstChild) firstChild.style.transition = '';
 				});
 
-				// Pin old content at current scroll position
-				if (this.fromElement) {
-					const scrollY = window.scrollY;
-					this.fromElement.style.position = 'fixed';
-					this.fromElement.style.top = `-${scrollY}px`;
-					this.fromElement.style.left = '0';
-					this.fromElement.style.width = '100%';
-				}
-
 				to.classList.add('is-transition');
 
 				super.onEnter({ to, trigger }, () => {
@@ -85,6 +77,7 @@ export default class TransitionManager {
 
 					scrollInstance.scrollTo(0);
 					to.classList.remove('is-transition');
+					document.documentElement.style.overflow = '';
 					scrollInstance.resize();
 					scrollInstance.startScroll();
 					manager.animation = new Animation();

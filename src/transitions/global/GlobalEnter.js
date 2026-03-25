@@ -49,7 +49,7 @@ export default class GlobalTransition extends Transition {
 				duration: 0.65,
 				ease: 'sine.in',
 			},
-			this.fromElement ? 0.8 : 0,
+			this.fromElement ? 0.75 : 0,
 		);
 	}
 }
