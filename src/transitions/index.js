@@ -68,6 +68,15 @@ export default class TransitionManager {
 
 				to.classList.add('is-transition');
 
+				// Pin old content at current scroll position
+				if (this.fromElement) {
+					const scrollY = window.scrollY;
+					this.fromElement.style.position = 'fixed';
+					this.fromElement.style.top = `-${scrollY}px`;
+					this.fromElement.style.left = '0';
+					this.fromElement.style.width = '100%';
+				}
+
 				super.onEnter({ to, trigger }, () => {
 					const wasNavHidden =
 						manager.component?.instances?.hideNav?._st?.isActive;
