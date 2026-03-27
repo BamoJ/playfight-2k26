@@ -39,7 +39,6 @@ void main() {
 	float wave = (waveY + waveX) * uStrength;
 
 	mvPosition.x -= wave * 0.1;
-	mvPosition.z += wave * 0.5;
 
 	vUv = uv;
 

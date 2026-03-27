@@ -33,7 +33,7 @@ void main() {
 	coverUv = bulge(coverUv, uMouse);
 
 	// --- RGB Shift on Y axis ---
-	float shiftAmount = uStrength * uScrollProgress * 0.95;
+	float shiftAmount = uStrength * uScrollProgress * 0.7;
 
 	// --- Sharp sample — individual channel offsets ---
 	float sharpR = texture2D(uTexture, coverUv + vec2(0.0, shiftAmount * 2.0)).r;
