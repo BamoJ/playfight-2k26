@@ -36,7 +36,7 @@ export class HomeView extends DOMPlane {
 	loadImages() {
 		const images = Array.from(
 			this.template.querySelectorAll('[data-gl-img="true"]'),
-		);
+		).filter((img) => !img.closest('[data-stacked-trail-area]'));
 
 		if (!images.length) return;
 

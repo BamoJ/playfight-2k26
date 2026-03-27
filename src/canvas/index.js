@@ -42,6 +42,7 @@ export default class Canvas {
 
 		emitter.on('transition:start', () => {
 			this.currentPage?.view?.fadeOut();
+			this.currentPage?.trailView?.fadeOutTrail();
 			this.isTransitioning = true;
 		});
 

@@ -2,6 +2,7 @@ import { Page } from '../Page';
 import emitter from '@utils/Emitter';
 import SmoothScroll from '@utils/SmoothScroll';
 import { HomeView } from './HomeView';
+import { TrailView } from './TrailView';
 
 export class Home extends Page {
 	constructor(options) {
@@ -46,6 +47,13 @@ export class Home extends Page {
 			screen: this.screen,
 			template,
 		});
+		this.trailView = new TrailView({
+			parent: this.elements,
+			camera: this.camera,
+			viewport: this.viewport,
+			screen: this.screen,
+			template,
+		});
 	}
 
 	onEnter(data) {
@@ -53,7 +61,9 @@ export class Home extends Page {
 			clearTimeout(this._leaveTimer);
 			this._leaveTimer = null;
 			this.view?.destroy?.();
+			this.trailView?.destroy?.();
 			this.view = null;
+			this.trailView = null;
 			this.created = false;
 			this.create(data);
 		}
@@ -66,14 +76,15 @@ export class Home extends Page {
 	}
 
 	transitionOut(onComplete) {
-		if (this.view) {
-			this.view.hide();
-		}
+		this.view?.hide();
+		this.trailView?.hide();
 
 		this._leaveTimer = setTimeout(() => {
 			this._leaveTimer = null;
 			this.view?.destroy?.();
+			this.trailView?.destroy?.();
 			this.view = null;
+			this.trailView = null;
 			this.created = false;
 			if (onComplete) onComplete();
 		}, 1400);
@@ -82,6 +93,7 @@ export class Home extends Page {
 	onResize() {
 		this.calculateViewport();
 		this.view?.onResize?.(this.viewport, this.screen);
+		this.trailView?.onResize?.(this.viewport, this.screen);
 	}
 
 	update(time) {
@@ -101,10 +113,12 @@ export class Home extends Page {
 		}
 
 		this.view.update(time);
+		this.trailView?.update(time);
 	}
 
 	destroy() {
 		this.view?.destroy?.();
+		this.trailView?.destroy?.();
 		super.destroy();
 	}
 }

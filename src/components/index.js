@@ -16,7 +16,7 @@ import NavButtonHover from '@ui/Buttons/NavButtonHover';
 
 import HeroTypewriter from '@ui/HeroTypewriter/HeroTypewritter';
 import HideNav from '@ui/HideNav/HideNav';
-import MouseImageTrail from '@ui/Mouse/MouseImageTrail';
+
 import PLModeSwitch from '@ui/PlaygroundModeSwitch/PLModeSwitch';
 import ServiceList from './ui/ServiceListHover/ServiceList';
 import NavLogoMorph from './ui/Buttons/NavLogoMorph';
@@ -40,7 +40,6 @@ export default class Components {
 
 		this.instances.heroTypewriter = new HeroTypewriter();
 		this.instances.hideNav = new HideNav();
-		this.instances.mouseImageTrail = new MouseImageTrail();
 		this.instances.buttonHover = new ButtonHover();
 		this.instances.lightboxButtonHover = new LightboxButtonHover();
 		this.instances.callButtonHover = new CallButtonHover();
