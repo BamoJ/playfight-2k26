@@ -22,7 +22,7 @@ import ServiceList from './ui/ServiceListHover/ServiceList';
 import NavLogoMorph from './ui/Buttons/NavLogoMorph';
 import PlaygroundButtonHover from './ui/Buttons/PlaygroundButtonHover';
 import Lightbox from './Lightbox/Lightbox';
-
+import FlipCardManager from './FlipCard/FlipCardManager';
 export default class Components {
 	constructor() {
 		this.instances = {};
@@ -47,6 +47,7 @@ export default class Components {
 		this.instances.plModeSwitch = new PLModeSwitch();
 		this.instances.ServiceList = new ServiceList();
 		this.instances.lightbox = new Lightbox();
+		this.instances.flipCardManager = new FlipCardManager();
 	}
 
 	get(name) {
