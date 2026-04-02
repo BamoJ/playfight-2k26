@@ -72,23 +72,14 @@ export default class AboutStoryScroll extends AnimationCore {
 		this.crtvText =
 			this.textElementWrap.querySelectorAll('.el_crtv div');
 
-		/** EL BORN */
-		this.elBorn = this.textElementWrap.querySelectorAll(
-			'.el_born_text div',
-		);
-
 		// EL PF LOGO //
 		this.pfTxt = document.querySelector('.elf_pf_txt');
 		this.pfR = this.textElementWrap.querySelector('.el_r_txt');
-
-		console.log(this.pfR, this.pfTxt);
 
 		/** CREATIVE PROD */
 		this.creativeProdTxt = this.textElementWrap.querySelectorAll(
 			'.el_creative_prod_post div',
 		);
-
-		console.log(this.creativeProdTxt);
 	}
 
 	createScrollTrigger() {
@@ -233,39 +224,6 @@ export default class AboutStoryScroll extends AnimationCore {
 					'<',
 				);
 		}
-
-		/* ==============================================
-		 *
-		 *   EL BORN — scramble + move
-		 *
-		 * ============================================== */
-		this.timeline
-			.to(
-				this.elBorn,
-				{
-					scrambleText: (_, target) => ({
-						text: target.textContent,
-						chars: scrambleChars,
-						tweenLength: false,
-						speed: 0.5,
-						rightToLeft: true,
-					}),
-					duration: 2,
-				},
-				1.8,
-			)
-			.from(
-				this.elBorn,
-				{
-					x: '-7.5vw',
-					filter: 'blur(5px)',
-					duration: 2,
-					opacity: 0.3,
-					ease: scrambleMoveEase,
-					stagger: 0.061,
-				},
-				'<+.4',
-			);
 
 		/* ==============================================
 		 *
@@ -428,7 +386,6 @@ export default class AboutStoryScroll extends AnimationCore {
 	destroy() {
 		[
 			this.crftText,
-			this.elBorn,
 			this.crtvText,
 			this.scrambledNumber,
 			this.kanjiScrambled,

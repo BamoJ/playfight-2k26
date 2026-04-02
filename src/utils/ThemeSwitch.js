@@ -13,24 +13,50 @@ export default class ThemeSwitch {
 		this._applyCurrentTheme();
 	}
 
-	_applyCurrentTheme() {}
+	_applyCurrentTheme() {
+		const carrier = document.querySelector('[data-page-bg]');
+		if (carrier) {
+			const bg = carrier.style.backgroundColor;
+			if (bg) {
+				document.body.style.backgroundColor = bg;
+				const wrapper = document.body.firstElementChild;
+				if (wrapper) wrapper.style.backgroundColor = bg;
+				return;
+			}
+		}
+	}
 
 	_onNavigateIn({ to }) {
 		const fetchedBody = to.page.body;
+		const liveBody = document.body;
+		const wrapper = liveBody.firstElementChild;
 
-		// Find theme class from the fetched page — check body first, then first child wrapper
-		let match = themeClasses.find((cls) =>
-			fetchedBody.classList.contains(cls),
+		// 1. CMS color carrier (per-project background)
+		const carrier = fetchedBody.querySelector('[data-page-bg]');
+		if (carrier) {
+			const bg = carrier.style.backgroundColor;
+			if (bg) {
+				liveBody.style.backgroundColor = bg;
+				if (wrapper) wrapper.style.backgroundColor = bg;
+				return;
+			}
+		}
+
+		// 2. No carrier → clear inline bg on both, fall back to theme classes
+		liveBody.style.backgroundColor = '';
+		if (wrapper) wrapper.style.backgroundColor = '';
+
+		themeClasses.forEach((cls) => liveBody.classList.remove(cls));
+
+		let match = [...fetchedBody.classList].find((cls) =>
+			themeClasses.includes(cls),
 		);
 		if (!match && fetchedBody.firstElementChild) {
-			match = themeClasses.find((cls) =>
-				fetchedBody.firstElementChild.classList.contains(cls),
+			match = [...fetchedBody.firstElementChild.classList].find(
+				(cls) => themeClasses.includes(cls),
 			);
 		}
 
-		// Apply to body only
-		const liveBody = document.body;
-		themeClasses.forEach((cls) => liveBody.classList.remove(cls));
 		if (match) liveBody.classList.add(match);
 	}
 }
