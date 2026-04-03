@@ -61,11 +61,11 @@ export default class NavLogoMorph extends ComponentCore {
 		this.tl.to(
 			this.logoSecondary,
 			{
-				duration: 0.5,
+				duration: 0.4,
 				ease: 'back.out',
 				scale: 1,
 			},
-			0.2,
+			0.1,
 		);
 	}
 
