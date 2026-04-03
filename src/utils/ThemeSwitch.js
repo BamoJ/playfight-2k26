@@ -1,4 +1,5 @@
 import E from '@unseenco/e';
+import gsap from 'gsap';
 
 const themeClasses = [
 	'u-theme-dark',
@@ -19,8 +20,12 @@ export default class ThemeSwitch {
 			const bg = carrier.style.backgroundColor;
 			if (bg) {
 				document.body.style.backgroundColor = bg;
+				document.body.style.color = '#fff';
 				const wrapper = document.body.firstElementChild;
-				if (wrapper) wrapper.style.backgroundColor = bg;
+				if (wrapper) {
+					wrapper.style.backgroundColor = bg;
+					wrapper.style.color = '#fff';
+				}
 				return;
 			}
 		}
@@ -37,14 +42,22 @@ export default class ThemeSwitch {
 			const bg = carrier.style.backgroundColor;
 			if (bg) {
 				liveBody.style.backgroundColor = bg;
-				if (wrapper) wrapper.style.backgroundColor = bg;
+				liveBody.style.color = '#fff';
+				if (wrapper) {
+					wrapper.style.backgroundColor = bg;
+					wrapper.style.color = '#fff';
+				}
 				return;
 			}
 		}
 
-		// 2. No carrier → clear inline bg on both, fall back to theme classes
+		// 2. No carrier → clear inline overrides, fall back to theme classes
 		liveBody.style.backgroundColor = '';
-		if (wrapper) wrapper.style.backgroundColor = '';
+		liveBody.style.color = '';
+		if (wrapper) {
+			wrapper.style.backgroundColor = '';
+			wrapper.style.color = '';
+		}
 
 		themeClasses.forEach((cls) => liveBody.classList.remove(cls));
 
