@@ -13,8 +13,12 @@ export default class NavLogoMorph extends ComponentCore {
 
 	createElements() {
 		this.navLogo = document.querySelector('[data-nav-logo]');
-		this.main = this.navLogo.querySelector('#main');
-		this.secondary = this.navLogo.querySelector('#secondary');
+		this.logoPrimary = this.navLogo.querySelector(
+			'[data-logo-primary]',
+		);
+		this.logoSecondary = this.navLogo.querySelector(
+			'[data-logo-secondary]',
+		);
 	}
 
 	addEventListeners() {
@@ -42,19 +46,27 @@ export default class NavLogoMorph extends ComponentCore {
 	}
 
 	handleMouseEnter() {
-		console.log('mouseenter');
-		if (!this.tl) {
-			this.tl = gsap.timeline({ paused: true });
-			this.tl.to(this.main, {
+		if (this.tl) this.tl.kill();
+		this.tl = gsap.timeline();
+		this.tl.to(
+			this.logoPrimary.querySelectorAll('path'),
+			{
+				yPercent: -150,
+				duration: 0.3,
+				ease: 'power4.out',
+				stagger: { from: 'random', amount: 0.1 },
+			},
+			0,
+		);
+		this.tl.to(
+			this.logoSecondary,
+			{
 				duration: 0.5,
-				morphSVG: {
-					shape: this.secondary,
-				},
-				ease: 'expo.inOut',
-			});
-		}
-
-		this.tl.play();
+				ease: 'back.out',
+				scale: 1,
+			},
+			0.2,
+		);
 	}
 
 	handleMouseLeave() {

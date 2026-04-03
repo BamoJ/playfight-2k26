@@ -80,7 +80,7 @@ export default class HideNav extends ComponentCore {
 		if (this.navSVG) {
 			gsap.to(this.navSVG.querySelectorAll('path'), {
 				yPercent: 0,
-				duration: 0.9,
+				duration: 0.4,
 				ease: 'power4.out',
 				stagger: { from: 'random', amount: 0.25 },
 				overwrite: true,
