@@ -44,17 +44,6 @@ export default class CallButtonHover extends ComponentCore {
 				onReverseComplete: () =>
 					gsap.set(btn, { clearProps: 'width, scale' }),
 			});
-
-			// tl.to(
-			// 	btn,
-			// 	{
-			// 		width: hoverWidth,
-			// 		scale: 1.05,
-			// 		duration: 0.34,
-			// 		ease: 'power2.out',
-			// 	},
-			// 	0,
-			// );
 			tl.to(
 				splitText.chars,
 				{

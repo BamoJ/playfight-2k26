@@ -1,26 +1,14 @@
 import { gsap } from 'gsap';
+import { SplitText } from 'gsap/SplitText';
 import emitter from '@utils/Emitter';
+import TextureCache from '@canvas/utils/TextureCache';
 
-/**
- * Preloader — tracks real loading progress and orchestrates page enter.
- *
- * Customize the DOM selectors and animations per project.
- * The loading logic (texture preloading, progress tracking) stays the same.
- *
- * Required Webflow elements:
- *   [data-loader="wrapper"]     - Preloader container
- *   [data-loader="loader-num"]  - Progress number display
- *   [data-loader="progress-bar"] - Progress bar element
- */
 export default class Preloader {
 	constructor(options = {}) {
 		this.onComplete = options.onComplete || (() => {});
-		this.onAppStart = options.onAppStart || (() => {});
 		this.minDuration = options.minDuration || 400;
 
-		this.wrapper = document.querySelector(
-			'[data-loader="wrapper"]',
-		);
+		this.wrapper = document.querySelector('[data-loader="wrap"]');
 		if (!this.wrapper) {
 			this.onComplete();
 			return;
@@ -29,9 +17,26 @@ export default class Preloader {
 		this.loaderNum = this.wrapper.querySelector(
 			'[data-loader="loader-num"]',
 		);
-		this.progressBar = this.wrapper.querySelector(
-			'[data-loader="progress-bar"]',
+		this.svgLeft = this.wrapper.querySelector(
+			'[data-loader="svg-left"]',
 		);
+		this.svgRight = this.wrapper.querySelector(
+			'[data-loader="svg-right"]',
+		);
+
+		this.imagesMove = document.querySelectorAll(
+			'[data-anim-hero-scroll="img-move"]',
+		);
+		this.videoFlip = document.querySelector(
+			'[data-anim-hero-scroll="video-flip-move"]',
+		);
+		this.heading = document.querySelector(
+			'[data-loader="heading"] h1',
+		);
+		this.text = document.querySelector('[data-loader="text"]');
+		this.logo = document.querySelector('[data-loader="logo"]');
+		this.navBtn = document.querySelector('[data-loader="nav-btn"]');
+		this.bg = this.wrapper.querySelector('[data-loader="bg"]');
 
 		this.actualProgress = 0;
 		this.displayProgress = 0;
@@ -39,17 +44,11 @@ export default class Preloader {
 		this.rafId = null;
 		this.isComplete = false;
 		this.startTime = 0;
-		this.appStarted = false;
+		this.tl = null;
+		this.view = null;
 
-		// Page-specific ready signal name (e.g. 'home:enter-ready')
-		this.readySignal = options.readySignal || null;
-		this.readyFired = false;
-
-		if (this.readySignal) {
-			emitter.once(this.readySignal, () => {
-				this.readyFired = true;
-			});
-		}
+		this.abort = this.abort.bind(this);
+		emitter.once('transition:start', this.abort);
 	}
 
 	startProgressTicker() {
@@ -66,15 +65,11 @@ export default class Preloader {
 				? timeProgress
 				: Math.min(timeProgress, this.actualProgress);
 
-			this.displayProgress +=
-				(target - this.displayProgress) * 0.1;
+			this.displayProgress += (target - this.displayProgress) * 0.1;
 
 			const current = Math.round(this.displayProgress);
 			if (this.loaderNum) {
 				this.loaderNum.textContent = current;
-			}
-			if (this.progressBar) {
-				this.progressBar.style.width = `${current}%`;
 			}
 
 			this.rafId = requestAnimationFrame(tick);
@@ -96,45 +91,277 @@ export default class Preloader {
 		this.wrapper.style.visibility = 'visible';
 		this.startTime = performance.now();
 
-		this.startProgressTicker();
+		// Hide page content behind preloader
+		this.view = document.querySelector('[data-taxi-view]');
+		if (this.view) gsap.set(this.view, { opacity: 0 });
 
-		await this.loadAssets();
-
-		// Start the app
-		await new Promise((r) => setTimeout(r, 100));
-		this.onAppStart();
-		this.appStarted = true;
-
-		// Wait for page-specific ready signal if configured
-		if (this.readySignal) {
-			await this.waitForPageReady();
+		// Hide nav
+		if (this.logo) {
+			gsap.set(this.logo.querySelectorAll('path'), {
+				yPercent: -150,
+			});
+		}
+		if (this.navBtn) {
+			const lines = this.navBtn.querySelectorAll('.nav_button_line');
+			if (lines.length) {
+				gsap.set(lines, { xPercent: 100, opacity: 0 });
+			}
 		}
 
+		// Load assets, measure how long it took
+		const loadStart = performance.now();
+		await this.loadAssets();
+		const loadTime = (performance.now() - loadStart) / 1000;
+
+		// Entrance duration = actual load time, min 4s
+		const duration = Math.max(loadTime, 4);
+		this.minDuration = duration * 1000;
 		this.loadingComplete = true;
 		this.actualProgress = 100;
 
-		const elapsed = performance.now() - this.startTime;
-		const remaining = Math.max(this.minDuration - elapsed, 0);
-		if (remaining > 0) {
-			await new Promise((r) => setTimeout(r, remaining));
-		}
+		// Reset ticker for entrance phase — counter 0→100 over 'duration'
+		this.displayProgress = 0;
+		this.startTime = performance.now();
+		this.startProgressTicker();
 
-		await new Promise((r) => setTimeout(r, 150));
+		await this.animateIn(duration);
+
 		this.stopProgressTicker();
-		await this.complete();
-	}
-
-	async complete() {
-		if (this.isComplete) return;
 		this.isComplete = true;
-
+		emitter.off('transition:start', this.abort);
 		this.displayProgress = 100;
 		if (this.loaderNum) this.loaderNum.textContent = '100';
-		if (this.progressBar)
-			this.progressBar.style.width = '100%';
-
 		await new Promise((r) => setTimeout(r, 100));
+
+		// Exit + hero entrance
 		await this.animateOut();
+
+		this.wrapper.style.visibility = 'hidden';
+	}
+
+	animateIn(duration) {
+		return new Promise((resolve) => {
+			const tl = gsap.timeline({ onComplete: resolve });
+
+			if (this.loaderNum) {
+				tl.fromTo(
+					this.loaderNum,
+					{ y: '100vh' },
+					{ y: '0vh', duration, ease: 'power3.out' },
+				);
+			}
+
+			if (this.svgLeft) {
+				tl.fromTo(
+					this.svgLeft,
+					{ y: '100vh' },
+					{ y: '0vh', duration, ease: 'power3.out' },
+					0,
+				);
+			}
+			if (this.svgRight) {
+				tl.fromTo(
+					this.svgRight,
+					{ y: '100vh' },
+					{ y: '0vh', duration, ease: 'power3.out' },
+					0,
+				);
+			}
+		});
+	}
+
+	animateOut() {
+		return new Promise((resolve) => {
+			this.tl = gsap.timeline({ onComplete: resolve });
+
+			/*
+			 * ───────────────────────────────────────
+			 *  Preloader exit
+			 * ───────────────────────────────────────
+			 */
+			if (this.svgLeft) {
+				this.tl.to(
+					this.svgLeft,
+					{
+						x: '0',
+						duration: 0.5,
+						ease: 'power3.inOut',
+					},
+					0,
+				);
+			}
+			if (this.bg) {
+				this.tl.to(
+					this.bg,
+					{
+						opacity: '0',
+						duration: 0.2,
+						ease: 'sine.out',
+					},
+					0,
+				);
+			}
+			if (this.svgRight) {
+				this.tl.to(
+					this.svgRight,
+					{
+						x: '0',
+						duration: 0.5,
+						ease: 'power3.inOut',
+					},
+					0.05,
+				);
+			}
+			if (this.loaderNum) {
+				this.tl.to(
+					this.loaderNum,
+					{ opacity: 0, duration: 2, ease: 'sine.out' },
+					0.1,
+				);
+			}
+
+			/*
+			 * ───────────────────────────────────────
+			 *  Hide wrapper → initDom → set scatter
+			 *  All sync so HeroScroll captures (0,0)
+			 *  before scatter positions are applied
+			 * ───────────────────────────────────────
+			 */
+			const fromX = gsap.utils.wrap(['-50vw', '50vw']);
+			const fromY = gsap.utils.wrap([
+				'-50vh',
+				'-50vh',
+				'50vh',
+				'50vh',
+				'50vh',
+			]);
+
+			this.tl.call(
+				() => {
+					this.onComplete();
+					if (this.imagesMove.length) {
+						gsap.set(this.imagesMove, {
+							x: (i) => fromX(i),
+							y: (i) => fromY(i),
+							filter: 'blur(30px)',
+						});
+					}
+				},
+				null,
+				'<',
+			);
+
+			/*
+			 * ───────────────────────────────────────
+			 *  Hero entrance
+			 * ───────────────────────────────────────
+			 */
+			this.tl.addLabel('reveal', 0.6);
+
+			// Page view fade in
+			if (this.view) {
+				this.tl.to(
+					this.view,
+					{
+						opacity: 1,
+						duration: 0.65,
+						ease: 'sine.out',
+						onComplete: () =>
+							gsap.set(this.view, {
+								clearProps: 'opacity',
+							}),
+					},
+					'reveal',
+				);
+			}
+
+			// img-move scatter entrance
+			if (this.imagesMove.length) {
+				this.tl.to(
+					this.imagesMove,
+					{
+						x: 0,
+						y: 0,
+						filter: 'blur(0px)',
+						duration: 2,
+						ease: 'expo.out',
+						overwrite: false,
+						stagger: {
+							from: 'center',
+							amount: 0.15,
+						},
+					},
+					'reveal',
+				);
+			}
+
+			// Heading SplitText reveal
+			if (this.heading) {
+				const split = new SplitText(this.heading, {
+					type: 'lines, chars',
+					mask: 'lines',
+				});
+				this.tl.fromTo(
+					split.chars,
+					{ yPercent: 100 },
+					{
+						yPercent: 0,
+						duration: 0.7,
+						ease: 'power3.out',
+						stagger: 0.015,
+					},
+					'reveal',
+				);
+			}
+
+			// Text fade in
+			if (this.text) {
+				this.tl.fromTo(
+					this.text,
+					{ opacity: 0 },
+					{
+						opacity: 1,
+						duration: 0.8,
+						ease: 'sine.out',
+					},
+					'reveal+=0.3',
+				);
+			}
+
+			// Nav logo reveal
+			if (this.logo) {
+				this.tl.to(
+					this.logo.querySelectorAll('path'),
+					{
+						yPercent: 0,
+						duration: 0.4,
+						ease: 'power4.out',
+						stagger: { from: 'random', amount: 0.25 },
+					},
+					'reveal',
+				);
+			}
+
+			// Nav button reveal
+			if (this.navBtn) {
+				const lines = this.navBtn.querySelectorAll(
+					'.nav_button_line',
+				);
+				if (lines.length) {
+					this.tl.to(
+						lines,
+						{
+							xPercent: 0,
+							opacity: 1,
+							duration: 0.5,
+							stagger: 0.08,
+							ease: 'power4.out',
+						},
+						'reveal',
+					);
+				}
+			}
+		});
 	}
 
 	async loadAssets() {
@@ -163,46 +390,29 @@ export default class Preloader {
 		this.actualProgress = 95;
 	}
 
-	waitForPageReady() {
-		return new Promise((resolve) => {
-			if (this.readyFired) {
-				resolve();
-				return;
-			}
+	abort() {
+		if (this.isComplete) return;
+		this.isComplete = true;
+		this.stopProgressTicker();
 
-			emitter.once(this.readySignal, () => {
-				this.readyFired = true;
-				resolve();
+		if (this.tl) this.tl.kill();
+		gsap.killTweensOf(
+			[this.svgLeft, this.svgRight, this.loaderNum].filter(Boolean),
+		);
+
+		this.wrapper.style.display = 'none';
+
+		if (this.logo) {
+			gsap.set(this.logo.querySelectorAll('path'), {
+				clearProps: 'all',
 			});
+		}
+		if (this.navBtn) {
+			const lines = this.navBtn.querySelectorAll('.nav_button_line');
+			if (lines.length) gsap.set(lines, { clearProps: 'all' });
+		}
+		if (this.view) gsap.set(this.view, { clearProps: 'opacity' });
 
-			setTimeout(() => {
-				if (!this.readyFired) {
-					console.warn(
-						`[Preloader] Timeout waiting for ${this.readySignal}`,
-					);
-					resolve();
-				}
-			}, 2000);
-		});
-	}
-
-	/**
-	 * Override this per project for custom exit animations.
-	 */
-	animateOut() {
-		return new Promise((resolve) => {
-			const tl = gsap.timeline({
-				onComplete: () => {
-					this.wrapper.style.visibility = 'hidden';
-					resolve();
-				},
-			});
-
-			tl.to(this.wrapper, {
-				opacity: 0,
-				duration: 0.6,
-				ease: 'power2.inOut',
-			});
-		});
+		this.onComplete();
 	}
 }

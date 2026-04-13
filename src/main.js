@@ -13,7 +13,9 @@ import PlaygroundTransition from '@/transitions/pages/playground';
 import OriginalsTransition from '@transitions/pages/originals';
 import AboutTransition from '@transitions/pages/about';
 import HomeTransition from '@transitions/pages/home';
+import Preloader from '@transitions/Preloader';
 import emitter from '@utils/Emitter';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // --- Page Registry (WebGL) ---
 const pages = {
@@ -39,14 +41,36 @@ const pageTransitions = {
 // --- Main App ---
 class App {
 	constructor() {
-		new SmoothScroll();
+		const scroll = new SmoothScroll();
 
 		const canvas = new Canvas(pages);
 		emitter.on('transition:complete', () => {
 			canvas.onChange(canvas.detectPageName());
 		});
 
-		new TransitionManager({ pageTransitions });
+		const isHome = ['/', '/index', '/index.html'].includes(
+			window.location.pathname,
+		);
+		const showPreloader = isHome; // TODO: restore sessionStorage check after debugging
+
+		if (showPreloader) {
+			scroll.stopScroll();
+			const tm = new TransitionManager({
+				pageTransitions,
+				deferDomInit: true,
+			});
+			const preloader = new Preloader({
+				onComplete: () => {
+					tm.initDom();
+					scroll.startScroll();
+					ScrollTrigger.refresh();
+				},
+			});
+			preloader.start();
+			sessionStorage.setItem('preloaderShown', 'true');
+		} else {
+			new TransitionManager({ pageTransitions });
+		}
 	}
 }
 

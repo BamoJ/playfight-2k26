@@ -21,11 +21,15 @@ import ThemeSwitch from '@utils/ThemeSwitch';
  *   2. Pass it in the pageTransitions config
  */
 export default class TransitionManager {
-	constructor({ pageTransitions = {} } = {}) {
+	constructor({ pageTransitions = {}, deferDomInit = false } = {}) {
 		this.scroll = new SmoothScroll();
 		this.pageTransitions = pageTransitions;
 		this.init();
 		this.themeSwitch = new ThemeSwitch();
+		if (!deferDomInit) this.initDom();
+	}
+
+	initDom() {
 		this.component = new Components();
 		this.animation = new Animation();
 	}
