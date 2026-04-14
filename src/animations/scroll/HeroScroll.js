@@ -1,6 +1,7 @@
 import { gsap } from 'gsap';
 import { Flip } from 'gsap/Flip';
 import AnimationCore from '@animations/_core/AnimationCore';
+import emitter from '@utils/Emitter';
 
 gsap.registerPlugin(Flip);
 
@@ -42,9 +43,23 @@ export default class HeroScroll extends AnimationCore {
 		)
 			return;
 
+		// Defer Flip setup until preloader's reveal finishes so Flip.getState
+		// captures a clean (transform-free) state on videoFlipMove + children.
+		const loader = document.querySelector('[data-loader="wrap"]');
+		const preloading =
+			loader && loader.style.visibility !== 'hidden';
+
+		if (preloading) {
+			this._flipSetup = () => this.setupFlip();
+			emitter.once('preloader:complete', this._flipSetup);
+		} else {
+			this.setupFlip();
+		}
+	}
+
+	setupFlip() {
 		const state = Flip.getState(this.videoFlipMove);
-		const target = this.targetVideoContainer;
-		target.append(this.videoFlipMove);
+		this.targetVideoContainer.append(this.videoFlipMove);
 
 		const targetX = gsap.utils.wrap(['-50vw', '50vw']);
 		const targetY = gsap.utils.wrap([
@@ -73,6 +88,10 @@ export default class HeroScroll extends AnimationCore {
 	}
 
 	destroy() {
+		if (this._flipSetup) {
+			emitter.off('preloader:complete', this._flipSetup);
+			this._flipSetup = null;
+		}
 		if (this.flipOriginParent && this.videoFlipMove) {
 			gsap.set(this.videoFlipMove, {
 				clearProps: 'transform,opacity',
