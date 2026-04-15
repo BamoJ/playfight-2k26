@@ -62,9 +62,11 @@ class App {
 			const preloader = new Preloader({
 				onComplete: () => {
 					tm.initDom();
-					scroll.startScroll();
-					ScrollTrigger.refresh();
 				},
+			});
+			emitter.once('preloader:complete', () => {
+				scroll.startScroll();
+				ScrollTrigger.refresh();
 			});
 			preloader.start();
 			sessionStorage.setItem('preloaderShown', 'true');

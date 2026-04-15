@@ -16,6 +16,10 @@ body > :first-child {
 	transition: background-color 0.4s ease;
 }
 
+.split-line {
+	padding: 0 0.2em;
+}
+
 .about_navigation_link {
 	position: relative;
 	will-change: transform;
