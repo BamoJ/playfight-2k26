@@ -12,7 +12,9 @@ export default class NavLogoMorph extends ComponentCore {
 	}
 
 	createElements() {
+		this.navbar = document.querySelector('[data-nav-hide="component"]');
 		this.navLogo = document.querySelector('[data-nav-logo]');
+		if (!this.navLogo) return;
 		this.logoPrimary = this.navLogo.querySelector(
 			'[data-logo-primary]',
 		);
@@ -46,6 +48,7 @@ export default class NavLogoMorph extends ComponentCore {
 	}
 
 	handleMouseEnter() {
+		if (this.navbar?.classList.contains('is-nav-hidden')) return;
 		if (this.tl) this.tl.kill();
 		this.tl = gsap.timeline();
 		this.tl.to(
@@ -70,6 +73,7 @@ export default class NavLogoMorph extends ComponentCore {
 	}
 
 	handleMouseLeave() {
+		if (this.navbar?.classList.contains('is-nav-hidden')) return;
 		if (this.tl) {
 			this.tl.timeScale(1.4).reverse();
 		}

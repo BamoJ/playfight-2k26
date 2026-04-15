@@ -1,6 +1,8 @@
 import { Transition } from '@unseenco/taxi';
 import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import SmoothScroll from '@utils/SmoothScroll';
 
 export default class HomeTransition extends Transition {
 	onLeave({ done }) {
@@ -8,6 +10,8 @@ export default class HomeTransition extends Transition {
 	}
 
 	onEnter({ to }, animationComplete) {
+		const scroll = new SmoothScroll();
+
 		/*
 		 * ───────────────────────────────────────
 		 *  Fade out old content
@@ -36,10 +40,24 @@ export default class HomeTransition extends Transition {
 			 * ───────────────────────────────────────
 			 *  Fire animationComplete early
 			 *  Triggers transition:complete → canvas
-			 *  page swap, so WebGL loads in parallel
+			 *  page swap, so WebGL loads in parallel.
+			 *  Re-lock scroll immediately — TM unlocks
+			 *  inside animationComplete's callback, but
+			 *  HeroScroll's scrub would smear the hero
+			 *  transforms if the user scrolls during the
+			 *  entrance. Master timeline's onComplete
+			 *  unlocks once all tweens settle.
 			 * ───────────────────────────────────────
 			 */
 			animationComplete();
+			scroll.stopScroll();
+
+			const tl = gsap.timeline({
+				onComplete: () => {
+					scroll.startScroll();
+					ScrollTrigger.refresh();
+				},
+			});
 
 			/*
 			 * ───────────────────────────────────────
@@ -54,7 +72,7 @@ export default class HomeTransition extends Transition {
 					mask: 'lines',
 				});
 
-				gsap.fromTo(
+				tl.fromTo(
 					splitHeading.lines,
 					{ yPercent: 100 },
 					{
@@ -63,6 +81,7 @@ export default class HomeTransition extends Transition {
 						ease: 'power3.out',
 						stagger: 0.055,
 					},
+					0,
 				);
 			}
 
@@ -73,15 +92,15 @@ export default class HomeTransition extends Transition {
 			 */
 			const typewrite = to.querySelector('.hero_typewrite');
 			if (typewrite) {
-				gsap.fromTo(
+				tl.fromTo(
 					typewrite,
 					{ opacity: 0 },
 					{
 						opacity: 1,
 						duration: 0.8,
 						ease: 'sine.out',
-						delay: 0.3,
 					},
+					0.3,
 				);
 			}
 
@@ -112,43 +131,50 @@ export default class HomeTransition extends Transition {
 					filter: 'blur(30px)',
 				});
 
-				gsap.to(imgMove, {
-					x: 0,
-					y: 0,
-					filter: 'blur(0px)',
-					duration: 1.6,
-					ease: 'expo.out',
-					overwrite: false,
-					stagger: {
-						from: 'center',
-						amount: 0.15,
+				tl.to(
+					imgMove,
+					{
+						x: 0,
+						y: 0,
+						filter: 'blur(0px)',
+						duration: 1.6,
+						ease: 'expo.out',
+						overwrite: false,
+						stagger: {
+							from: 'center',
+							amount: 0.15,
+						},
 					},
-				});
+					0,
+				);
 			}
 
 			/*
 			 * ───────────────────────────────────────
-			 *  Hero video-flip-move fade in
-			 *  Opacity only — no transforms to avoid
-			 *  Flip state conflict with HeroScroll
+			 *  Hero video-flip-move rise + blur clear
+			 *  `from` only — tween ends at the element's
+			 *  natural (HeroScroll Flip-set) position, so
+			 *  no clearProps needed. HeroScroll's scrub
+			 *  will overwrite the inline transform on the
+			 *  first scroll tick — clearing it here would
+			 *  flash the video to its target (fullscreen)
+			 *  DOM position for one paint before refresh.
 			 * ───────────────────────────────────────
 			 */
 			const videoFlip = to.querySelector(
 				'[data-anim-hero-scroll="video-flip-move"]',
 			);
 			if (videoFlip) {
-				gsap.fromTo(
+				tl.from(
 					videoFlip,
-					{ opacity: 0 },
 					{
-						opacity: 1,
-						duration: 0.8,
-						ease: 'sine.out',
-						delay: 0.4,
-						onComplete: () => {
-							gsap.set(videoFlip, { clearProps: 'opacity' });
-						},
+						opacity: 0,
+						y: '110vh',
+						filter: 'blur(30px)',
+						duration: 2,
+						ease: 'expo.out',
 					},
+					0.4,
 				);
 			}
 
@@ -157,14 +183,18 @@ export default class HomeTransition extends Transition {
 			 *  Page fade in
 			 * ───────────────────────────────────────
 			 */
-			gsap.to(to, {
-				opacity: 1,
-				duration: 0.65,
-				ease: 'sine.out',
-				onComplete: () => {
-					gsap.set(to, { clearProps: 'opacity' });
+			tl.to(
+				to,
+				{
+					opacity: 1,
+					duration: 0.65,
+					ease: 'sine.out',
+					onComplete: () => {
+						gsap.set(to, { clearProps: 'opacity' });
+					},
 				},
-			});
+				0,
+			);
 		});
 	}
 }

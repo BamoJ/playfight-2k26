@@ -34,6 +34,7 @@ export default class HideNav extends ComponentCore {
 	removeEventListeners() {}
 
 	startHidden() {
+		this.navbar?.classList.add('is-nav-hidden');
 		if (this.navBtnLine?.length) {
 			gsap.set(this.navBtnLine, { xPercent: 100, opacity: 0 });
 		}
@@ -45,6 +46,7 @@ export default class HideNav extends ComponentCore {
 	}
 
 	_hide() {
+		this.navbar?.classList.add('is-nav-hidden');
 		if (this.navBtnLine && this.navBtnLine.length) {
 			gsap.to(this.navBtnLine, {
 				xPercent: 100,
@@ -67,6 +69,7 @@ export default class HideNav extends ComponentCore {
 	}
 
 	_show() {
+		this.navbar?.classList.remove('is-nav-hidden');
 		if (this.navBtnLine && this.navBtnLine.length) {
 			gsap.to(this.navBtnLine, {
 				xPercent: 0,
@@ -86,6 +89,18 @@ export default class HideNav extends ComponentCore {
 				overwrite: true,
 			});
 		}
+	}
+
+	freeze() {
+		const wasHidden = !!this._st?.isActive;
+		if (this._st) {
+			this._st.kill();
+			this._st = null;
+		}
+		if (this.navBtnLine?.length) gsap.killTweensOf(this.navBtnLine);
+		if (this.navSVG)
+			gsap.killTweensOf(this.navSVG.querySelectorAll('path'));
+		return wasHidden;
 	}
 
 	_buildTrigger() {

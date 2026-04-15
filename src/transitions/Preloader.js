@@ -323,13 +323,13 @@ export default class Preloader {
 			if (this.svgLeft)
 				this.tl.to(
 					this.svgLeft,
-					{ x: '0vw', duration: 0.85, ease: 'power4.inOut' },
-					'>-.5',
+					{ x: '0vw', duration: 0.85, ease: 'power4.out' },
+					'>-.35',
 				);
 			if (this.svgRight)
 				this.tl.to(
 					this.svgRight,
-					{ x: '0vw', duration: 0.85, ease: 'power4.inOut' },
+					{ x: '0vw', duration: 0.85, ease: 'power4.out' },
 					'<',
 				);
 

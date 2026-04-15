@@ -43,6 +43,13 @@ export default class TransitionManager {
 
 		return class extends TransitionClass {
 			onLeave({ from, trigger, done }) {
+				const hideNav = manager.component?.instances?.hideNav;
+				const navWasHidden = hideNav ? hideNav.freeze() : false;
+				const fromFooter =
+					trigger instanceof Element &&
+					!!trigger.closest('[data-footer]');
+				this._navShouldReveal = navWasHidden || fromFooter;
+
 				scrollInstance.stopScroll();
 				document.documentElement.style.overflow = 'hidden';
 				emitter.emit('transition:start');
@@ -82,8 +89,6 @@ export default class TransitionManager {
 				}
 
 				super.onEnter({ to, trigger }, () => {
-					const wasNavHidden =
-						manager.component?.instances?.hideNav?._st?.isActive;
 					if (manager.component) manager.component.destroy();
 					if (manager.animation) manager.animation.destroy();
 					if (this.fromElement) {
@@ -98,15 +103,13 @@ export default class TransitionManager {
 					manager.animation = new Animation();
 					manager.component = new Components();
 
-					const fromFooter =
-						trigger instanceof Element &&
-						trigger.closest('[data-footer]');
-					if (fromFooter || wasNavHidden) {
+					if (this._navShouldReveal) {
 						const hideNav = manager.component.instances.hideNav;
 						if (hideNav) {
 							hideNav.startHidden();
 							gsap.delayedCall(0.5, () => hideNav._show());
 						}
+						this._navShouldReveal = false;
 					}
 
 					ScrollTrigger.refresh();
@@ -162,6 +165,8 @@ export default class TransitionManager {
 							path === '/index.html');
 					if (isHome || path.includes(name)) {
 						trans.fromElement = this.fromElement;
+						trans._navShouldReveal = this._navShouldReveal;
+						this._navShouldReveal = false;
 						trans.onEnter(args, done);
 						return;
 					}
