@@ -92,7 +92,8 @@ export default class HideNav extends ComponentCore {
 	}
 
 	freeze() {
-		const wasHidden = !!this._st?.isActive;
+		const wasHidden =
+			this.navbar?.classList.contains('is-nav-hidden') ?? false;
 		if (this._st) {
 			this._st.kill();
 			this._st = null;
@@ -114,6 +115,7 @@ export default class HideNav extends ComponentCore {
 	}
 
 	destroy() {
+		this.navbar?.classList.remove('is-nav-hidden');
 		if (this._st) {
 			this._st.kill();
 			this._st = null;

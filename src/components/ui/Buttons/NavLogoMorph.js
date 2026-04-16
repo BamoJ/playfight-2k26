@@ -12,7 +12,9 @@ export default class NavLogoMorph extends ComponentCore {
 	}
 
 	createElements() {
-		this.navbar = document.querySelector('[data-nav-hide="component"]');
+		this.navbar = document.querySelector(
+			'[data-nav-hide="component"]',
+		);
 		this.navLogo = document.querySelector('[data-nav-logo]');
 		if (!this.navLogo) return;
 		this.logoPrimary = this.navLogo.querySelector(
@@ -49,27 +51,29 @@ export default class NavLogoMorph extends ComponentCore {
 
 	handleMouseEnter() {
 		if (this.navbar?.classList.contains('is-nav-hidden')) return;
-		if (this.tl) this.tl.kill();
-		this.tl = gsap.timeline();
-		this.tl.to(
-			this.logoPrimary.querySelectorAll('path'),
-			{
-				yPercent: -150,
-				duration: 0.3,
-				ease: 'power4.out',
-				stagger: { from: 'random', amount: 0.1 },
-			},
-			0,
-		);
-		this.tl.to(
-			this.logoSecondary,
-			{
-				duration: 0.4,
-				ease: 'back.out',
-				scale: 1,
-			},
-			0.1,
-		);
+		if (!this.tl) {
+			this.tl = gsap.timeline({ paused: true });
+			this.tl.to(
+				this.logoPrimary.querySelectorAll('path'),
+				{
+					yPercent: -150,
+					duration: 0.3,
+					ease: 'power4.out',
+					stagger: { from: 'random', amount: 0.1 },
+				},
+				0,
+			);
+			this.tl.to(
+				this.logoSecondary,
+				{
+					duration: 0.4,
+					ease: 'back.out',
+					scale: 1,
+				},
+				0.1,
+			);
+		}
+		this.tl.timeScale(1).play();
 	}
 
 	handleMouseLeave() {
@@ -82,6 +86,10 @@ export default class NavLogoMorph extends ComponentCore {
 	}
 
 	destroy() {
+		if (this.tl) {
+			this.tl.kill();
+			this.tl = null;
+		}
 		super.destroy();
 	}
 }
