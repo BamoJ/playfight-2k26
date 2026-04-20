@@ -1,16 +1,20 @@
 import Core from 'smooothy';
+import { isTouch } from '@utils/device';
 
 export class OriginalSlider extends Core {
 	constructor(wrapper) {
+		const touch = isTouch();
 		super(wrapper, {
 			infinite: true,
 			snap: true,
 			scrollInput: false,
+			lerpFactor: touch ? 0.18 : 0.3,
+			snapStrength: touch ? 0.18 : 0.1,
 			virtualScroll: {
 				mouseMultiplier: 0.85,
-				touchMultiplier: 1.25,
-				speedDecay: 0.3,
-				lerpFactor: 0.001,
+				touchMultiplier: touch ? 2.2 : 1.25,
+				speedDecay: touch ? 0.2 : 0.3,
+				lerpFactor: touch ? 0.12 : 0.001,
 				enabled: true,
 				scrollContainer: wrapper,
 			},

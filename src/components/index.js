@@ -44,7 +44,7 @@ export default class Components {
 		if (!touch) this.instances.navButtonHover = new NavButtonHover();
 		this.instances.menu = new MenuComponent();
 		this.instances.videoPlayer = new VideoPlayerManager();
-		this.instances.navLogoMorph = new NavLogoMorph();
+		if (!touch) this.instances.navLogoMorph = new NavLogoMorph();
 		if (!touch)
 			this.instances.playgroundButtonHover = new PlaygroundButtonHover();
 
