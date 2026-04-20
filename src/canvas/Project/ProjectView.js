@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { DOMPlane } from '../DOMPlane';
 import TextureCache from '../utils/TextureCache';
 import emitter from '@utils/Emitter';
+import { isMobile } from '@utils/device';
 import vertexShader from '../shaders/sharedVert.glsl';
 import fragmentShader from '../shaders/sharedFrag.glsl';
 
@@ -129,7 +130,7 @@ export class ProjectView extends DOMPlane {
 			link.addEventListener(
 				'click',
 				() => {
-					if (window.matchMedia('(max-width: 768px)').matches) return;
+					if (isMobile()) return;
 
 					emitter.emit('webgl:transition:prepare', {
 						mesh,

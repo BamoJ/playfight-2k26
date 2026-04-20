@@ -5,6 +5,7 @@ import AboutNav from './scroll/AboutNav';
 import AboutStoryScroll from './scroll/AboutStoryScroll';
 import LogoWallCycle from './scroll/LogoWallCycle';
 import ImageParallax from './global/ImageParallax';
+import { isMobile } from '@utils/device';
 // import ServiceListScroll from './scroll/ServiceListScroll';
 
 export default class Animation {
@@ -15,6 +16,8 @@ export default class Animation {
 	}
 
 	createAnimations() {
+		const mobile = isMobile();
+
 		// TODO: Uncomment when animation classes are implemented
 		// import FadeIn, LineReveal, ImageReveal, ImageParallax, HeadingReveal
 
@@ -33,7 +36,7 @@ export default class Animation {
 		const heroScrollEl = document.querySelector(
 			'[data-anim-hero-scroll="container"]',
 		);
-		if (heroScrollEl) {
+		if (heroScrollEl && !mobile) {
 			const animation = new HeroScroll(heroScrollEl);
 			this.collection.push(animation);
 			animation.init();
@@ -51,7 +54,7 @@ export default class Animation {
 		const aboutScrollEl = document.querySelector(
 			'[data-anim-about-scroll="container"]',
 		);
-		if (aboutScrollEl) {
+		if (aboutScrollEl && !mobile) {
 			const animation = new AboutStoryScroll(aboutScrollEl);
 			this.collection.push(animation);
 			animation.init();
@@ -69,13 +72,15 @@ export default class Animation {
 		//**
 		// IMAGE PARALLAX ANIMATIONS */
 
-		document
-			.querySelectorAll('[data-anim-parallax="true"]')
-			.forEach((element) => {
-				const animation = new ImageParallax(element);
-				this.collection.push(animation);
-				animation.init();
-			});
+		if (!mobile) {
+			document
+				.querySelectorAll('[data-anim-parallax="true"]')
+				.forEach((element) => {
+					const animation = new ImageParallax(element);
+					this.collection.push(animation);
+					animation.init();
+				});
+		}
 
 		document
 			.querySelectorAll('[data-anim-counting-num]')

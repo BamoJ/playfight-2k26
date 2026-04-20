@@ -99,7 +99,10 @@ export default class Canvas {
 	createRenderer() {
 		this.renderer = new WebGLRenderer({
 			alpha: true,
-			antialias: true,
+			antialias: window.devicePixelRatio < 2,
+			powerPreference: 'high-performance',
+			stencil: false,
+			depth: false,
 		});
 
 		this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -191,12 +194,17 @@ export default class Canvas {
 	}
 
 	addEventListeners() {
-		this._onResize = this.onResize.bind(this);
+		this._resizeTimeout = null;
+		this._onResize = () => {
+			clearTimeout(this._resizeTimeout);
+			this._resizeTimeout = setTimeout(() => this.onResize(), 150);
+		};
 		window.addEventListener('resize', this._onResize);
 	}
 
 	destroy() {
 		this.time.stop();
+		clearTimeout(this._resizeTimeout);
 		window.removeEventListener('resize', this._onResize);
 
 		Object.values(this.pages).forEach((p) => {

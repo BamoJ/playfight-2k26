@@ -1,4 +1,4 @@
-import { TextureLoader } from 'three';
+import { LinearFilter, TextureLoader } from 'three';
 
 class TextureCache {
 	constructor() {
@@ -28,6 +28,8 @@ class TextureCache {
 			this.loader.load(
 				src,
 				(texture) => {
+					texture.generateMipmaps = false;
+					texture.minFilter = LinearFilter;
 					this.cache.set(src, texture);
 					this.pending.delete(src);
 					resolve(texture);

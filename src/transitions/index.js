@@ -7,6 +7,7 @@ import emitter from '@utils/Emitter';
 import GlobalTransition from './global/GlobalEnter';
 import Animation from '@/animations';
 import ThemeSwitch from '@utils/ThemeSwitch';
+import { isMobile } from '@utils/device';
 
 /**
  * TransitionManager — orchestrates page routing via Taxi.
@@ -40,6 +41,47 @@ export default class TransitionManager {
 	createTransitions(TransitionClass) {
 		const scrollInstance = this.scroll;
 		const manager = this;
+
+		// Mobile: fade-only wrapper, bypass page-specific transitions + DOM pinning
+		if (isMobile()) {
+			return class extends GlobalTransition {
+				onLeave({ from, trigger, done }) {
+					scrollInstance.stopScroll();
+					emitter.emit('transition:start');
+
+					if (
+						from.hasAttribute('data-loader') ||
+						from.classList.contains('loader')
+					) {
+						const realView =
+							document.querySelector('[data-taxi-view]');
+						this.fromElement = realView || from;
+					} else {
+						this.fromElement = from;
+					}
+
+					super.onLeave({ from, trigger, done });
+				}
+
+				onEnter({ to, trigger, done }) {
+					super.onEnter({ to, trigger }, () => {
+						if (manager.component) manager.component.destroy();
+						if (manager.animation) manager.animation.destroy();
+						if (this.fromElement) this.fromElement.remove();
+
+						scrollInstance.scrollTo(0);
+						scrollInstance.resize();
+						scrollInstance.startScroll();
+						manager.animation = new Animation();
+						manager.component = new Components();
+						ScrollTrigger.refresh();
+
+						emitter.emit('transition:complete');
+						done();
+					});
+				}
+			};
+		}
 
 		return class extends TransitionClass {
 			onLeave({ from, trigger, done }) {
@@ -179,15 +221,18 @@ export default class TransitionManager {
 	}
 
 	init() {
-		const transitions = {
-			default: this.createRoute(),
-		};
+		const mobile = isMobile();
+		const transitions = mobile
+			? { default: this.createTransitions(GlobalTransition) }
+			: { default: this.createRoute() };
 
 		// Also register page-specific transitions for data-taxi-view matching
-		for (const [name, TransClass] of Object.entries(
-			this.pageTransitions,
-		)) {
-			transitions[name] = this.createTransitions(TransClass);
+		if (!mobile) {
+			for (const [name, TransClass] of Object.entries(
+				this.pageTransitions,
+			)) {
+				transitions[name] = this.createTransitions(TransClass);
+			}
 		}
 
 		this.taxi = new Core({

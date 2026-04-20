@@ -61,7 +61,7 @@ export class DOMPlane {
 		const height =
 			(bounds.height / this.screen.height) * this.viewport.height;
 
-		const geometry = new PlaneGeometry(width, height, 32, 32);
+		const geometry = new PlaneGeometry(width, height, 24, 24);
 
 		const material = new ShaderMaterial({
 			vertexShader: this.shaders.vertex,
@@ -244,7 +244,7 @@ export class DOMPlane {
 					(bounds.height / this.screen.height) * this.viewport.height;
 
 				plane.geometry.dispose();
-				plane.geometry = new PlaneGeometry(width, height, 32, 32);
+				plane.geometry = new PlaneGeometry(width, height, 24, 24);
 			});
 		}
 	}

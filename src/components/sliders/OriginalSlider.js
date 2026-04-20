@@ -22,6 +22,9 @@ export class OriginalSlider extends Core {
 					this.lastMoveTime = Date.now();
 				}
 			},
+			onResize: (instance) => {
+				instance.goToIndex(instance.currentSlide);
+			},
 		});
 
 		this.wrapper = wrapper;

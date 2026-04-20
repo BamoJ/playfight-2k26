@@ -1,4 +1,5 @@
 import AnimationCore from '@animations/_core/AnimationCore';
+import { isTabletOrMobile } from '@utils/device';
 
 export default class CountingNumbers extends AnimationCore {
 	constructor(element) {
@@ -10,7 +11,7 @@ export default class CountingNumbers extends AnimationCore {
 		});
 
 		this.originalHTML = this.element.innerHTML;
-		this.isMobile = window.matchMedia('(max-width: 991px)').matches;
+		this.isMobile = isTabletOrMobile();
 	}
 
 	createElements() {

@@ -1,13 +1,12 @@
 import { Page } from '../Page';
 import emitter from '@utils/Emitter';
-import { OriginalSlider } from './OriginalSlider';
+import { getComponents } from '@components';
 import { OriginalsView } from './OriginalsView';
 
 export class Originals extends Page {
 	constructor(options) {
 		super(options);
 		this.view = null;
-		this.slider = null;
 		this.smoothedStrength = 0;
 		this._leaveTimer = null;
 		this.calculateViewport();
@@ -30,8 +29,6 @@ export class Originals extends Page {
 		if (this.created) return;
 
 		this.calculateViewport();
-
-		this.initSlider(template);
 		this.initView(template);
 
 		this.scene.add(this.elements);
@@ -39,22 +36,16 @@ export class Originals extends Page {
 		this.emit('create');
 	}
 
-	initSlider(template = document) {
+	initView(template = document) {
 		const wrapper = template.querySelector(
 			'[data-slider="originals"]',
 		);
-		if (!wrapper) return;
-
-		this.slider = new OriginalSlider(wrapper);
-	}
-
-	initView(template = document) {
 		this.view = new OriginalsView({
 			parent: this.elements,
 			camera: this.camera,
 			viewport: this.viewport,
 			screen: this.screen,
-			template: this.slider?.wrapper || template,
+			template: wrapper || template,
 			onReady: () => {
 				emitter.emit('originals:enter-ready');
 			},
@@ -66,9 +57,7 @@ export class Originals extends Page {
 			clearTimeout(this._leaveTimer);
 			this._leaveTimer = null;
 			this.view?.destroy?.();
-			this.slider?.destroy?.();
 			this.view = null;
-			this.slider = null;
 			this.created = false;
 			this.create(data);
 		}
@@ -87,9 +76,7 @@ export class Originals extends Page {
 		this._leaveTimer = setTimeout(() => {
 			this._leaveTimer = null;
 			this.view?.destroy?.();
-			this.slider?.destroy?.();
 			this.view = null;
-			this.slider = null;
 			this.created = false;
 			if (onComplete) onComplete();
 		}, 1);
@@ -103,13 +90,14 @@ export class Originals extends Page {
 	update(time) {
 		if (!this.isActive || !this.view) return;
 
-		if (this.slider) {
-			const targetStrength = this.slider.currentSpeed * 0.1;
+		const slider = getComponents()?.instances?.originalSlider;
+		if (slider) {
+			const targetStrength = slider.currentSpeed * 0.1;
 			this.smoothedStrength +=
 				(targetStrength - this.smoothedStrength) * 0.1;
 
 			this.view.setStrength(this.smoothedStrength);
-			this.view.setProgress(this.slider.currentProgress);
+			this.view.setProgress(slider.currentProgress);
 		}
 
 		this.view.update(time);
@@ -117,7 +105,6 @@ export class Originals extends Page {
 
 	destroy() {
 		this.view?.destroy?.();
-		this.slider?.destroy?.();
 		super.destroy();
 	}
 }

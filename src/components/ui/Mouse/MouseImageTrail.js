@@ -16,6 +16,9 @@ export default class MouseImageTrail extends ComponentCore {
 		this.lastClientX = null;
 		this.lastClientY = null;
 		this.isHovering = false;
+		this._cachedRect = null;
+		this._rectDirty = true;
+		this._isIdle = true;
 		this._ac = new AbortController();
 		this._tick = this._step.bind(this);
 		this.init();
@@ -38,7 +41,9 @@ export default class MouseImageTrail extends ComponentCore {
 
 	createEvents() {
 		this.events.onMouseMove = this._onMouseMove.bind(this);
-		this.events.onScroll = this._updateFromPointer.bind(this);
+		this.events.onScroll = () => {
+			this._rectDirty = true;
+		};
 	}
 
 	addEventListeners() {
@@ -46,9 +51,11 @@ export default class MouseImageTrail extends ComponentCore {
 		const { signal } = this._ac;
 		document.addEventListener('mousemove', this.events.onMouseMove, {
 			signal,
+			passive: true,
 		});
-		window.addEventListener('scroll', this.events.onScroll, {
+		window.addEventListener('scroll', thiss.events.onScroll, {
 			signal,
+			passive: true,
 		});
 		gsap.ticker.add(this._tick);
 
@@ -63,23 +70,10 @@ export default class MouseImageTrail extends ComponentCore {
 		gsap.ticker.remove(this._tick);
 	}
 
-	_getPercent(clientX, clientY) {
-		const rect = this.container.getBoundingClientRect();
-		return {
-			x: Math.min(
-				100,
-				Math.max(0, ((clientX - rect.left) / rect.width) * 100),
-			),
-			y: Math.min(
-				100,
-				Math.max(0, ((clientY - rect.top) / rect.height) * 100),
-			),
-		};
-	}
-
 	_updateFromPointer() {
 		if (this.lastClientX === null) return;
-		const rect = this.container.getBoundingClientRect();
+		if (!this._cachedRect) return;
+		const rect = this._cachedRect;
 		const inside =
 			this.lastClientX >= rect.left &&
 			this.lastClientX <= rect.right &&
@@ -95,19 +89,40 @@ export default class MouseImageTrail extends ComponentCore {
 		}
 
 		if (!inside) return;
-		const pos = this._getPercent(this.lastClientX, this.lastClientY);
-		this.mouseX = pos.x;
-		this.mouseY = pos.y;
+		this.mouseX = Math.min(
+			100,
+			Math.max(
+				0,
+				((this.lastClientX - rect.left) / rect.width) * 100,
+			),
+		);
+		this.mouseY = Math.min(
+			100,
+			Math.max(
+				0,
+				((this.lastClientY - rect.top) / rect.height) * 100,
+			),
+		);
 	}
 
 	_onMouseMove(e) {
 		this.lastClientX = e.clientX;
 		this.lastClientY = e.clientY;
-		this._updateFromPointer();
+		this._rectDirty = true;
 	}
 
 	_step() {
+		if (this._isIdle && !this._rectDirty) return;
+
+		if (this._rectDirty) {
+			this._cachedRect = this.container.getBoundingClientRect();
+			this._rectDirty = false;
+			this._updateFromPointer();
+		}
+
 		const { leadEase, trailEase, pathFollow } = this.config;
+		const EPS = 0.01;
+		let moved = false;
 
 		this.instances.forEach((state, index) => {
 			let targetX, targetY;
@@ -123,13 +138,21 @@ export default class MouseImageTrail extends ComponentCore {
 					prev.y * pathFollow + this.mouseY * (1 - pathFollow);
 			}
 
+			const dx = targetX - state.x;
+			const dy = targetY - state.y;
+
+			if (Math.abs(dx) < EPS && Math.abs(dy) < EPS) return;
+
 			const ease = index === 0 ? leadEase : trailEase;
-			state.x += (targetX - state.x) * ease;
-			state.y += (targetY - state.y) * ease;
+			state.x += dx * ease;
+			state.y += dy * ease;
 
 			state.el.style.left = state.x + '%';
 			state.el.style.top = state.y + '%';
+			moved = true;
 		});
+
+		this._isIdle = !moved && !this.isHovering;
 	}
 
 	destroy() {

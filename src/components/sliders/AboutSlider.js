@@ -20,6 +20,9 @@ export class AboutSlider extends Core {
 				this.currentProgress = instance.progress;
 				this.currentParallax = instance.parallaxValues;
 			},
+			onResize: (instance) => {
+				instance.goToIndex(instance.currentSlide);
+			},
 		});
 
 		this.wrapper = wrapper;

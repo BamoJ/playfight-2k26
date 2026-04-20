@@ -2,6 +2,7 @@ import { gsap } from 'gsap';
 import { SplitText } from 'gsap/SplitText';
 import emitter from '@utils/Emitter';
 import AssetTracker from '@utils/AssetTracker';
+import { isMobile } from '@utils/device';
 
 // Minimum time the counter is allowed to take, even if the page loads instantly.
 // Pure padding — the site is fast, we just want the preloader to breathe.
@@ -88,15 +89,20 @@ export default class Preloader {
 		this.view = document.querySelector('[data-taxi-view]');
 
 		// Nav starts hidden (logo paths up, button lines off-right) — animateOut reveals it.
-		if (this.logo) {
-			gsap.set(this.logo.querySelectorAll('path'), {
-				yPercent: -150,
-			});
-		}
-		if (this.navBtn) {
-			const lines = this.navBtn.querySelectorAll('.nav_button_line');
-			if (lines.length) {
-				gsap.set(lines, { xPercent: 100, opacity: 0 });
+		// Skipped on mobile since animateOutMobile is a plain fade with no reveal choreography.
+		if (!isMobile()) {
+			if (this.logo) {
+				gsap.set(this.logo.querySelectorAll('path'), {
+					yPercent: -150,
+				});
+			}
+			if (this.navBtn) {
+				const lines = this.navBtn.querySelectorAll(
+					'.nav_button_line',
+				);
+				if (lines.length) {
+					gsap.set(lines, { xPercent: 100, opacity: 0 });
+				}
 			}
 		}
 
@@ -254,6 +260,7 @@ export default class Preloader {
 	 * off-screen. Hero images, video, heading, body, nav/logo animate in after.
 	 */
 	animateOut() {
+		if (isMobile()) return this.animateOutMobile();
 		return new Promise((resolve) => {
 			// ── Setup ──
 			const fromX = gsap.utils.wrap(['-50vw', '50vw']);
@@ -500,6 +507,29 @@ export default class Preloader {
 					},
 					'<',
 				);
+		});
+	}
+
+	/**
+	 * Mobile exit — simple opacity fade on the preloader wrapper.
+	 * Skips all SplitText/SVG/hero choreography; still fires onComplete (Taxi init)
+	 * before the fade lands so the next page is ready when the wrapper clears.
+	 */
+	animateOutMobile() {
+		return new Promise((resolve) => {
+			// Fade first; defer Taxi init until after it lands so its
+			// synchronous ScrollTrigger/Components/Animation setup can't
+			// block the main thread mid-fade (lagSmoothing is 0, so a
+			// blocked tween snaps forward instead of catching up).
+			this.tl = gsap.to(this.wrapper, {
+				opacity: 0,
+				duration: 0.5,
+				ease: 'sine.out',
+				onComplete: () => {
+					this.onComplete();
+					resolve();
+				},
+			});
 		});
 	}
 

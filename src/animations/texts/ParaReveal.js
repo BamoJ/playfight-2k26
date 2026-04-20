@@ -2,6 +2,7 @@ import AnimationCore from '@animations/_core/AnimationCore';
 import { SplitText } from 'gsap/SplitText';
 import { easings } from '@utils/easings';
 import { gsap } from 'gsap';
+import { isTabletOrMobile } from '@utils/device';
 export default class ParaReveal extends AnimationCore {
 	constructor(element) {
 		super(element, {
@@ -18,7 +19,7 @@ export default class ParaReveal extends AnimationCore {
 			);
 		}
 		this.element.originalContent = this.element.innerHTML;
-		this.isMobile = window.matchMedia('(max-width: 991px)').matches;
+		this.isMobile = isTabletOrMobile();
 
 		// Split text immediately
 		this.splitText();
@@ -65,7 +66,9 @@ export default class ParaReveal extends AnimationCore {
 			linesClass: 'lineChildren',
 		});
 		if (this.element._split.lines.length > 0) {
-			gsap.set(this.element._split.lines, { willChange: 'transform' });
+			gsap.set(this.element._split.lines, {
+				willChange: 'transform',
+			});
 		}
 	}
 

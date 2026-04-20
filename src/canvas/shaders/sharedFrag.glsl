@@ -18,7 +18,7 @@ vec2 bulge(vec2 uv, vec2 center) {
 	float strength = 1.1;
 	uv -= center;
 	float dist = length(uv) / radius;
-	float distPow = pow(dist, 2.0);
+	float distPow = dist * dist;
 	float strengthAmount = strength / (1.0 + distPow);
 	uv *= mix(1.0, strengthAmount, uBulge);
 	uv += center;

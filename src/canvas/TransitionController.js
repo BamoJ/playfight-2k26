@@ -1,7 +1,8 @@
-import { Mesh, PlaneGeometry } from 'three';
+import { Mesh } from 'three';
 import { gsap } from 'gsap';
 import CustomEase from 'gsap/CustomEase';
 import emitter from '@utils/Emitter';
+import { isMobile } from '@utils/device';
 
 gsap.registerPlugin(CustomEase);
 
@@ -46,7 +47,7 @@ export class TransitionController {
 	}
 
 	handleTransitionPrepare(data) {
-		if (window.matchMedia('(max-width: 768px)').matches) return;
+		if (isMobile()) return;
 
 		const { mesh, targetUrl, sourcePage, startPosition } = data;
 		if (!mesh) return;
@@ -104,7 +105,7 @@ export class TransitionController {
 		}
 
 		this.transitionMesh = new Mesh(
-			sourcePlane.geometry,
+			sourcePlane.geometry.clone(),
 			clonedMaterial,
 		);
 
@@ -280,16 +281,12 @@ export class TransitionController {
 		 *
 		 *
 		 * ==================================================== */
-		const startWidth =
-			this.transitionMesh.geometry.parameters.width *
-			this.transitionMesh.scale.x;
-		const startHeight =
-			this.transitionMesh.geometry.parameters.height *
-			this.transitionMesh.scale.y;
+		const baseWidth = this.transitionMesh.geometry.parameters.width;
+		const baseHeight = this.transitionMesh.geometry.parameters.height;
 
 		const sizeProxy = {
-			width: startWidth,
-			height: startHeight,
+			width: baseWidth * this.transitionMesh.scale.x,
+			height: baseHeight * this.transitionMesh.scale.y,
 			progress: 0,
 		};
 
@@ -302,15 +299,11 @@ export class TransitionController {
 				duration: 1.25,
 				ease: 'expo.inOut',
 				onUpdate: () => {
-					const oldGeometry = this.transitionMesh.geometry;
-					this.transitionMesh.geometry = new PlaneGeometry(
-						sizeProxy.width,
-						sizeProxy.height,
-						64,
-						64,
+					this.transitionMesh.scale.set(
+						sizeProxy.width / baseWidth,
+						sizeProxy.height / baseHeight,
+						1,
 					);
-					this.transitionMesh.scale.set(1, 1, 1);
-					oldGeometry.dispose();
 				},
 			},
 			0,

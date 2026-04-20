@@ -15,6 +15,7 @@ import AboutTransition from '@transitions/pages/about';
 import HomeTransition from '@transitions/pages/home';
 import Preloader from '@transitions/Preloader';
 import emitter from '@utils/Emitter';
+import { isMobile } from '@utils/device';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // --- Page Registry (WebGL) ---
@@ -43,10 +44,12 @@ class App {
 	constructor() {
 		const scroll = new SmoothScroll();
 
-		const canvas = new Canvas(pages);
-		emitter.on('transition:complete', () => {
-			canvas.onChange(canvas.detectPageName());
-		});
+		const canvas = isMobile() ? null : new Canvas(pages);
+		if (canvas) {
+			emitter.on('transition:complete', () => {
+				canvas.onChange(canvas.detectPageName());
+			});
+		}
 
 		const isHome = ['/', '/index', '/index.html'].includes(
 			window.location.pathname,
