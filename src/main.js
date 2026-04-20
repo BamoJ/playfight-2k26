@@ -16,6 +16,7 @@ import HomeTransition from '@transitions/pages/home';
 import Preloader from '@transitions/Preloader';
 import emitter from '@utils/Emitter';
 import { isMobile } from '@utils/device';
+import ensureInlineVideos from '@utils/ensureInlineVideos';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // --- Page Registry (WebGL) ---
@@ -42,6 +43,8 @@ const pageTransitions = {
 // --- Main App ---
 class App {
 	constructor() {
+		ensureInlineVideos();
+
 		const scroll = new SmoothScroll();
 
 		const canvas = isMobile() ? null : new Canvas(pages);

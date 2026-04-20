@@ -26,6 +26,7 @@ import FlipCardManager from './FlipCard/FlipCardManager';
 import { OriginalSlider } from './sliders/OriginalSlider';
 import { AboutSlider } from './sliders/AboutSlider';
 import { isTouch } from '@utils/device';
+import ensureInlineVideos from '@utils/ensureInlineVideos';
 
 let currentInstance = null;
 export const getComponents = () => currentInstance;
@@ -34,6 +35,7 @@ export default class Components {
 	constructor() {
 		this.instances = {};
 		currentInstance = this;
+		ensureInlineVideos();
 		this.initComponents();
 	}
 
