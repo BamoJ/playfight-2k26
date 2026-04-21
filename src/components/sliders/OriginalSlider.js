@@ -22,9 +22,6 @@ export class OriginalSlider extends Core {
 				this.currentSpeed = instance.speed;
 				this.currentProgress = instance.progress;
 				this.currentParallax = instance.parallaxValues;
-				if (Math.abs(instance.speed) > 0.1) {
-					this.lastMoveTime = Date.now();
-				}
 			},
 			onResize: (instance) => {
 				instance.goToIndex(instance.currentSlide);
@@ -36,7 +33,6 @@ export class OriginalSlider extends Core {
 		this.currentSpeed = 0;
 		this.currentProgress = 0;
 		this.currentParallax = [];
-		this.lastMoveTime = 0;
 
 		this._raf = this._raf.bind(this);
 		this._running = false;
@@ -57,49 +53,63 @@ export class OriginalSlider extends Core {
 	}
 
 	#handleLinks() {
+		let lastInteractionEndTime = 0;
+
 		[...this.wrapper.querySelectorAll('a')].forEach((item) => {
 			let startX = 0;
 			let startY = 0;
 			let startTime = 0;
-			let isDragging = false;
+			let movedDuringPress = false;
 
 			item.style.pointerEvents = 'none';
+
+			const handleWindowMouseMove = (e) => {
+				const dx = Math.abs(e.clientX - startX);
+				const dy = Math.abs(e.clientY - startY);
+				if (dx > 5 || dy > 5) movedDuringPress = true;
+			};
+
+			const handleWindowMouseUp = () => {
+				window.removeEventListener('mousemove', handleWindowMouseMove);
+				window.removeEventListener('mouseup', handleWindowMouseUp);
+
+				if (!startTime) return;
+				const tapDuration = Date.now() - startTime;
+				const sinceLastInteraction =
+					Date.now() - lastInteractionEndTime;
+				startTime = 0;
+				lastInteractionEndTime = Date.now();
+
+				const wasDrag = movedDuringPress || this.isDragging;
+				movedDuringPress = false;
+
+				if (wasDrag) return;
+
+				const sliderInMotion =
+					this.isDragging ||
+					this.isTouching ||
+					Math.abs(this.speed) > 0.05;
+
+				if (sliderInMotion) return;
+				if (tapDuration > 120) return;
+				if (sinceLastInteraction < 350) return;
+
+				item.click();
+			};
 
 			const handleMouseDown = (e) => {
 				startX = e.clientX;
 				startY = e.clientY;
 				startTime = Date.now();
-				isDragging = false;
-			};
-
-			const handleMouseMove = (e) => {
-				if (!startTime) return;
-				const deltaX = Math.abs(e.clientX - startX);
-				const deltaY = Math.abs(e.clientY - startY);
-				if (deltaX > 5 || deltaY > 5) {
-					isDragging = true;
-				}
-			};
-
-			const handleMouseUp = () => {
-				const deltaTime = Date.now() - startTime;
-				const timeSinceMove = Date.now() - this.lastMoveTime;
-				if (!isDragging && deltaTime < 120 && timeSinceMove > 600) {
-					item.click();
-				}
-				startTime = 0;
-				isDragging = false;
+				movedDuringPress = false;
+				window.addEventListener('mousemove', handleWindowMouseMove);
+				window.addEventListener('mouseup', handleWindowMouseUp);
 			};
 
 			item.parentElement.addEventListener(
 				'mousedown',
 				handleMouseDown,
 			);
-			item.parentElement.addEventListener(
-				'mousemove',
-				handleMouseMove,
-			);
-			item.parentElement.addEventListener('mouseup', handleMouseUp);
 		});
 	}
 
