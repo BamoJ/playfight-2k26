@@ -12,9 +12,9 @@ export class OriginalSlider extends Core {
 			snapStrength: touch ? 0.18 : 0.1,
 			virtualScroll: {
 				mouseMultiplier: 0.85,
-				touchMultiplier: touch ? 2.2 : 1.25,
+				touchMultiplier: touch ? 4.2 : 1.25,
 				speedDecay: touch ? 0.2 : 0.3,
-				lerpFactor: touch ? 0.12 : 0.001,
+				lerpFactor: touch ? 0.22 : 0.001,
 				enabled: true,
 				scrollContainer: wrapper,
 			},
