@@ -1,6 +1,7 @@
 import { Page } from '../Page';
 import emitter from '@utils/Emitter';
 import { getComponents } from '@components';
+import WebGLConfig from '../utils/WebGLConfig';
 import { OriginalsView } from './OriginalsView';
 
 export class Originals extends Page {
@@ -92,7 +93,8 @@ export class Originals extends Page {
 
 		const slider = getComponents()?.instances?.originalSlider;
 		if (slider) {
-			const targetStrength = slider.currentSpeed * 0.1;
+			const targetStrength =
+				slider.currentSpeed * 0.1 * WebGLConfig.get().scrollStrength;
 			this.smoothedStrength +=
 				(targetStrength - this.smoothedStrength) * 0.1;
 

@@ -10,17 +10,23 @@ uniform vec2 uCoverScale;
 uniform vec2 uMouse;
 uniform float uBulge;
 uniform float uEntrance;
+uniform float uRGBMul;
+uniform float uBlurMul;
+uniform float uBulgeMul;
+uniform float uHoverZoomMul;
 
 varying vec2 vUv;
 
 vec2 bulge(vec2 uv, vec2 center) {
-	float radius = 1.2; // Adjust as needed
-	float strength = 1.1;
+	float radius = 1.2;
+	// Quadratic curve: mul=1 keeps current 10% zoom, mul=2/3 ramp dramatically.
+	// mul=0 → 1.0 (off), mul=1 → 1.1, mul=2 → 1.4, mul=3 → 1.9
+	float strength = 1.0 + 0.1 * uHoverZoomMul * uHoverZoomMul;
 	uv -= center;
 	float dist = length(uv) / radius;
 	float distPow = dist * dist;
 	float strengthAmount = strength / (1.0 + distPow);
-	uv *= mix(1.0, strengthAmount, uBulge);
+	uv *= mix(1.0, strengthAmount, uBulge * uBulgeMul);
 	uv += center;
 	return uv;
 }
@@ -33,7 +39,7 @@ void main() {
 	coverUv = bulge(coverUv, uMouse);
 
 	// --- RGB Shift on Y axis ---
-	float shiftAmount = uStrength * uScrollProgress * 0.7;
+	float shiftAmount = uStrength * uScrollProgress * 0.7 * uRGBMul;
 
 	// --- Sharp sample — individual channel offsets ---
 	float sharpR = texture2D(uTexture, coverUv + vec2(0.0, shiftAmount * 2.0)).r;
@@ -43,7 +49,7 @@ void main() {
 
 	// --- Motion Blur (8 samples, vertical) ---
 	float entranceBlur = uEntrance * 1.5;
-	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0 + entranceBlur;
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 15.0 * uBlurMul + entranceBlur;
 
 	// Early-out: skip blur loop when not scrolling
 	if(blurAmount < 0.001) {

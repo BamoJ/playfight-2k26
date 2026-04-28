@@ -7,6 +7,8 @@ uniform float uStrength;
 uniform float uScrollProgress;
 uniform float uOpacity;
 uniform vec2 uCoverScale;
+uniform float uRGBMul;
+uniform float uBlurMul;
 
 varying vec2 vUv;
 
@@ -15,7 +17,7 @@ void main() {
 	vec2 coverUv = (vUv - 0.5) * uCoverScale + 0.5;
 
 	// --- RGB Shift ---
-	float shiftAmount = uStrength * uScrollProgress * 0.95;
+	float shiftAmount = uStrength * uScrollProgress * 0.95 * uRGBMul;
 
 	// --- Sharp sample (no blur) ---
 	float sharpR = texture2D(uTexture, coverUv + vec2(shiftAmount * 2.0, 0.0)).r;
@@ -24,7 +26,7 @@ void main() {
 	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
 	// --- Motion Blur (8 samples, horizontal) ---
-	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 10.0;
+	float blurAmount = smoothstep(0.05, 0.5, abs(uStrength)) * abs(uStrength) * 10.0 * uBlurMul;
 
 	vec3 blurred = vec3(0.0);
 	const int SAMPLES = 8;

@@ -1,6 +1,7 @@
 import { Page } from '../Page';
 import emitter from '@utils/Emitter';
 import SmoothScroll from '@utils/SmoothScroll';
+import WebGLConfig from '../utils/WebGLConfig';
 import { ProjectView } from './ProjectView';
 
 export class Project extends Page {
@@ -118,7 +119,8 @@ export class Project extends Page {
 
 		const lenis = SmoothScroll.instance?.lenis;
 		if (lenis) {
-			const targetStrength = lenis.velocity * 0.005;
+			const targetStrength =
+				lenis.velocity * 0.005 * WebGLConfig.get().scrollStrength;
 			this.smoothedStrength +=
 				(targetStrength - this.smoothedStrength) * 0.1;
 			this.view.setStrength(this.smoothedStrength);

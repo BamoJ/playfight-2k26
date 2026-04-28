@@ -6,6 +6,7 @@ import {
 	Group,
 } from 'three';
 import { gsap } from 'gsap';
+import WebGLConfig from './utils/WebGLConfig';
 
 /**
  * DOMPlane — maps DOM elements (images, videos) to WebGL planes.
@@ -63,6 +64,7 @@ export class DOMPlane {
 
 		const geometry = new PlaneGeometry(width, height, 24, 24);
 
+		const cfg = WebGLConfig.get();
 		const material = new ShaderMaterial({
 			vertexShader: this.shaders.vertex,
 			fragmentShader: this.shaders.fragment,
@@ -74,6 +76,10 @@ export class DOMPlane {
 				uOffset: { value: { x: 0, y: 0 } },
 				uMouseVelocity: { value: { x: 0, y: 0 } },
 				uReveal: { value: 1 },
+				uRGBMul: { value: cfg.rgbShift },
+				uBlurMul: { value: cfg.blur },
+				uBulgeMul: { value: cfg.bulge },
+				uHoverZoomMul: { value: cfg.hoverZoom },
 			},
 		});
 

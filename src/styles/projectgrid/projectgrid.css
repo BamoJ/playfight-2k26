@@ -1,0 +1,524 @@
+/* Hide all inner elements by default */
+.content_wrap .module_media,
+.content_wrap .module_grid,
+.content_wrap .module_text,
+.content_wrap .module_layout,
+.content_wrap .module_layout_stack {
+	display: none;
+}
+
+/* Base styles */
+.content_wrap {
+	width: 100%;
+}
+
+/* ============================================================
+ * MODULE: Layout: 2-Col Square + Wide Stacked (Both Variants)
+ * 1. Layout: 2-Col Square (Image 1:1) + Wide Stacked (Image 16:9)
+ * 2. Layout: 2-Col Square (Video 1:1) + Wide Stacked (Image 16:9)
+ * Layout: 2-col grid — square (1fr) + stacked wides (1fr)
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 2-Col Square (Image 1:1) + Wide Stacked (Image 16:9)']
+	.module_layout_stack,
+.content_wrap[data-module-type='Layout: 2-Col Square (Video 1:1) + Wide Stacked (Image 16:9)']
+	.module_layout_stack {
+	display: grid;
+	grid-template-columns: var(--grid-2);
+	gap: 1rem;
+}
+
+/* Column 2: Two stacked 16:9 images */
+.content_wrap[data-module-type='Layout: 2-Col Square (Image 1:1) + Wide Stacked (Image 16:9)']
+	.layout_column:nth-child(2),
+.content_wrap[data-module-type='Layout: 2-Col Square (Video 1:1) + Wide Stacked (Image 16:9)']
+	.layout_column:nth-child(2) {
+	display: grid;
+	grid-template-rows: auto auto;
+	row-gap: 1rem;
+}
+
+/* ============================================================
+ * MODULE:Layout: 2-Col Wide Stacked (Image 16:9) + Square (Image 1:1)  
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 2-Col Wide Stacked (Image 16:9) + Square (Image 1:1)']
+	.module_layout_stack {
+	display: grid;
+	grid-template-columns: var(--grid-2);
+	gap: 1rem;
+}
+
+/* Column 2: Two stacked 16:9 images, spans 2 cols */
+.content_wrap[data-module-type='Layout: 2-Col Wide Stacked (Image 16:9) + Square (Image 1:1)']
+	.layout_column:nth-child(2) {
+	display: grid;
+	grid-template-rows: auto auto;
+	row-gap: 1rem;
+	order: -1;
+}
+
+/* ============================================================
+ * MODULE: Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)
+ * ============================================================ */
+
+.content_wrap[data-module-type='Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)']
+	.module_layout {
+	display: grid !important;
+	grid-template-columns: var(--grid-5);
+	gap: 1rem;
+}
+
+/* Column 1: Square */
+.content_wrap[data-module-type='Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)']
+	.layout_column:nth-child(1) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 1/1;
+	grid-column: 1/3;
+}
+
+/* Column 2: Wide */
+.content_wrap[data-module-type='Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)']
+	.layout_column:nth-child(2) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+	grid-column: 3 / -1;
+}
+
+/* ============================================================
+  *  REVERSE OF THE ABOVE
+ * MODULE: Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)']
+	.module_layout {
+	display: grid !important;
+	grid-template-columns: var(--grid-5);
+	gap: 1rem;
+}
+/* Column 1: Square */
+.content_wrap[data-module-type='Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)']
+	.layout_column:nth-child(1) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+	grid-column: 1 / 4;
+}
+
+/* Column 2: Wide */
+.content_wrap[data-module-type='Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)']
+	.layout_column:nth-child(2) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 1/1;
+	grid-column: 4 / -1;
+}
+
+/* ============================================================
+ * MODULE: Layout: Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)']
+	.module_layout {
+	display: grid !important;
+	grid-template-columns: var(--grid-4);
+	gap: 1rem;
+}
+/* Column 2: Wide */
+.content_wrap[data-module-type='Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)']
+	.layout_column:nth-child(2) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+	grid-column: 1 / span 3;
+	grid-row: 1 !important;
+}
+
+/* Column 1: Portrait */
+.content_wrap[data-module-type='Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)']
+	.layout_column:nth-child(1) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 2/3;
+	grid-column: 4 / -1;
+}
+
+/* ============================================================
+ * MODULE: Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)
+ * Layout: 4-col grid — portrait left (1fr), wide right (3fr)
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)']
+	.module_layout {
+	display: grid !important;
+	grid-template-columns: var(--grid-4);
+	gap: 1rem;
+}
+
+/* Column 1: Portrait */
+.content_wrap[data-module-type='Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)']
+	.layout_column:nth-child(1) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 2/3;
+	grid-column: 1 / 2;
+}
+
+/* Column 2: Wide */
+.content_wrap[data-module-type='Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)']
+	.layout_column:nth-child(2) {
+	position: relative;
+	overflow: hidden;
+	aspect-ratio: 16/9;
+	grid-column: 2 / -1;
+}
+
+/* ============================================================
+ * MODULE: Layout: 2-Col SQUARE PHOTO + Square PHOTO   
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 2-Col — Square (Photo 1:1) + Square (Photo 1:1)']
+	.module_layout {
+	display: grid !important;
+	grid-template-columns: var(--grid-2);
+	gap: 1rem;
+}
+
+.content_wrap[data-module-type='Layout: 2-Col — Square (Photo 1:1) + Square (Photo 1:1)']
+	.layout_column {
+	position: relative;
+	aspect-ratio: 1/1;
+}
+
+/* ============================================================
+ * MODULE: Layout: 2-Col Portrait (Photo 2:3) + Portrait (Photo 2:3)
+ * Layout: 2-col grid — Double Portrait
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 2-Col — Portrait (Photo 2:3) + Portrait (Photo 2:3)']
+	.module_layout {
+	display: grid !important;
+	grid-template-columns: var(--grid-2);
+	gap: 1rem;
+}
+
+.content_wrap[data-module-type='Layout: 2-Col — Portrait (Photo 2:3) + Portrait (Photo 2:3)']
+	.layout_column {
+	position: relative;
+	aspect-ratio: 2/2.25;
+}
+
+/* ============================================================
+ * MODULE: Layout: 3-col Double Portrait + Square Photo 
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 3-Col — 2 Portrait (Photo 2:3) + Square (Photo 1:1)']
+	.module_layout_stack {
+	display: grid !important;
+	grid-template-columns: var(--grid-2);
+	gap: 1rem;
+}
+.content_wrap[data-module-type='Layout: 3-Col — 2 Portrait (Photo 2:3) + Square (Photo 1:1)']
+	.layout_column:nth-child(2) {
+	display: grid;
+	grid-template-columns: auto auto;
+	column-gap: 1rem;
+	order: -1;
+}
+
+/* ============================================================
+ * MODULE: Layout: 3-col Square Photo  +  Double portrait
+ * ============================================================ */
+.content_wrap[data-module-type='Layout: 3-Col — Square (Photo 1:1) + 2 Portrait (Photo 2:3)']
+	.module_layout_stack {
+	display: grid !important;
+	grid-template-columns: var(--grid-2);
+	gap: 1rem;
+}
+
+.content_wrap[data-module-type='Layout: 3-Col — Square (Photo 1:1) + 2 Portrait (Photo 2:3)']
+	.layout_column:nth-child(2) {
+	display: grid;
+	grid-template-columns: auto auto;
+	column-gap: 1rem;
+}
+
+/* ============================================================
+ * MODULE:  === Photo/GIF 1:1 (square) ===
+ * ============================================================ */
+.content_wrap[data-module-type='Photo/GIF 1:1 (square)']
+	.module_media {
+	display: block !important;
+	position: relative;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 1/1;
+	overflow: hidden;
+}
+
+/* ============================================================
+ * MODULE: FULL WIDTH 1/1 IMAGES OR VIDEO 
+ * ============================================================ */
+
+.content_wrap[data-module-type='Full Width 1:1'] .module_media {
+	display: block;
+	aspect-ratio: 1 / 1;
+}
+
+/* ============================================================
+ * MODULE: FULL WIDTH 16/9 IMAGES OR VIDEO 
+ * ============================================================ */
+.content_wrap[data-module-type='Full Width Video'] .module_media,
+.content_wrap[data-module-type='Full Width Image'] .module_media {
+	display: block;
+	aspect-ratio: 16 / 9;
+}
+
+/* ============================================================
+ * MODULE: Photo/GIF 21:9 (ultra-wide cinematic)
+ * ============================================================ */
+.content_wrap[data-module-type='Photo/GIF 21:9 (ultra-wide cinematic)']
+	.module_media {
+	display: block;
+	aspect-ratio: 16.8/4.3;
+}
+
+/* ============================================================
+ * MODULE: ALL INNER MEDIA DIV STYLING
+ * ============================================================ */
+
+.module_media {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+}
+
+.module_video,
+.module_image {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.module_image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+/* ============================================================
+ * MODULE: Photo Grid
+ * ============================================================ */
+
+.content_wrap[data-module-type*='Photo Grid'] .module_grid {
+	display: block !important;
+}
+
+/* ============================================================
+ * MODULE: PHOTO GRID 2 COLUMN
+ * ============================================================ */
+.content_wrap[data-module-type='Photo Grid 2-Column'] .w-dyn-items {
+	display: grid !important;
+	grid-template-columns: repeat(2, 1fr) !important;
+	gap: 1rem !important;
+}
+
+.content_wrap[data-module-type='Photo Grid 2-Column'] .w-dyn-item {
+	aspect-ratio: 1/1;
+}
+
+/* ============================================================
+ * MODULE: PHOTO GRID 3 COLUMN
+ * ============================================================ */
+.content_wrap[data-module-type='Photo Grid 3-Column'] .w-dyn-items {
+	display: grid !important;
+	grid-template-columns: var(--grid-3);
+	gap: 1rem !important;
+}
+
+.content_wrap[data-module-type='Photo Grid 3-Column'] .w-dyn-item {
+	aspect-ratio: 1 / 1 !important;
+}
+
+/* ============================================================
+ * MODULE: PHOTO GRID 4 COLUMN
+ * ============================================================ */
+.content_wrap[data-module-type='Photo Grid 4-Column'] .w-dyn-items {
+	display: grid !important;
+	grid-template-columns: var(--grid-4);
+	gap: 1rem !important;
+}
+
+.content_wrap[data-module-type='Photo Grid 4-Column'] .w-dyn-item {
+	aspect-ratio: 1 / 1 !important;
+}
+
+/* ============================================================
+ * MODULE: TEXT Content
+ * ============================================================ */
+.content_wrap[data-module-type='Text Block'] .module_text {
+	display: block;
+	max-width: 30ch;
+	margin: 0 auto;
+}
+
+/* ============================================================
+* ============================================================ 
+ * REPONSIVE ALL MODULE TYPE
+ * ============================================================ 
+ * ============================================================ 
+ * ============================================================ 
+ */
+
+/* ============================================================
+ * RESPONSIVE: PHOTO GRID 3 & 4 COLUMN
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Photo Grid 3-Column'] .w-dyn-items,
+	.content_wrap[data-module-type='Photo Grid 4-Column'] .w-dyn-items {
+		grid-template-columns: var(--grid-1);
+	}
+}
+
+@media (max-width: 767px) {
+	.content_wrap[data-module-type*='Photo Grid'] .w-dyn-items {
+		grid-template-columns: 1fr !important;
+		gap: 1rem !important;
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Wide Stacked (Image 16:9) + Square (Image 1:1)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col Wide Stacked (Image 16:9) + Square (Image 1:1)']
+		.module_layout_stack {
+		grid-template-columns: var(--grid-1);
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)']
+		.module_layout {
+		grid-template-columns: var(--grid-1) !important;
+	}
+
+	.content_wrap[data-module-type='Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)']
+		.layout_column:nth-child(1),
+	.content_wrap[data-module-type='Layout: 2-Col Square (Video/Photo/GIF 1:1) + Wide (Video/Photo/GIF 16:9)']
+		.layout_column:nth-child(2) {
+		grid-column: 1 / -1;
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)']
+		.module_layout {
+		grid-template-columns: var(--grid-1) !important;
+	}
+
+	.content_wrap[data-module-type='Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)']
+		.layout_column:nth-child(1),
+	.content_wrap[data-module-type='Layout: 2-Col Wide (Video/Photo/GIF 16:9) + Square (Video/Photo/GIF 1:1)']
+		.layout_column:nth-child(2) {
+		grid-column: 1 / -1;
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)']
+		.module_layout {
+		grid-template-columns: var(--grid-1) !important;
+	}
+	.content_wrap[data-module-type='Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)']
+		.layout_column:nth-child(1),
+	.content_wrap[data-module-type='Layout: 2-Col Wide (Video 16:9) + Portrait (Image 2:3)']
+		.layout_column:nth-child(2) {
+		grid-column: 1 / -1;
+		grid-row: auto !important;
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)']
+		.module_layout {
+		grid-template-columns: var(--grid-1) !important;
+	}
+
+	.content_wrap[data-module-type='Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)']
+		.layout_column:nth-child(1),
+	.content_wrap[data-module-type='Layout: 2-Col Portrait (Image 2:3) + Wide (Video 16:9)']
+		.layout_column:nth-child(2) {
+		grid-column: 1 / -1;
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Square (Photo 1:1) + Square (Photo 1:1)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col — Square (Photo 1:1) + Square (Photo 1:1)']
+		.module_layout {
+		grid-template-columns: var(--grid-1) !important;
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Portrait (Photo 2:3) + Portrait (Photo 2:3)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col — Portrait (Photo 2:3) + Portrait (Photo 2:3)']
+		.module_layout {
+		grid-template-columns: var(--grid-1) !important;
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 3-Col 2 Portrait (Photo 2:3) + Square (Photo 1:1)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 3-Col — 2 Portrait (Photo 2:3) + Square (Photo 1:1)']
+		.module_layout_stack {
+		grid-template-columns: var(--grid-1) !important;
+	}
+
+	.content_wrap[data-module-type='Layout: 3-Col — 2 Portrait (Photo 2:3) + Square (Photo 1:1)']
+		.layout_column:nth-child(2) {
+		grid-template-columns: var(--grid-1);
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 3-Col Square (Photo 1:1) + 2 Portrait (Photo 2:3)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 3-Col — Square (Photo 1:1) + 2 Portrait (Photo 2:3)']
+		.module_layout_stack {
+		grid-template-columns: var(--grid-1);
+	}
+
+	.content_wrap[data-module-type='Layout: 3-Col — Square (Photo 1:1) + 2 Portrait (Photo 2:3)']
+		.layout_column:nth-child(2) {
+		grid-template-columns: var(--grid-1);
+	}
+}
+
+/* ============================================================
+ * RESPONSIVE: Layout: 2-Col Square + Wide Stacked (Both Variants)
+ * 1. Layout: 2-Col Square (Image 1:1) + Wide Stacked (Image 16:9)
+ * 2. Layout: 2-Col Square (Video 1:1) + Wide Stacked (Image 16:9)
+ * ============================================================ */
+@media (max-width: 767px) {
+	.content_wrap[data-module-type='Layout: 2-Col Square (Image 1:1) + Wide Stacked (Image 16:9)']
+		.module_layout_stack,
+	.content_wrap[data-module-type='Layout: 2-Col Square (Video 1:1) + Wide Stacked (Image 16:9)']
+		.module_layout_stack {
+		grid-template-columns: var(--grid-1);
+	}
+}

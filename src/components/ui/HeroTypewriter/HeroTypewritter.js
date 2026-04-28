@@ -7,16 +7,6 @@ gsap.registerPlugin(TextPlugin);
 export default class HeroTypewriter extends ComponentCore {
 	constructor() {
 		super();
-
-		this.texts = [
-			'Human',
-			'For Adventure.',
-			'Nice.',
-			'Fun.',
-			'A Bit Crazy.',
-			'For People.',
-		];
-
 		this.init();
 	}
 
@@ -27,10 +17,16 @@ export default class HeroTypewriter extends ComponentCore {
 		this.cursor = this.container.querySelector(
 			'.hero_blinking_cursor',
 		);
+		this.texts = Array.from(
+			document.querySelectorAll('[data-typewrite="item"]'),
+		)
+			.map((el) => el.textContent.trim())
+			.filter(Boolean);
 	}
 
 	createEvents() {
 		if (!this.container) return;
+		if (!this.texts.length) return;
 		this.typewriterInit();
 	}
 

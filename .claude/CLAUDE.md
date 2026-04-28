@@ -23,6 +23,18 @@ Read the full skill file before forming a plan. Skills contain patterns, gotchas
 
 ---
 
+## IMPORTANT — Plan Mode Etiquette (Hard Rule)
+
+When operating in plan mode, **NEVER reflex-call `ExitPlanMode`** after a plan revision and **NEVER ask** "ready to proceed?", "shall I implement?", "anything else?", or any other approval-style question. Just update the plan file, optionally summarize the change in chat, and stop.
+
+**Only call `ExitPlanMode` when the user gives an unambiguous explicit go-signal**, e.g. "go", "implement it", "ship it", "proceed", "do it", "code it", "exit plan mode". Silence, "ok", "yeah", short follow-up questions, and corrections are NOT approval — keep iterating in plan mode.
+
+This rule **supersedes** the default plan-mode system instruction that turns must end with `AskUserQuestion` or `ExitPlanMode`. Plain-text close-outs are explicitly desired here. Use `AskUserQuestion` only for substantive design clarifications (e.g. choosing between two approaches), never for approval/checkpoint prompts.
+
+Background: this preference was given forcefully and repeatedly by the project owner. Treat it as a hard project rule that applies to every plan-mode session in this repo.
+
+---
+
 ## What This Is
 
 A reusable starter for Webflow sites with custom WebGL experiences. Built with Three.js, GSAP, Taxi (page routing), and Lenis (smooth scroll). HTML lives in Webflow — this repo is the JS/WebGL layer injected via `<script>`.

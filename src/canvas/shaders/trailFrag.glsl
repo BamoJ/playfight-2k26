@@ -2,11 +2,12 @@ precision highp float;
 #define PI 3.1415926535897932384626433832795
 
 uniform sampler2D uTexture;
-uniform float uTime;
 uniform float uStrength;
 uniform float uOpacity;
 uniform vec2 uCoverScale;
 uniform vec2 uVelocityDir;
+uniform float uRGBMul;
+uniform float uBlurMul;
 
 varying vec2 vUv;
 
@@ -15,7 +16,7 @@ void main() {
 	vec2 coverUv = (vUv - 0.5) * uCoverScale + 0.5;
 
 	// --- RGB Shift along movement direction ---
-	float shiftAmount = uStrength * 0.3;
+	float shiftAmount = uStrength * 0.3 * uRGBMul;
 	vec2 shiftDir = normalize(uVelocityDir + vec2(0.001));
 
 	float sharpR = texture2D(uTexture, coverUv + shiftDir * shiftAmount * 1.0).r;
@@ -24,7 +25,7 @@ void main() {
 	vec3 sharp = vec3(sharpR, sharpG, sharpB);
 
 	// --- Motion Blur along movement direction (6 samples) ---
-	float blurAmount = smoothstep(0.02, 0.3, abs(uStrength)) * abs(uStrength) * 2.0;
+	float blurAmount = smoothstep(0.02, 0.3, abs(uStrength)) * abs(uStrength) * 2.0 * uBlurMul;
 
 	// Early-out when still
 	if(blurAmount < 0.001) {
