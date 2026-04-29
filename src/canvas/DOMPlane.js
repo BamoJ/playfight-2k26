@@ -79,7 +79,7 @@ export class DOMPlane {
 				uRGBMul: { value: cfg.rgbShift },
 				uBlurMul: { value: cfg.blur },
 				uBulgeMul: { value: cfg.bulge },
-				uHoverZoomMul: { value: cfg.hoverZoom },
+				uBulgeStrengthMul: { value: cfg.bulgeStrength },
 			},
 		});
 

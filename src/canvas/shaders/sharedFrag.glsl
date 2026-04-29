@@ -13,15 +13,15 @@ uniform float uEntrance;
 uniform float uRGBMul;
 uniform float uBlurMul;
 uniform float uBulgeMul;
-uniform float uHoverZoomMul;
+uniform float uBulgeStrengthMul;
 
 varying vec2 vUv;
 
 vec2 bulge(vec2 uv, vec2 center) {
 	float radius = 1.2;
-	// Quadratic curve: mul=1 keeps current 10% zoom, mul=2/3 ramp dramatically.
+	// Quadratic curve: mul=1 keeps current 10% peak, mul=2/3 ramp dramatically.
 	// mul=0 → 1.0 (off), mul=1 → 1.1, mul=2 → 1.4, mul=3 → 1.9
-	float strength = 1.0 + 0.1 * uHoverZoomMul * uHoverZoomMul;
+	float strength = 1.0 + 0.1 * uBulgeStrengthMul * uBulgeStrengthMul;
 	uv -= center;
 	float dist = length(uv) / radius;
 	float distPow = dist * dist;
